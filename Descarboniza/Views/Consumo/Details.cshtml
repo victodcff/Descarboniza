@@ -1,0 +1,188 @@
+@model Descarboniza.Areas.Identity.Data.Consumo
+
+@{
+    ViewData["Title"] = "Detalhes do Consumo";
+}
+
+<div class="data-page consumo-details-page">
+
+    <div class="data-page-header">
+
+        <div class="data-page-title-wrap">
+
+            <span class="data-page-kicker">GESTÃO ENERGÉTICA</span>
+
+            <h1>Detalhes do consumo</h1>
+
+            <p class="data-page-description">
+                Visualize as informações registradas deste consumo.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="data-details-card">
+
+        <div class="details-section">
+
+            <span class="details-section-title">
+                Equipamento
+            </span>
+
+            <div class="details-row">
+
+                <span class="details-label">
+                    Máquina
+                </span>
+
+                <span class="details-value">
+
+                    @if (Model.Maquina != null)
+                    {
+                        @($"{Model.Maquina.Fabricante} - {Model.Maquina.Modelo}")
+                    }
+                    else
+                    {
+                        <span>Máquina não encontrada</span>
+                    }
+
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="details-section">
+
+            <span class="details-section-title">
+                Registro
+            </span>
+
+            <div class="details-row">
+
+                <span class="details-label">
+                    Data do registro
+                </span>
+
+                <span class="details-value">
+                    @Model.DataRegistro.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="details-section">
+
+            <span class="details-section-title">
+                Utilização
+            </span>
+
+            <div class="details-grid details-grid-2">
+
+                <div class="details-stat">
+
+                    <span>Horas por dia</span>
+
+                    <strong>
+                        @Model.HorasUsoDia.ToString("N2")
+                    </strong>
+
+                    <small>h</small>
+
+                </div>
+
+
+                <div class="details-stat">
+
+                    <span>Dias por mês</span>
+
+                    <strong>
+                        @Model.DiasUsoMes.ToString("N0")
+                    </strong>
+
+                    <small>dias</small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="details-section">
+
+            <span class="details-section-title">
+                Consumo
+            </span>
+
+            <div class="details-grid details-grid-2">
+
+                <div class="details-stat highlight">
+
+                    <span>Consumo mensal</span>
+
+                    <strong>
+                        @Model.ConsumoKwhMes.ToString("N2")
+                    </strong>
+
+                    <small>kWh</small>
+
+                </div>
+
+
+                <div class="details-stat">
+
+                    <span>Tarifa</span>
+
+                    <strong>
+                        R$ @Model.TarifaKwh.ToString("N2")
+                    </strong>
+
+                    <small>por kWh</small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="details-footer-actions">
+
+        <a asp-action="Delete"
+           asp-route-id="@Model.IdConsumo"
+           class="details-delete-link">
+            Excluir consumo
+        </a>
+
+        <div class="details-footer-group">
+
+            <a asp-action="Index"
+               class="form-cancel">
+                Voltar
+            </a>
+
+            <a asp-action="Analise"
+               asp-route-id="@Model.IdConsumo"
+               class="form-cancel">
+                Analisar
+            </a>
+
+            <a asp-action="Edit"
+               asp-route-id="@Model.IdConsumo"
+               class="form-submit">
+                Editar consumo
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

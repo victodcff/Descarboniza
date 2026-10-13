@@ -1,0 +1,397 @@
+﻿@model Descarboniza.ViewModels.AnaliseConsumoViewModel
+
+@{
+    ViewData["Title"] = "Análise de Consumo";
+
+    var consumo = Model.Consumo;
+    var maquina = consumo.Maquina;
+
+    var status = Descarboniza.ViewModels.AnaliseStatus.Obter(
+        Model.ConsumoTeorico,
+        Model.PercentualDiferenca);
+
+    var classeStatus = status switch
+    {
+        "alerta" => "alert",
+        "abaixo" => "danger",
+        "indisponivel" => "neutral",
+        _ => ""
+    };
+
+    var tituloStatus = status switch
+    {
+        "alerta" => "Consumo acima do esperado",
+        "abaixo" => "Consumo abaixo do esperado",
+        "proximo" => "Consumo próximo do teórico",
+        _ => "Análise indisponível"
+    };
+
+    var orientacao = status switch
+    {
+        "alerta" => "O consumo teórico considera a máquina sempre na potência nominal. Como o valor informado passou disso, confira as horas de uso, os dias por mês, o consumo informado e a potência cadastrada.",
+        "abaixo" => "O consumo informado ficou bem abaixo do teórico. Confira as horas de uso, os dias por mês e o consumo informado. Se estiverem corretos, a máquina provavelmente opera com carga parcial.",
+        "proximo" => "Os dados informados são coerentes com a potência e o tempo de uso da máquina.",
+        _ => "Informe potência, horas e dias de uso válidos para calcular o consumo teórico."
+    };
+}
+
+<div class="data-page analise-page">
+
+    <div class="data-page-header">
+
+        <div class="data-page-title-wrap">
+
+            <span class="data-page-kicker">ANÁLISE ENERGÉTICA</span>
+
+            <h1>Análise de Consumo</h1>
+
+            <p class="data-page-description">
+                Avaliação do consumo energético e dos custos da máquina.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    @if (maquina != null)
+    {
+        <div class="analise-machine-card">
+
+            <div class="analise-machine-icon">
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8">
+                    <rect x="3" y="4" width="18" height="16" rx="2" />
+                    <path d="M7 8h10" />
+                    <path d="M7 12h4" />
+                    <path d="M7 16h7" />
+                </svg>
+            </div>
+
+            <div class="analise-machine-info">
+
+                <span class="analise-label">
+                    MÁQUINA ANALISADA
+                </span>
+
+                <h2>
+                    @maquina.Fabricante - @maquina.Modelo
+                </h2>
+
+                <div class="analise-machine-specs">
+
+                    <span>
+                        <strong>@maquina.Potencia.ToString("N2")</strong>
+                        kW
+                    </span>
+
+                    <span>
+                        <strong>@maquina.Tensao.ToString("N2")</strong>
+                        V
+                    </span>
+
+                    <span>
+                        <strong>@maquina.Corrente.ToString("N2")</strong>
+                        A
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+    else
+    {
+        <div class="analise-warning">
+            <strong>Máquina não encontrada.</strong>
+            Não foi possível carregar os dados da máquina deste consumo.
+        </div>
+    }
+
+
+    <div class="analise-classification @classeStatus">
+
+        <div class="analise-classification-icon">
+
+            @if (status == "alerta" || status == "abaixo")
+            {
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+                    <path d="M12 9v4" />
+                    <path d="M12 17h.01" />
+                    <path d="M10.3 3.5 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.5a2 2 0 0 0-3.4 0Z" />
+                </svg>
+            }
+            else if (status == "indisponivel")
+            {
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M12 16v-4" />
+                    <path d="M12 8h.01" />
+                </svg>
+            }
+            else
+            {
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M8 12.5l3 3 5-6" />
+                </svg>
+            }
+
+        </div>
+
+        <div>
+
+            <span class="analise-section-kicker">
+                RESUMO DA ANÁLISE
+            </span>
+
+            <h2>@tituloStatus</h2>
+
+            <p>@Model.Classificacao</p>
+
+            <p class="analise-hint">@orientacao</p>
+
+        </div>
+
+    </div>
+
+
+    <div class="analise-section">
+
+        <div class="analise-grid">
+
+            <div class="analise-info-card">
+                <span class="analise-card-label">Consumo informado</span>
+                <strong>
+                    @consumo.ConsumoKwhMes.ToString("N2")
+                    <small>kWh/mês</small>
+                </strong>
+            </div>
+
+            <div class="analise-result-card highlight">
+                <span class="analise-card-label">Consumo teórico</span>
+                <strong>
+                    @Model.ConsumoTeorico.ToString("N2")
+                    <small>kWh/mês</small>
+                </strong>
+            </div>
+
+            <div class="analise-info-card">
+                <span class="analise-card-label">Diferença percentual</span>
+                <strong>
+                    @Model.PercentualDiferenca.ToString("N2")%
+                </strong>
+                <small>@Model.DiferencaConsumo.ToString("N2") kWh/mês</small>
+            </div>
+
+            <div class="analise-info-card">
+                <span class="analise-card-label">Custo mensal</span>
+                <strong>
+                    R$ @Model.CustoMensal.ToString("N2")
+                </strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <details class="analise-collapse">
+
+        <summary>
+
+            <div>
+                <span class="analise-section-kicker">DADOS REGISTRADOS</span>
+                <h2>Utilização</h2>
+            </div>
+
+            <svg viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="2"
+                 stroke-linecap="round"
+                 stroke-linejoin="round">
+                <path d="m6 9 6 6 6-6" />
+            </svg>
+
+        </summary>
+
+        <div class="analise-collapse-body">
+
+            <div class="analise-grid analise-grid-3">
+
+                <div class="analise-info-card">
+                    <span class="analise-card-label">Horas por dia</span>
+                    <strong>
+                        @consumo.HorasUsoDia.ToString("N2")
+                        <small>h</small>
+                    </strong>
+                </div>
+
+                <div class="analise-info-card">
+                    <span class="analise-card-label">Dias por mês</span>
+                    <strong>
+                        @consumo.DiasUsoMes.ToString("N0")
+                        <small>dias</small>
+                    </strong>
+                </div>
+
+                <div class="analise-info-card">
+                    <span class="analise-card-label">Tarifa</span>
+                    <strong>
+                        R$ @consumo.TarifaKwh.ToString("N2")
+                        <small>/ kWh</small>
+                    </strong>
+                </div>
+
+            </div>
+
+        </div>
+
+    </details>
+
+
+    <details class="analise-collapse">
+
+        <summary>
+
+            <div>
+                <span class="analise-section-kicker">RESULTADOS</span>
+                <h2>Consumo energético</h2>
+            </div>
+
+            <svg viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="2"
+                 stroke-linecap="round"
+                 stroke-linejoin="round">
+                <path d="m6 9 6 6 6-6" />
+            </svg>
+
+        </summary>
+
+        <div class="analise-collapse-body">
+
+            <div class="analise-grid analise-grid-3">
+
+                <div class="analise-result-card">
+                    <span class="analise-card-label">Consumo diário</span>
+                    <strong>
+                        @Model.ConsumoDiario.ToString("N2")
+                        <small>kWh/dia</small>
+                    </strong>
+                </div>
+
+                <div class="analise-result-card">
+                    <span class="analise-card-label">Consumo por hora</span>
+                    <strong>
+                        @Model.ConsumoPorHora.ToString("N2")
+                        <small>kWh/h</small>
+                    </strong>
+                </div>
+
+                <div class="analise-result-card">
+                    <span class="analise-card-label">Consumo anual</span>
+                    <strong>
+                        @Model.ConsumoAnual.ToString("N2")
+                        <small>kWh/ano</small>
+                    </strong>
+                </div>
+
+            </div>
+
+        </div>
+
+    </details>
+
+
+    <details class="analise-collapse">
+
+        <summary>
+
+            <div>
+                <span class="analise-section-kicker">IMPACTO FINANCEIRO</span>
+                <h2>Custos estimados</h2>
+            </div>
+
+            <svg viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="2"
+                 stroke-linecap="round"
+                 stroke-linejoin="round">
+                <path d="m6 9 6 6 6-6" />
+            </svg>
+
+        </summary>
+
+        <div class="analise-collapse-body">
+
+            <div class="analise-grid">
+
+                <div class="analise-info-card">
+                    <span class="analise-card-label">Custo por hora</span>
+                    <strong>R$ @Model.CustoPorHora.ToString("N2")</strong>
+                </div>
+
+                <div class="analise-info-card">
+                    <span class="analise-card-label">Custo diário</span>
+                    <strong>R$ @Model.CustoDiario.ToString("N2")</strong>
+                </div>
+
+                <div class="analise-info-card">
+                    <span class="analise-card-label">Custo mensal</span>
+                    <strong>R$ @Model.CustoMensal.ToString("N2")</strong>
+                </div>
+
+                <div class="analise-info-card">
+                    <span class="analise-card-label">Custo anual</span>
+                    <strong>R$ @Model.CustoAnual.ToString("N2")</strong>
+                </div>
+
+            </div>
+
+        </div>
+
+    </details>
+
+
+    <div class="details-footer-actions end">
+
+        <div class="details-footer-group">
+
+            <a asp-action="Analises"
+               class="form-cancel">
+                Voltar
+            </a>
+
+            <a asp-action="Edit"
+               asp-route-id="@consumo.IdConsumo"
+               class="form-submit">
+                Editar consumo
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

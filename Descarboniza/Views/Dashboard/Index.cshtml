@@ -1,0 +1,538 @@
+﻿@model Descarboniza.ViewModels.DashboardPainelViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+
+    var inv = System.Globalization.CultureInfo.InvariantCulture;
+
+    // Largura da barra (0 a 100). Sempre com ponto decimal, porque é CSS.
+    string Largura(double valor, double maximo)
+    {
+        if (maximo <= 0 || valor <= 0)
+        {
+            return "0";
+        }
+
+        return Math.Max(valor / maximo * 100, 3).ToString("0.0", inv);
+    }
+
+    string RotuloStatus(string status) => status switch
+    {
+        "alerta" => "Acima do teórico",
+        "abaixo" => "Abaixo do teórico",
+        "proximo" => "Dentro do esperado",
+        _ => "Sem análise"
+    };
+
+    var temDados = Model.Maquinas.Count > 0;
+
+    var ranking = Model.Maquinas.Take(5).ToList();
+
+    var maioresEmissoes = Model.Maquinas
+        .OrderByDescending(m => m.EmissaoKgCo2)
+        .Take(4)
+        .ToList();
+
+    var maxConsumo = temDados ? Model.Maquinas.Max(m => m.ConsumoKwh) : 0;
+    var maxCusto = temDados ? Model.Maquinas.Max(m => m.CustoMensal) : 0;
+    var maxEmissao = temDados ? Model.Maquinas.Max(m => m.EmissaoKgCo2) : 0;
+
+    var foraDoEsperado = Model.MaquinasAcimaDoTeorico + Model.MaquinasAbaixoDoTeorico;
+
+    var classeInsight =
+        Model.MaquinasAbaixoDoTeorico > 0 ? "danger" :
+        Model.MaquinasAcimaDoTeorico > 0 ? "alerta" :
+        "ok";
+
+    string tituloInsight;
+    string textoInsight;
+
+    if (foraDoEsperado > 0)
+    {
+        tituloInsight = foraDoEsperado == 1
+            ? "1 máquina fora do esperado"
+            : $"{foraDoEsperado} máquinas fora do esperado";
+
+        textoInsight = "O consumo informado difere mais de 10% do consumo teórico. Revise os dados dessas máquinas.";
+    }
+    else if (Model.MaquinasProximasDoTeorico > 0)
+    {
+        tituloInsight = "Tudo dentro do esperado";
+        textoInsight = "O consumo informado está coerente com a potência e o uso das suas máquinas.";
+    }
+    else
+    {
+        tituloInsight = "Análise indisponível";
+        textoInsight = "Informe potência, horas e dias de uso válidos para calcular o consumo teórico.";
+    }
+}
+
+<div class="dsh-page">
+
+    <header class="dsh-header">
+
+        <div>
+
+            <span class="dsh-kicker">VISÃO GERAL</span>
+
+            <h1 class="dsh-title">Dashboard</h1>
+
+            <p class="dsh-subtitle">
+                Acompanhe os principais indicadores energéticos das suas máquinas.
+            </p>
+
+        </div>
+
+        <div class="dsh-actions">
+
+            <a asp-controller="Consumo"
+               asp-action="Analises"
+               class="dsh-pill">
+
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     aria-hidden="true">
+                    <path d="M4 19V5" />
+                    <path d="M4 19h16" />
+                    <path d="M7 15l3-4 3 2 5-7" />
+                </svg>
+
+                Análises
+
+            </a>
+
+            <a asp-controller="Consumo"
+               asp-action="Create"
+               class="dsh-pill dsh-pill--primary">
+
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     aria-hidden="true">
+                    <path d="M12 5v14" />
+                    <path d="M5 12h14" />
+                </svg>
+
+                Novo consumo
+
+            </a>
+
+        </div>
+
+    </header>
+
+
+    @if (!temDados)
+    {
+        <section class="dsh-card dsh-empty">
+
+            <div class="dsh-empty__icon">
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     aria-hidden="true">
+                    <path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" />
+                </svg>
+            </div>
+
+            <h2 class="dsh-empty__title">Nenhum consumo registrado ainda</h2>
+
+            <p class="dsh-empty__text">
+                @if (Model.QuantidadeMaquinas > 0)
+                {
+                    <text>
+                        Você tem @Model.QuantidadeMaquinas
+                        @(Model.QuantidadeMaquinas == 1 ? "máquina cadastrada" : "máquinas cadastradas"),
+                        mas ainda nenhum consumo. Registre o primeiro para ver os indicadores.
+                    </text>
+                }
+                else
+                {
+                    <text>
+                        Cadastre uma máquina e registre o consumo dela para ver os indicadores aqui.
+                    </text>
+                }
+            </p>
+
+            <a asp-controller="@(Model.QuantidadeMaquinas > 0 ? "Consumo" : "Maquina")"
+               asp-action="Create"
+               class="dsh-pill dsh-pill--glow">
+                @(Model.QuantidadeMaquinas > 0 ? "Registrar consumo" : "Cadastrar máquina")
+            </a>
+
+        </section>
+    }
+    else
+    {
+        <div class="dsh-grid">
+
+            <!-- COLUNA 1: PRINCIPAL -->
+
+            <div class="dsh-col dsh-col--main">
+
+                <section class="dsh-card dsh-hero">
+
+                    <span class="dsh-hero__label">Consumo mensal total</span>
+
+                    <div class="dsh-hero__value">
+                        @Model.ConsumoMensal.ToString("N0")
+                        <small>kWh</small>
+                    </div>
+
+                    <p class="dsh-hero__meta">
+                        @Model.MaquinasComConsumo de @Model.QuantidadeMaquinas
+                        @(Model.QuantidadeMaquinas == 1 ? "máquina" : "máquinas")
+                        com consumo · média de @Model.ConsumoMedio.ToString("N0") kWh
+                    </p>
+
+                    <dl class="dsh-stats">
+
+                        <div>
+                            <dt>Custo mensal</dt>
+                            <dd>@Model.CustoMensal.ToString("C")</dd>
+                        </div>
+
+                        <div>
+                            <dt>Custo anual (projeção)</dt>
+                            <dd>@Model.CustoAnual.ToString("C")</dd>
+                        </div>
+
+                        <div>
+                            <dt>Emissão estimada</dt>
+                            <dd>@Model.EmissaoMensalKgCo2.ToString("N1") kg CO₂</dd>
+                        </div>
+
+                    </dl>
+
+                </section>
+
+
+                <section class="dsh-card dsh-insight dsh-insight--@classeInsight">
+
+                    <div class="dsh-insight__icon">
+
+                        @if (classeInsight == "ok")
+                        {
+                            <svg viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 aria-hidden="true">
+                                <circle cx="12" cy="12" r="9" />
+                                <path d="M8 12.5l3 3 5-6" />
+                            </svg>
+                        }
+                        else
+                        {
+                            <svg viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="2"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 aria-hidden="true">
+                                <path d="M12 9v4" />
+                                <path d="M12 17h.01" />
+                                <path d="M10.3 3.5 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.5a2 2 0 0 0-3.4 0Z" />
+                            </svg>
+                        }
+
+                    </div>
+
+                    <h2 class="dsh-insight__title">@tituloInsight</h2>
+
+                    <p class="dsh-insight__text">@textoInsight</p>
+
+                    <a asp-controller="Consumo"
+                       asp-action="Analises"
+                       class="dsh-pill dsh-pill--glow">
+                        Ver análises
+                    </a>
+
+                </section>
+
+            </div>
+
+
+            <!-- COLUNA 2: RANKING -->
+
+            <div class="dsh-col">
+
+                <section class="dsh-card">
+
+                    <div class="dsh-card__head">
+
+                        <h2 class="dsh-card__title">Ranking de consumo</h2>
+
+                        <a asp-controller="Consumo"
+                           asp-action="Index"
+                           class="dsh-card__link">
+                            Ver todos
+                        </a>
+
+                    </div>
+
+                    <ol class="dsh-rank">
+
+                        @for (var i = 0; i < ranking.Count; i++)
+                        {
+                            var item = ranking[i];
+
+                            <li class="dsh-rank__item">
+
+                                <span class="dsh-rank__pos">@(i + 1)</span>
+
+                                <div class="dsh-rank__name">
+                                    <strong>@item.Fabricante</strong>
+                                    <small>@item.Modelo</small>
+                                </div>
+
+                                <div class="dsh-rank__value">
+                                    <strong>@item.ConsumoKwh.ToString("N0") kWh</strong>
+                                    <small>@item.PercentualDoTotal.ToString("N1")%</small>
+                                </div>
+
+                                <span class="dsh-dot dsh-dot--@item.Status"
+                                      role="img"
+                                      aria-label="@RotuloStatus(item.Status)"
+                                      title="@RotuloStatus(item.Status)"></span>
+
+                                <div class="dsh-rank__bar">
+                                    <span style="width:@(Largura(item.ConsumoKwh, maxConsumo))%"></span>
+                                </div>
+
+                            </li>
+                        }
+
+                    </ol>
+
+                </section>
+
+            </div>
+
+
+            <!-- COLUNA 3: EMISSÕES -->
+
+            <div class="dsh-col">
+
+                <section class="dsh-card">
+
+                    <div class="dsh-card__head">
+
+                        <h2 class="dsh-card__title">Emissões de CO₂</h2>
+
+                        <a asp-controller="EmissaoCarbono"
+                           asp-action="Index"
+                           class="dsh-card__link">
+                            Ver emissões
+                        </a>
+
+                    </div>
+
+                    <div class="dsh-co2__value">
+                        @Model.EmissaoMensalKgCo2.ToString("N1")
+                        <small>kg CO₂ / mês</small>
+                    </div>
+
+                    <div class="dsh-co2__grid">
+
+                        @foreach (var item in maioresEmissoes)
+                        {
+                            <div class="dsh-mini">
+
+                                <span class="dsh-mini__name">@item.Fabricante</span>
+                                <span class="dsh-mini__model">@item.Modelo</span>
+
+                                <strong>@item.EmissaoKgCo2.ToString("N1") kg CO₂</strong>
+                                <small>@item.ConsumoKwh.ToString("N0") kWh</small>
+
+                            </div>
+                        }
+
+                    </div>
+
+                    <p class="dsh-note">
+                        Estimativa com o fator de
+                        @Descarboniza.Services.EmissaoCarbonoService.FatorEmissaoPadrao.ToString("N5")
+                        kg CO₂ por kWh.
+                    </p>
+
+                </section>
+
+            </div>
+
+        </div>
+
+
+        <!-- GRÁFICO POR MÁQUINA -->
+
+        <section class="dsh-card dsh-chart">
+
+            <div class="dsh-card__head dsh-chart__head">
+
+                <div>
+
+                    <h2 class="dsh-card__title">Comparativo por máquina</h2>
+
+                    <p class="dsh-card__subtitle">
+                        Compare as máquinas por consumo, custo ou emissão.
+                    </p>
+
+                </div>
+
+                <div class="dsh-tabs" role="tablist" aria-label="Métrica do comparativo">
+
+                    <button type="button"
+                            role="tab"
+                            class="dsh-tab is-active"
+                            aria-selected="true"
+                            data-dsh-tab="consumo">
+                        Consumo
+                    </button>
+
+                    <button type="button"
+                            role="tab"
+                            class="dsh-tab"
+                            aria-selected="false"
+                            data-dsh-tab="custo">
+                        Custo
+                    </button>
+
+                    <button type="button"
+                            role="tab"
+                            class="dsh-tab"
+                            aria-selected="false"
+                            data-dsh-tab="emissao">
+                        Emissão
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="dsh-bars" role="tabpanel" data-dsh-panel="consumo">
+
+                @foreach (var item in Model.Maquinas)
+                {
+                    <div class="dsh-bar">
+
+                        <div class="dsh-bar__label">
+                            <strong>@item.Fabricante</strong>
+                            <small>@item.Modelo</small>
+                        </div>
+
+                        <div class="dsh-bar__track">
+                            <span class="dsh-bar__fill"
+                                  style="width:@(Largura(item.ConsumoKwh, maxConsumo))%"></span>
+                        </div>
+
+                        <div class="dsh-bar__value">@item.ConsumoKwh.ToString("N0") kWh</div>
+
+                    </div>
+                }
+
+            </div>
+
+
+            <div class="dsh-bars" role="tabpanel" data-dsh-panel="custo" hidden>
+
+                @foreach (var item in Model.Maquinas.OrderByDescending(m => m.CustoMensal))
+                {
+                    <div class="dsh-bar">
+
+                        <div class="dsh-bar__label">
+                            <strong>@item.Fabricante</strong>
+                            <small>@item.Modelo</small>
+                        </div>
+
+                        <div class="dsh-bar__track">
+                            <span class="dsh-bar__fill"
+                                  style="width:@(Largura(item.CustoMensal, maxCusto))%"></span>
+                        </div>
+
+                        <div class="dsh-bar__value">@item.CustoMensal.ToString("C")</div>
+
+                    </div>
+                }
+
+            </div>
+
+
+            <div class="dsh-bars" role="tabpanel" data-dsh-panel="emissao" hidden>
+
+                @foreach (var item in Model.Maquinas.OrderByDescending(m => m.EmissaoKgCo2))
+                {
+                    <div class="dsh-bar">
+
+                        <div class="dsh-bar__label">
+                            <strong>@item.Fabricante</strong>
+                            <small>@item.Modelo</small>
+                        </div>
+
+                        <div class="dsh-bar__track">
+                            <span class="dsh-bar__fill"
+                                  style="width:@(Largura(item.EmissaoKgCo2, maxEmissao))%"></span>
+                        </div>
+
+                        <div class="dsh-bar__value">@item.EmissaoKgCo2.ToString("N1") kg CO₂</div>
+
+                    </div>
+                }
+
+            </div>
+
+        </section>
+    }
+
+</div>
+
+
+@section Scripts {
+
+    <script>
+        (function() {
+
+            var abas = document.querySelectorAll("[data-dsh-tab]");
+            var paineis = document.querySelectorAll("[data-dsh-panel]");
+
+            abas.forEach(function(aba) {
+
+                aba.addEventListener("click", function() {
+
+                    var alvo = aba.getAttribute("data-dsh-tab");
+
+                    abas.forEach(function(outra) {
+
+                        var ativa = outra === aba;
+
+                        outra.classList.toggle("is-active", ativa);
+                        outra.setAttribute("aria-selected", ativa ? "true" : "false");
+
+                    });
+
+                    paineis.forEach(function(painel) {
+
+                        painel.hidden = painel.getAttribute("data-dsh-panel") !== alvo;
+
+                    });
+
+                });
+
+            });
+
+        })();
+    </script>
+}

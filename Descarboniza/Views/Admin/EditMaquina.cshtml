@@ -1,0 +1,167 @@
+﻿@model Descarboniza.Areas.Identity.Data.Maquina
+
+@{
+    ViewData["Title"] = "Editar máquina (admin)";
+}
+
+<div class="data-page maquina-form-page">
+
+    <div class="data-page-header">
+        <div class="data-page-title-wrap">
+            <span class="data-page-kicker">ADMINISTRAÇÃO</span>
+
+            <h1>Editar máquina</h1>
+
+            <p class="data-page-description">
+                Atualize os dados técnicos do equipamento.
+            </p>
+        </div>
+    </div>
+
+
+    <div class="data-form-card">
+
+        <form asp-action="EditMaquina" asp-route-id="@Model.IdMaquina" id="editForm">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="IdMaquina" />
+
+
+            <div class="form-section">
+
+                <div class="form-section-title">Proprietário</div>
+
+                <div class="form-group">
+                    <label class="form-label" for="Dono">Usuário</label>
+
+                    <input type="text"
+                           id="Dono"
+                           class="form-control"
+                           value="@ViewBag.Dono"
+                           readonly
+                           tabindex="-1" />
+
+                    <span class="form-hint">O proprietário da máquina não pode ser alterado.</span>
+                </div>
+
+            </div>
+
+
+            <div class="form-section">
+
+                <div class="form-section-title">Identificação</div>
+
+                <div class="form-grid-2">
+
+                    <div class="form-group">
+                        <label asp-for="Fabricante" class="form-label">Fabricante</label>
+                        <input asp-for="Fabricante" class="form-control" autocomplete="off" />
+                        <span asp-validation-for="Fabricante" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Modelo" class="form-label">Modelo</label>
+                        <input asp-for="Modelo" class="form-control" autocomplete="off" />
+                        <span asp-validation-for="Modelo" class="text-danger"></span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-section">
+
+                <div class="form-section-title">Dados elétricos</div>
+
+                <div class="form-grid-3">
+
+                    <div class="form-group">
+                        <label asp-for="Potencia" class="form-label">Potência</label>
+                        <div class="input-with-unit">
+                            <input asp-for="Potencia" type="text" inputmode="decimal" class="form-control decimal" data-val="false" />
+                            <span>kW</span>
+                        </div>
+                        <span asp-validation-for="Potencia" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Tensao" class="form-label">Tensão</label>
+                        <div class="input-with-unit">
+                            <input asp-for="Tensao" type="text" inputmode="decimal" class="form-control decimal" data-val="false" />
+                            <span>V</span>
+                        </div>
+                        <span asp-validation-for="Tensao" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Corrente" class="form-label">Corrente</label>
+                        <div class="input-with-unit">
+                            <input asp-for="Corrente" type="text" inputmode="decimal" class="form-control decimal" data-val="false" />
+                            <span>A</span>
+                        </div>
+                        <span asp-validation-for="Corrente" class="text-danger"></span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-section">
+
+                <div class="form-section-title">Cadastro</div>
+
+                <div class="form-group">
+                    <label class="form-label" for="DataAtual">Data de cadastro</label>
+
+                    <input type="text"
+                           id="DataAtual"
+                           class="form-control"
+                           value="@Model.DataCadastro.ToLocalTime().ToString("dd/MM/yyyy HH:mm")"
+                           readonly
+                           tabindex="-1" />
+
+                    <span class="form-hint">A data de cadastro não pode ser alterada.</span>
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a asp-action="Maquinas" class="form-cancel">Cancelar</a>
+
+                <button type="submit" class="form-submit">Salvar alterações</button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+
+        const form = document.getElementById("editForm");
+
+        document.querySelectorAll(".decimal").forEach(function (campo) {
+            campo.value = campo.value.replace(".", ",");
+        });
+
+        form.addEventListener("submit", function () {
+            document.querySelectorAll(".decimal").forEach(function (campo) {
+                campo.value = campo.value.replace(".", ",");
+            });
+        });
+
+    </script>
+}

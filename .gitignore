@@ -1,0 +1,16 @@
+# Visual Studio / .NET
+.vs/
+bin/
+obj/
+*.user
+*.suo
+
+# Python (IA)
+.venv/
+venv/
+__pycache__/
+.env
+
+# Segredos: nunca versionar
+secrets.json
+appsettings.Production.json

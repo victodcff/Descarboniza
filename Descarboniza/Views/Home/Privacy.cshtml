@@ -1,0 +1,366 @@
+﻿@{
+    ViewData["Title"] = "Privacidade";
+
+    // EDITE AQUI: Nome, Github, Instagram e Foto de cada integrante.
+    //  - Github e Instagram: link completo ou só o usuário (ex.: "joaosilva").
+    //    Deixe "" para o botão ficar apagado.
+    //  - Foto: deixe "" para usar a foto do perfil do GitHub automaticamente.
+    //    Para usar uma foto sua, coloque o arquivo em wwwroot/img/equipe/
+    //    e escreva "~/img/equipe/nome.jpg".
+    var equipe = new List<(string Nome, string Github, string Instagram, string Foto)>
+    {
+        ("Rodrigo Victor Damazio Costa Filho",   "https://github.com/victodcff", "https://www.instagram.com/victordcff/", ""),
+        ("Guilherme Pereira Dantas De Oliveira Santos", "https://github.com/guilherme-ogreofcodes", "https://www.instagram.com/guimeepd/", ""),
+        ("João Victor Silva De Oliveira Melo",      "https://github.com/S1LVZ", "https://www.instagram.com/joaovs8_/", ""),
+        ("Júlia Gabriela Figueiredo Travassos",     "https://github.com/JulliaGabriella", "https://www.instagram.com/julis_gabriela/", ""),
+        ("Mariana Fernandes Souza Santos",   "https://github.com/GingerProgrammer", "https://www.instagram.com/mfernandesx__/", "")
+    };
+
+    string Normalizar(string valor, string baseUrl)
+    {
+        if (string.IsNullOrWhiteSpace(valor))
+        {
+            return "";
+        }
+
+        valor = valor.Trim();
+
+        if (valor.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+        {
+            return valor;
+        }
+
+        return baseUrl + valor.TrimStart('@').Trim('/');
+    }
+
+    string UsuarioDoGithub(string url)
+    {
+        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
+        {
+            return "";
+        }
+
+        return uri.Segments.Length > 1 ? uri.Segments[1].Trim('/') : "";
+    }
+}
+
+<div class="data-page dsc-about-page">
+
+    <div class="data-page-header">
+
+        <div class="data-page-title-wrap">
+
+            <span class="data-page-kicker">SOBRE O PROJETO</span>
+
+            <h1>Privacidade e créditos</h1>
+
+            <p class="data-page-description">
+                Quem desenvolveu o Descarboniza e como os seus dados são tratados.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <section class="dsc-credits">
+
+        <span class="data-page-kicker">DESENVOLVIDO POR</span>
+
+        <h2>
+            Desenvolvido pelos alunos da turma EMIDES3BM do SENAI CETAF-AJU
+        </h2>
+
+        <p>
+            O Descarboniza é o nosso Trabalho de Conclusão de Curso (TCC) do
+            curso técnico em Desenvolvimento de Sistemas.
+        </p>
+
+    </section>
+
+
+    <section class="dsc-section">
+
+        <div class="dsc-section__header">
+
+            <span class="data-page-kicker">EQUIPE</span>
+
+            <h2 class="dsc-section__title">Quem desenvolveu</h2>
+
+            <p class="dsc-section__text">
+                Clique nos ícones para visitar o GitHub e o Instagram de cada integrante.
+            </p>
+
+        </div>
+
+        <div class="dsc-team">
+
+            @foreach (var (nome, github, instagram, foto) in equipe)
+            {
+                var urlGithub = Normalizar(github, "https://github.com/");
+                var urlInstagram = Normalizar(instagram, "https://instagram.com/");
+
+                var temGithub = urlGithub != "";
+                var temInstagram = urlInstagram != "";
+
+                var usuarioGithub = UsuarioDoGithub(urlGithub);
+
+                var fotoFinal = !string.IsNullOrWhiteSpace(foto)
+                    ? Url.Content(foto)
+                    : (usuarioGithub != ""
+                        ? "https://github.com/" + usuarioGithub + ".png?size=128"
+                        : "");
+
+                var inicial = nome.Length > 0
+                    ? char.ToUpperInvariant(nome[0]).ToString()
+                    : "?";
+
+                <div class="dsc-member">
+
+                    <div class="dsc-member__avatar">
+
+                        <span aria-hidden="true">@inicial</span>
+
+                        @if (!string.IsNullOrEmpty(fotoFinal))
+                        {
+                            <img src="@fotoFinal"
+                                 alt="Foto de @nome"
+                                 width="64"
+                                 height="64"
+                                 loading="lazy"
+                                 referrerpolicy="no-referrer"
+                                 onerror="this.remove()" />
+                        }
+
+                    </div>
+
+                    <div class="dsc-member__info">
+
+                        <p class="dsc-member__name">@nome</p>
+
+                        <div class="dsc-social-row">
+
+                            <a class="dsc-social@(temGithub ? "" : " is-disabled")"
+                               href="@(temGithub ? urlGithub : null)"
+                               target="@(temGithub ? "_blank" : null)"
+                               rel="@(temGithub ? "noopener noreferrer" : null)"
+                               aria-disabled="@(temGithub ? null : "true")"
+                               aria-label="GitHub de @nome"
+                               title="@(temGithub ? "GitHub de " + nome : "GitHub de " + nome + " (link em breve)")">
+
+                                <svg viewBox="0 0 16 16"
+                                     fill="currentColor"
+                                     aria-hidden="true">
+                                    <path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z" />
+                                </svg>
+
+                                <span class="dsc-social__label"><span>GitHub</span></span>
+
+                            </a>
+
+                            <a class="dsc-social@(temInstagram ? "" : " is-disabled")"
+                               href="@(temInstagram ? urlInstagram : null)"
+                               target="@(temInstagram ? "_blank" : null)"
+                               rel="@(temInstagram ? "noopener noreferrer" : null)"
+                               aria-disabled="@(temInstagram ? null : "true")"
+                               aria-label="Instagram de @nome"
+                               title="@(temInstagram ? "Instagram de " + nome : "Instagram de " + nome + " (link em breve)")">
+
+                                <svg viewBox="0 0 24 24"
+                                     fill="none"
+                                     stroke="currentColor"
+                                     stroke-width="2"
+                                     stroke-linecap="round"
+                                     stroke-linejoin="round"
+                                     aria-hidden="true">
+                                    <rect x="3" y="3" width="18" height="18" rx="5" />
+                                    <circle cx="12" cy="12" r="4" />
+                                    <path d="M17.5 6.5h.01" />
+                                </svg>
+
+                                <span class="dsc-social__label"><span>Instagram</span></span>
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+    </section>
+
+
+    <section class="dsc-section">
+
+        <div class="dsc-section__header">
+
+            <span class="data-page-kicker">PRIVACIDADE</span>
+
+            <h2 class="dsc-section__title">Como tratamos os seus dados</h2>
+
+        </div>
+
+        <div class="dsc-info-grid">
+
+            <div class="dsc-info-card">
+
+                <div class="dsc-info-card__icon">
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+                        <ellipse cx="12" cy="5" rx="9" ry="3" />
+                        <path d="M3 5v14a9 3 0 0 0 18 0V5" />
+                        <path d="M3 12a9 3 0 0 0 18 0" />
+                    </svg>
+                </div>
+
+                <h3>Dados armazenados</h3>
+
+                <ul>
+                    <li>Os dados da sua conta: e-mail e senha. A senha é guardada de forma protegida, nunca em texto puro.</li>
+                    <li>Os registros que você cadastra: máquinas, consumos e emissões de carbono.</li>
+                </ul>
+
+            </div>
+
+            <div class="dsc-info-card">
+
+                <div class="dsc-info-card__icon">
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+                        <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+                        <circle cx="12" cy="12" r="3" />
+                    </svg>
+                </div>
+
+                <h3>Uso dos dados</h3>
+
+                <p>
+                    Os dados cadastrados são usados apenas para calcular e exibir
+                    os indicadores do próprio sistema. Cada usuário vê somente os
+                    seus registros. Apenas a administração do sistema pode acessá-los,
+                    para manutenção e suporte.
+                </p>
+
+            </div>
+
+            <div class="dsc-info-card">
+
+                <div class="dsc-info-card__icon">
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+                        <path d="M12 20h9" />
+                        <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z" />
+                    </svg>
+                </div>
+
+                <h3>Controle dos registros</h3>
+
+                <p>
+                    Você pode editar ou excluir as suas máquinas, consumos e
+                    emissões a qualquer momento.
+                </p>
+
+            </div>
+
+            <div class="dsc-info-card">
+
+                <div class="dsc-info-card__icon">
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+                        <path d="M22 10 12 5 2 10l10 5 10-5Z" />
+                        <path d="M6 12v5c3 3 9 3 12 0v-5" />
+                    </svg>
+                </div>
+
+                <h3>Projeto acadêmico</h3>
+
+                <p>
+                    O Descarboniza é um projeto de estudo, desenvolvido para
+                    fins educacionais.
+                </p>
+
+            </div>
+
+
+            <div class="dsc-info-card">
+
+                <div class="dsc-info-card__icon">
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                        <circle cx="12" cy="13" r="4" />
+                    </svg>
+                </div>
+
+                <h3>Leitura de placas com IA</h3>
+
+                <p>
+                    Ao usar "Preencher com IA", a foto da placa é enviada ao serviço
+                    de leitura do Descarboniza, que a repassa ao Google Gemini para
+                    identificar fabricante, modelo, potência, tensão e corrente.
+                    A foto não é armazenada por nós: só ficam salvos os dados que você
+                    confirmar ao cadastrar a máquina. Evite fotografar pessoas ou
+                    informações pessoais. O tratamento feito pelo Google segue os
+                    termos dele.
+                </p>
+
+            </div>
+
+            <div class="dsc-info-card">
+
+                <div class="dsc-info-card__icon">
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                    </svg>
+                </div>
+
+                <h3>Administração do sistema</h3>
+
+                <p>
+                    Existe uma conta de administração, restrita à equipe do projeto,
+                    que pode visualizar, editar e excluir usuários e registros para
+                    manter o sistema funcionando.
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</div>

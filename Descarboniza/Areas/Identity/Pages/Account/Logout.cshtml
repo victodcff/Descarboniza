@@ -1,0 +1,59 @@
+﻿@page
+@model LogoutModel
+
+@{
+    ViewData["Title"] = "Sair";
+}
+
+<div class="dsc-auth">
+
+    <div class="dsc-auth__card">
+
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="dsc-auth__brand dsc-brand">
+
+            <img class="dsc-logo dsc-logo--lg"
+                 src="~/img/logo.png"
+                 alt=""
+                 asp-append-version="true" />
+
+            <b class="dsc-brand__text"><span>DES</span>CARBONIZA</b>
+
+        </a>
+
+        @if (User.Identity?.IsAuthenticated ?? false)
+        {
+            <h1 class="dsc-auth__title">Sair da conta</h1>
+
+            <p class="dsc-auth__subtitle">
+                Deseja encerrar a sua sessão?
+            </p>
+
+            <form asp-area="Identity"
+                  asp-page="/Account/Logout"
+                  asp-route-returnUrl="@Url.Page("/", new { area = "" })"
+                  method="post">
+
+                <button type="submit" class="form-submit dsc-btn-block">
+                    Sair
+                </button>
+
+            </form>
+        }
+        else
+        {
+            <h1 class="dsc-auth__title">Você saiu da conta</h1>
+
+            <p class="dsc-auth__subtitle">
+                Sua sessão foi encerrada com segurança.
+            </p>
+
+            <a asp-page="./Login" class="form-submit dsc-btn-block">
+                Entrar novamente
+            </a>
+        }
+
+    </div>
+
+</div>

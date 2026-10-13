@@ -1,0 +1,314 @@
+﻿/* ========================================================= SIDEBAR ========================================================= */
+
+.sidebar {
+    width: 240px;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 24px 12px;
+    background-color: #18201c;
+    color: white;
+    z-index: 1000;
+    overflow-y: auto;
+    box-sizing: border-box;
+}
+/* ========================================================= LOGO ========================================================= */
+
+.sidebar-brand {
+    width: 100%;
+    flex-shrink: 0;
+    padding: 8px 0 30px;
+    border-bottom: 1px solid #303a34;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+    .sidebar-brand a {
+        display: block;
+        width: 100%;
+        color: white;
+        text-decoration: none;
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        white-space: nowrap;
+    }
+
+        .sidebar-brand a:hover {
+            color: white;
+        }
+
+.brand-des {
+    color: #7bcf38;
+}
+/* ========================================================= MENU ========================================================= */
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
+.sidebar-link {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 13px;
+    border-radius: 8px;
+    color: #c9cfcb;
+    text-decoration: none;
+    transition: background-color .2s ease, color .2s ease;
+}
+
+    .sidebar-link:hover {
+        background-color: #26342b;
+        color: white;
+    }
+
+    .sidebar-link.active {
+        background-color: #243c2d;
+        color: #7bcf38;
+    }
+
+        .sidebar-link.active .sidebar-svg {
+            color: #7bcf38;
+        }
+
+        .sidebar-link.active:hover {
+            background-color: #2b4935;
+        }
+
+.sidebar-svg {
+    width: 19px;
+    height: 19px;
+    min-width: 19px;
+    margin-right: 10px;
+}
+
+.sidebar-link:hover .sidebar-svg {
+    color: #7bcf38;
+}
+/* ========================================================= ÁREA CENTRAL ========================================================= */
+
+.sidebar-middle {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0;
+}
+/* ========================================================= CARD DE PROPÓSITO ========================================================= */
+
+.sidebar-highlight {
+    width: 100%;
+    margin: 0;
+    padding: 18px 14px;
+    border: 1px solid #304036;
+    border-radius: 9px;
+    background-color: #202c25;
+    flex-shrink: 0;
+}
+
+.sidebar-highlight-label {
+    display: block;
+    margin-bottom: 10px;
+    color: #7bcf38;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 1.4px;
+}
+
+.sidebar-highlight h3 {
+    margin: 0;
+    color: #f2f5f3;
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 1.35;
+}
+
+    .sidebar-highlight h3 span {
+        color: #7bcf38;
+    }
+
+.sidebar-highlight p {
+    margin: 12px 0 0;
+    color: #8f9993;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.sidebar-highlight-line {
+    width: 30px;
+    height: 2px;
+    margin-top: 14px;
+    background-color: #7bcf38;
+}
+/* ========================================================= ÁREA INFERIOR ========================================================= */
+
+.sidebar-bottom {
+    flex-shrink: 0;
+    padding-top: 18px;
+    border-top: 1px solid #303a34;
+}
+/* ========================================================= CONTA ========================================================= */
+
+.sidebar-account {
+    width: 100%;
+}
+
+.sidebar-account-header {
+    display: flex;
+    align-items: center;
+    padding: 0 6px 12px;
+}
+
+.sidebar-user-icon {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: #72bd36;
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.sidebar-account-info {
+    display: flex;
+    flex-direction: column;
+    margin-left: 10px;
+    min-width: 0;
+}
+
+.sidebar-account-title {
+    color: #8f9993;
+    font-size: 11px;
+}
+
+.sidebar-account-name {
+    margin-top: 2px;
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* ========================================================= CONFIGURAÇÕES / SAIR ========================================================= */
+
+.sidebar-account-link {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 40px;
+    padding: 9px 10px;
+    border: 0;
+    border-radius: 8px;
+    background: transparent;
+    color: #c9cfcb;
+    text-decoration: none;
+    font: inherit;
+    text-align: left;
+    transition: background-color .2s ease, color .2s ease;
+}
+
+    .sidebar-account-link:hover {
+        background-color: #26342b;
+        color: white;
+    }
+
+        .sidebar-account-link:hover .sidebar-svg {
+            color: #7bcf38;
+        }
+
+    .sidebar-account-link .sidebar-svg {
+        width: 17px;
+        height: 17px;
+        min-width: 17px;
+        margin-right: 9px;
+    }
+
+.sidebar-logout {
+    cursor: pointer;
+}
+/* ========================================================= SELETOR DE TEMA ========================================================= */
+
+.theme-selector {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+.theme-toggle {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    background: transparent;
+    color: #8f9993;
+    cursor: pointer;
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+}
+
+    .theme-toggle:hover {
+        background-color: #26342b;
+        border-color: #344239;
+        color: #7bcf38;
+    }
+
+    .theme-toggle svg {
+        width: 17px;
+        height: 17px;
+    }
+/* ========================================================= RESPONSIVO ========================================================= */
+
+@media (max-width: 767px) {
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        min-height: auto;
+        padding: 15px;
+        overflow: visible;
+    }
+
+    .sidebar-brand {
+        margin-bottom: 10px;
+        padding-bottom: 15px;
+    }
+
+    .sidebar-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .sidebar-link {
+        width: auto;
+    }
+
+    .sidebar-middle {
+        flex: none;
+        padding: 20px 0;
+    }
+
+    .sidebar-highlight {
+        margin: 0;
+    }
+
+    .sidebar-bottom {
+        margin-top: 0;
+    }
+}

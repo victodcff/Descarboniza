@@ -1,0 +1,39 @@
+﻿@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<div class="data-page dsc-settings-page">
+
+    <div class="data-page-header">
+
+        <div class="data-page-title-wrap">
+
+            <span class="data-page-kicker">CONTA</span>
+
+            <h1>Configurações</h1>
+
+            <p class="data-page-description">
+                Gerencie os seus dados de acesso e a sua conta.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="dsc-settings">
+
+        <aside>
+            <partial name="_ManageNav" />
+        </aside>
+
+        <div>
+            @RenderBody()
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

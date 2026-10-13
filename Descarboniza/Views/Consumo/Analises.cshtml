@@ -1,0 +1,182 @@
+﻿@model List<Descarboniza.ViewModels.AnaliseResumoViewModel>
+
+@{
+    ViewData["Title"] = "Análises";
+}
+
+<div class="data-page">
+
+    <div class="data-page-header">
+
+        <div class="data-page-title-wrap">
+
+            <span class="data-page-kicker">ANÁLISE ENERGÉTICA</span>
+
+            <h1>Análises</h1>
+
+            <p class="data-page-description">
+                Compare o consumo informado com o consumo teórico de cada equipamento.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="data-table-card">
+
+        <div class="data-table-wrapper">
+
+            <table class="data-table">
+
+                <thead>
+                    <tr>
+                        <th>Máquina</th>
+                        <th class="table-number">Informado</th>
+                        <th class="table-number">Teórico</th>
+                        <th class="table-number">Diferença</th>
+                        <th>Status</th>
+                        <th class="table-number">Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6" class="table-empty">
+
+                                <div class="table-empty-icon">
+                                    <svg viewBox="0 0 24 24"
+                                         fill="none"
+                                         stroke="currentColor"
+                                         stroke-width="1.8"
+                                         stroke-linecap="round"
+                                         stroke-linejoin="round">
+                                        <path d="M4 19V5" />
+                                        <path d="M4 19h16" />
+                                        <path d="M7 15l3-4 3 2 5-7" />
+                                    </svg>
+                                </div>
+
+                                <div class="table-empty-title">
+                                    Nenhuma análise disponível
+                                </div>
+
+                                <div class="table-empty-text">
+                                    Registre o consumo de uma máquina para ver a análise.
+                                </div>
+
+                                <a asp-action="Create"
+                                   class="table-empty-action">
+                                    Registrar consumo
+                                </a>
+
+                            </td>
+                        </tr>
+                    }
+
+                    @foreach (var item in Model)
+                    {
+                        var etiqueta = item.Status switch
+                        {
+                            "alerta" => "warn",
+                            "abaixo" => "danger",
+                            "indisponivel" => "muted",
+                            _ => "ok"
+                        };
+
+                        var textoStatus = item.Status switch
+                        {
+                            "alerta" => "Acima do teórico",
+                            "abaixo" => "Abaixo do teórico",
+                            "proximo" => "Próximo do teórico",
+                            _ => "Indisponível"
+                        };
+
+                        <tr>
+
+                            <td>
+                                <div class="table-entity">
+
+                                    <div class="table-entity-icon">
+                                        <svg viewBox="0 0 24 24"
+                                             fill="none"
+                                             stroke="currentColor"
+                                             stroke-width="1.8"
+                                             stroke-linecap="round"
+                                             stroke-linejoin="round">
+                                            <path d="M4 19V5" />
+                                            <path d="M4 19h16" />
+                                            <path d="M7 15l3-4 3 2 5-7" />
+                                        </svg>
+                                    </div>
+
+                                    <div>
+                                        <span class="table-primary-text">@item.Fabricante</span>
+                                        <span class="table-secondary-text">@item.Modelo</span>
+                                    </div>
+
+                                </div>
+                            </td>
+
+                            <td class="table-number">
+                                @item.ConsumoInformado.ToString("N2")
+                                <span class="table-unit">kWh</span>
+                            </td>
+
+                            <td class="table-number">
+                                @item.ConsumoTeorico.ToString("N2")
+                                <span class="table-unit">kWh</span>
+                            </td>
+
+                            <td class="table-number">
+                                @item.PercentualDiferenca.ToString("N2")%
+                            </td>
+
+                            <td>
+                                <span class="table-badge @etiqueta">@textoStatus</span>
+                            </td>
+
+                            <td>
+                                <div class="table-actions">
+
+                                    <a asp-action="Analise"
+                                       asp-route-id="@item.IdConsumo"
+                                       class="table-action analyze"
+                                       title="Ver análise"
+                                       aria-label="Ver análise">
+
+                                        <svg viewBox="0 0 24 24"
+                                             fill="none"
+                                             stroke="currentColor"
+                                             stroke-width="1.8"
+                                             stroke-linecap="round"
+                                             stroke-linejoin="round">
+                                            <path d="M4 19V5" />
+                                            <path d="M4 19h16" />
+                                            <path d="M7 15l3-4 3 2 5-7" />
+                                        </svg>
+
+                                    </a>
+
+                                </div>
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <div class="table-footer">
+            <span>@Model.Count análise(s)</span>
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,264 @@
+﻿@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+
+@if (SignInManager.IsSignedIn(User))
+{
+    var nome = User.FindFirst("Nome")?.Value;
+
+    var primeiroNome =
+        nome ?? UserManager.GetUserName(User) ?? "Usuário";
+
+
+    <div class="sidebar-account">
+
+
+        <!-- USUÁRIO -->
+
+        <div class="sidebar-account-header">
+
+            <div class="sidebar-user-icon">
+
+                @(primeiroNome.Substring(0, 1).ToUpper())
+
+            </div>
+
+
+            <div class="sidebar-account-info">
+
+                <span class="sidebar-account-title">
+                    Sua conta
+                </span>
+
+                <span class="sidebar-account-name">
+                    @primeiroNome
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- CONFIGURAÇÕES -->
+
+        <a asp-area="Identity"
+           asp-page="/Account/Manage/Index"
+           class="sidebar-account-link">
+
+            <svg class="sidebar-svg"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="1.8"
+                 stroke-linecap="round"
+                 stroke-linejoin="round">
+
+                <circle cx="12"
+                        cy="12"
+                        r="3" />
+
+                <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.8 1.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V20h-2.5v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1-1.8-1.8.1-.1A1.7 1.7 0 0 0 8 15a1.7 1.7 0 0 0-1.6-1H6v-2.5h.4a1.7 1.7 0 0 0 1.6-1A1.7 1.7 0 0 0 7.7 8l-.1-.1 1.8-1.8.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V5h2.5v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1 1.8 1.8-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.4V14h-.4a1.7 1.7 0 0 0-1.6 1z" />
+
+            </svg>
+
+            <span>
+                Configurações
+            </span>
+
+        </a>
+
+
+        <!-- SAIR -->
+
+        <form id="logoutForm"
+              method="post"
+              asp-area="Identity"
+              asp-page="/Account/Logout"
+              asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+
+            <button id="logout"
+                    type="submit"
+                    class="sidebar-account-link sidebar-logout">
+
+                <svg class="sidebar-svg"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.8"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+
+                    <path d="M10 17l5-5-5-5" />
+
+                    <path d="M15 12H3" />
+
+                    <path d="M21 3v18" />
+
+                </svg>
+
+                <span>
+                    Sair
+                </span>
+
+            </button>
+
+        </form>
+
+
+        <!-- CONFIRMAÇÃO DE SAÍDA -->
+
+        <dialog id="logoutDialog"
+                class="dsc-dialog"
+                aria-labelledby="logoutDialogTitle">
+
+            <div class="dsc-dialog__body">
+
+                <div class="dsc-dialog__icon">
+
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+
+                        <path d="M10 17l5-5-5-5" />
+                        <path d="M15 12H3" />
+                        <path d="M21 3v18" />
+
+                    </svg>
+
+                </div>
+
+                <h2 id="logoutDialogTitle" class="dsc-dialog__title">
+                    Deseja realmente sair?
+                </h2>
+
+                <p class="dsc-dialog__text">
+                    Você precisará entrar novamente para acessar o sistema.
+                </p>
+
+            </div>
+
+            <div class="dsc-dialog__actions">
+
+                <button type="button"
+                        class="form-cancel"
+                        data-fechar
+                        autofocus>
+                    Cancelar
+                </button>
+
+                <button type="button"
+                        class="form-submit"
+                        data-confirmar>
+                    Sair
+                </button>
+
+            </div>
+
+        </dialog>
+
+        <script>
+                (function () {
+
+                    var formulario = document.getElementById("logoutForm");
+                    var dialogo = document.getElementById("logoutDialog");
+
+                    if (!formulario || !dialogo || typeof dialogo.showModal !== "function") {
+                        return;
+                    }
+
+                    formulario.addEventListener("submit", function (evento) {
+                        evento.preventDefault();
+                        dialogo.showModal();
+                    });
+
+                    dialogo.querySelector("[data-fechar]").addEventListener("click", function () {
+                        dialogo.close();
+                    });
+
+                    dialogo.querySelector("[data-confirmar]").addEventListener("click", function () {
+                        formulario.submit();
+                    });
+
+                    // Clicar fora da janela também fecha
+                    dialogo.addEventListener("click", function (evento) {
+                        if (evento.target === dialogo) {
+                            dialogo.close();
+                        }
+                    });
+
+                })();
+        </script>
+
+
+    </div>
+}
+else
+{
+
+
+    <!-- ENTRAR -->
+
+    <a asp-area="Identity"
+       asp-page="/Account/Login"
+       class="sidebar-account-link">
+
+        <svg class="sidebar-svg"
+             viewBox="0 0 24 24"
+             fill="none"
+             stroke="currentColor"
+             stroke-width="1.8"
+             stroke-linecap="round"
+             stroke-linejoin="round">
+
+            <path d="M10 17l5-5-5-5" />
+
+            <path d="M15 12H3" />
+
+        </svg>
+
+        <span>
+            Entrar
+        </span>
+
+    </a>
+
+
+    <!-- CRIAR CONTA -->
+
+    <a asp-area="Identity"
+       asp-page="/Account/Register"
+       class="sidebar-account-link">
+
+        <svg class="sidebar-svg"
+             viewBox="0 0 24 24"
+             fill="none"
+             stroke="currentColor"
+             stroke-width="1.8"
+             stroke-linecap="round"
+             stroke-linejoin="round">
+
+            <circle cx="12"
+                    cy="8"
+                    r="4" />
+
+            <path d="M4 21c0-4 3.5-7 8-7s8 3 8 7" />
+
+            <path d="M19 8v6" />
+
+            <path d="M16 11h6" />
+
+        </svg>
+
+        <span>
+            Criar conta
+        </span>
+
+    </a>
+
+}

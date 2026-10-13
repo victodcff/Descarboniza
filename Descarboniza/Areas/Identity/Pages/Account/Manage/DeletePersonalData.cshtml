@@ -1,0 +1,73 @@
+﻿@page
+@model DeletePersonalDataModel
+
+@{
+    ViewData["Title"] = "Excluir conta";
+    ViewData["ActivePage"] = ManageNavPages.PersonalData;
+}
+
+<section class="dsc-card dsc-card--danger">
+
+    <h2 class="dsc-card__title">Excluir minha conta</h2>
+
+    <div class="dsc-note" role="alert">
+        <strong>Esta ação é definitiva e não pode ser desfeita.</strong>
+        Serão removidos:
+        <ul>
+            <li>o seu acesso ao sistema;</li>
+            <li>todas as suas máquinas;</li>
+            <li>todos os seus consumos e emissões de carbono.</li>
+        </ul>
+    </div>
+
+    <form id="delete-user" method="post">
+
+        <div asp-validation-summary="ModelOnly"
+             class="dsc-alert"
+             role="alert"></div>
+
+        <div class="dsc-field">
+
+            <input asp-for="Input.Password"
+                   class="dsc-field__input"
+                   autocomplete="current-password"
+                   aria-required="true"
+                   placeholder=" " />
+
+            <label asp-for="Input.Password" class="dsc-field__label">
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     aria-hidden="true">
+                    <rect x="4" y="11" width="16" height="10" rx="2" />
+                    <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                </svg>
+                <span>Confirme com a sua senha</span>
+            </label>
+
+            <span asp-validation-for="Input.Password" class="dsc-field__error"></span>
+
+        </div>
+
+        <div class="dsc-card__actions">
+
+            <a asp-page="PersonalData" class="form-cancel">
+                Cancelar
+            </a>
+
+            <button class="delete-confirm" type="submit">
+                Excluir minha conta
+            </button>
+
+        </div>
+
+    </form>
+
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

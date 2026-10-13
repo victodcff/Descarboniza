@@ -1,0 +1,133 @@
+﻿@model Descarboniza.ViewModels.AdminPainelViewModel
+
+@{
+    ViewData["Title"] = "Painel do administrador";
+}
+
+<div class="data-page">
+
+    <div class="data-page-header">
+        <div class="data-page-title-wrap">
+            <span class="data-page-kicker">ADMINISTRAÇÃO</span>
+
+            <h1>Painel do administrador</h1>
+
+            <p class="data-page-description">
+                Visão geral de todos os usuários e registros do sistema.
+            </p>
+        </div>
+    </div>
+
+
+    <div class="adm-stats">
+
+        <a asp-action="Usuarios" class="adm-stat">
+            <span class="adm-stat__label">Usuários</span>
+            <strong class="adm-stat__value">@Model.TotalUsuarios</strong>
+        </a>
+
+        <a asp-action="Maquinas" class="adm-stat">
+            <span class="adm-stat__label">Máquinas</span>
+            <strong class="adm-stat__value">@Model.TotalMaquinas</strong>
+        </a>
+
+        <a asp-action="Consumos" class="adm-stat">
+            <span class="adm-stat__label">Consumos</span>
+            <strong class="adm-stat__value">@Model.TotalConsumos</strong>
+        </a>
+
+        <a asp-action="Emissoes" class="adm-stat">
+            <span class="adm-stat__label">Emissões</span>
+            <strong class="adm-stat__value">@Model.TotalEmissoes</strong>
+        </a>
+
+        <div class="adm-stat adm-stat--static">
+            <span class="adm-stat__label">Consumo total</span>
+            <strong class="adm-stat__value">
+                @Model.ConsumoTotalKwhMes.ToString("N2")
+                <small>kWh/mês</small>
+            </strong>
+        </div>
+
+        <div class="adm-stat adm-stat--static">
+            <span class="adm-stat__label">Emissão total</span>
+            <strong class="adm-stat__value">
+                @Model.EmissaoTotalKg.ToString("N2")
+                <small>kg CO₂</small>
+            </strong>
+        </div>
+
+    </div>
+
+
+    <div class="data-table-card">
+
+        <div class="adm-card-title">Usuários com mais máquinas</div>
+
+        <div class="data-table-wrapper">
+
+            <table class="data-table">
+
+                <thead>
+                    <tr>
+                        <th>Usuário</th>
+                        <th class="text-end">Máquinas</th>
+                        <th class="text-end">Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (Model.MaioresUsuarios.Any())
+                    {
+                        foreach (var item in Model.MaioresUsuarios)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="table-primary-text">@item.Usuario.NomeCompleto</span>
+                                    <span class="table-secondary-text">@item.Usuario.Email</span>
+                                </td>
+
+                                <td class="table-number">@item.QtdMaquinas</td>
+
+                                <td>
+                                    <div class="table-actions">
+                                        <a asp-action="Maquinas"
+                                           asp-route-usuario="@item.Usuario.Id"
+                                           class="table-action view"
+                                           title="Ver máquinas"
+                                           aria-label="Ver máquinas do usuário">
+                                            <svg viewBox="0 0 24 24"
+                                                 fill="none"
+                                                 stroke="currentColor"
+                                                 stroke-width="2"
+                                                 stroke-linecap="round"
+                                                 stroke-linejoin="round">
+                                                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+                                                <circle cx="12" cy="12" r="3" />
+                                            </svg>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3" class="table-empty">
+                                <div class="table-empty-title">Nenhuma máquina cadastrada ainda</div>
+                                <div class="table-empty-text">Quando os usuários cadastrarem máquinas, elas aparecem aqui.</div>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>

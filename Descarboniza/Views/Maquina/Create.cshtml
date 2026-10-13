@@ -1,0 +1,735 @@
+﻿@model Descarboniza.Areas.Identity.Data.Maquina
+
+@{
+    ViewData["Title"] = "Nova Máquina";
+}
+
+<div class="data-page maquina-form-page">
+
+    <div class="data-page-header">
+
+        <div class="data-page-title-wrap">
+
+            <span class="data-page-kicker">GESTÃO DE ATIVOS</span>
+
+            <h1>Nova máquina</h1>
+
+            <p class="data-page-description">
+                Cadastre os dados técnicos do equipamento.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="data-form-card">
+
+        <form asp-action="Create" id="createForm">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger"></div>
+
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+                    Preencher com IA
+                </div>
+
+                <p class="form-hint">
+                    Envie uma foto da placa de identificação para sugerir os dados.
+                    Você revisa tudo antes de cadastrar.
+                </p>
+
+                <label class="ia-dropzone" id="iaDropzone" for="iaInputArquivo">
+
+                    <svg class="ia-dropzone__icon"
+                         viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.8"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+                        <polyline points="16 16 12 12 8 16" />
+                        <line x1="12" y1="12" x2="12" y2="21" />
+                        <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3" />
+                    </svg>
+
+                    <img id="iaThumb"
+                         class="ia-dropzone__thumb"
+                         alt="Foto da placa enviada" />
+
+                    <span class="ia-dropzone__titulo">Arraste a foto da placa aqui</span>
+                    <span class="ia-dropzone__ou">ou</span>
+                    <span class="ia-dropzone__botao">Escolher imagem</span>
+
+                    <input type="file" id="iaInputArquivo"
+                           accept="image/jpeg,image/png,image/webp" hidden />
+
+                </label>
+
+                <button type="button"
+                        class="form-cancel ia-btn ia-btn--camera"
+                        id="iaTirarFoto">
+                    Tirar foto
+                </button>
+
+                <input type="file" id="iaInputCamera"
+                       accept="image/*" capture="environment" hidden />
+
+                <div id="iaStatus" class="ia-status" role="status" aria-live="polite" hidden></div>
+
+                <div id="iaAlerta" class="ia-alerta" role="alert" hidden></div>
+
+                <div id="iaResultado" class="ia-resultado" hidden>
+                    <ul id="iaAvisos"></ul>
+                </div>
+
+            </div>
+
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+                    Identificação
+                </div>
+
+                <div class="form-grid-2">
+
+                    <div class="form-group">
+
+                        <label asp-for="Fabricante" class="form-label">
+                            Fabricante
+                        </label>
+
+                        <input asp-for="Fabricante"
+                               class="form-control"
+                               placeholder="Ex.: WEG"
+                               autocomplete="off" />
+
+                        <span asp-validation-for="Fabricante"
+                              class="text-danger"></span>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label asp-for="Modelo" class="form-label">
+                            Modelo
+                        </label>
+
+                        <input asp-for="Modelo"
+                               class="form-control"
+                               placeholder="Ex.: W22"
+                               autocomplete="off" />
+
+                        <span asp-validation-for="Modelo"
+                              class="text-danger"></span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+                    Dados elétricos
+                </div>
+
+                <div id="iaConfig" class="ia-config" hidden>
+
+                    <label class="form-label" for="iaConfigSelect">
+                        Esta placa tem mais de uma configuração elétrica
+                    </label>
+
+                    <select id="iaConfigSelect" class="form-control"></select>
+
+                    <span class="form-hint">
+                        Escolha a correta. Tensão e corrente são preenchidas juntas.
+                    </span>
+
+                </div>
+
+                <div class="form-grid-3">
+
+                    <div class="form-group">
+
+                        <label asp-for="Potencia" class="form-label">
+                            Potência
+                        </label>
+
+                        <div class="input-with-unit">
+
+                            <input asp-for="Potencia"
+                                   type="text"
+                                   inputmode="decimal"
+                                   class="form-control decimal"
+                                   placeholder="0,00"
+                                   data-val="false" />
+
+                            <span>kW</span>
+
+                        </div>
+
+                        <span asp-validation-for="Potencia"
+                              class="text-danger"></span>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label asp-for="Tensao" class="form-label">
+                            Tensão
+                        </label>
+
+                        <div class="input-with-unit">
+
+                            <input asp-for="Tensao"
+                                   type="text"
+                                   inputmode="decimal"
+                                   class="form-control decimal"
+                                   placeholder="0,00"
+                                   data-val="false" />
+
+                            <span>V</span>
+
+                        </div>
+
+                        <span asp-validation-for="Tensao"
+                              class="text-danger"></span>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label asp-for="Corrente" class="form-label">
+                            Corrente
+                        </label>
+
+                        <div class="input-with-unit">
+
+                            <input asp-for="Corrente"
+                                   type="text"
+                                   inputmode="decimal"
+                                   class="form-control decimal"
+                                   placeholder="0,00"
+                                   data-val="false" />
+
+                            <span>A</span>
+
+                        </div>
+
+                        <span asp-validation-for="Corrente"
+                              class="text-danger"></span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+                    Cadastro
+                </div>
+
+                <div class="form-group">
+
+                    <label class="form-label" for="DataAutomatica">
+                        Data de cadastro
+                    </label>
+
+                    <input type="text"
+                           id="DataAutomatica"
+                           class="form-control"
+                           data-relogio
+                           readonly
+                           tabindex="-1" />
+
+                    <span class="form-hint">
+                        Preenchida automaticamente ao salvar.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a asp-action="Index"
+                   class="form-cancel">
+                    Cancelar
+                </a>
+
+                <button type="submit"
+                        class="form-submit">
+                    Cadastrar máquina
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<div id="iaOverlay" class="ia-overlay" role="alert" aria-live="assertive" hidden>
+
+    <span class="dsc-loader" aria-hidden="true">
+        <span class="dsc-loader__dot"></span>
+        <span class="dsc-loader__dot"></span>
+        <span class="dsc-loader__dot"></span>
+    </span>
+
+    <span>Aguarde enquanto a IA preenche os dados…</span>
+
+    <span class="ia-overlay__sub">Isso pode levar alguns segundos (até 1 minuto se a IA estiver acordando).</span>
+
+</div>
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        document
+            .querySelectorAll(".decimal")
+            .forEach(function(campo) {
+
+                campo.value = campo.value.replace(".", ",");
+
+            });
+
+        document
+            .getElementById("createForm")
+            .addEventListener("submit", function() {
+
+                document
+                    .querySelectorAll(".decimal")
+                    .forEach(function(campo) {
+
+                        campo.value = campo.value.replace(".", ",");
+
+                    });
+
+            });
+    </script>
+
+    <script>
+        (function() {
+            "use strict";
+
+            var URL_ANALISE = '@Url.Action("AnalisarImagem", "Maquina")';
+            var LIMITE_BYTES = 5 * 1024 * 1024;
+            var LADO_MAX = 2048;
+            var TIPOS_ACEITOS = ["image/jpeg", "image/png", "image/webp"];
+            var MSG_SEM_PLACA =
+                "A imagem não contém uma máquina ou placa de identificação. " +
+                "Envie outra foto ou preencha manualmente.";
+
+            var form = document.getElementById("createForm");
+            var token = form.querySelector('input[name="__RequestVerificationToken"]');
+
+            var btnCamera = document.getElementById("iaTirarFoto");
+            var inputCamera = document.getElementById("iaInputCamera");
+            var inputArquivo = document.getElementById("iaInputArquivo");
+            var dropzone = document.getElementById("iaDropzone");
+            var thumb = document.getElementById("iaThumb");
+            var overlay = document.getElementById("iaOverlay");
+            var status = document.getElementById("iaStatus");
+            var alerta = document.getElementById("iaAlerta");
+            var resultado = document.getElementById("iaResultado");
+            var listaAvisos = document.getElementById("iaAvisos");
+            var configBox = document.getElementById("iaConfig");
+            var configSelect = document.getElementById("iaConfigSelect");
+            var thumbUrl = null;
+            var configuracoes = [];
+
+            // Garante que a tela cheia cubra a página toda, independente do layout
+            document.body.appendChild(overlay);
+
+            var NOMES = {
+                fabricante: "fabricante",
+                modelo: "modelo",
+                potencia: "potência",
+                tensao: "tensão",
+                corrente: "corrente"
+            };
+
+            var CAMPOS = {
+                fabricante: "Fabricante",
+                modelo: "Modelo",
+                potencia: "Potencia",
+                tensao: "Tensao",
+                corrente: "Corrente"
+            };
+
+            function mostrarStatus(texto, tipo) {
+                status.textContent = texto;
+                status.className = "ia-status" + (tipo ? " ia-status--" + tipo : "");
+                status.hidden = false;
+            }
+
+            function mostrarAlerta(mensagens) {
+                alerta.textContent = "";
+
+                if (mensagens.length === 0) {
+                    alerta.hidden = true;
+                    return;
+                }
+
+                mensagens.forEach(function(texto) {
+                    var linha = document.createElement("div");
+                    linha.textContent = texto;
+                    alerta.appendChild(linha);
+                });
+
+                alerta.hidden = false;
+            }
+
+            function textoFaltando(faltando) {
+                var nomes = faltando.map(function(c) {
+                    return NOMES[c] || c;
+                });
+
+                if (nomes.length === 1) {
+                    return "A IA não conseguiu identificar o campo " + nomes[0] +
+                        ". Preencha-o manualmente.";
+                }
+
+                return "A IA não conseguiu identificar os campos: " + nomes.join(", ") +
+                    ". Preencha-os manualmente.";
+            }
+
+            function esconderThumb() {
+                dropzone.classList.remove("has-thumb");
+                thumb.removeAttribute("src");
+
+                if (thumbUrl) {
+                    URL.revokeObjectURL(thumbUrl);
+                    thumbUrl = null;
+                }
+            }
+
+            function mostrarThumb(blob) {
+                esconderThumb();
+                thumbUrl = URL.createObjectURL(blob);
+                thumb.src = thumbUrl;
+                dropzone.classList.add("has-thumb");
+            }
+
+            function esconderConfig() {
+                configBox.hidden = true;
+                configSelect.textContent = "";
+                configuracoes = [];
+            }
+
+            function limparResultado() {
+                status.hidden = true;
+                alerta.hidden = true;
+                alerta.textContent = "";
+                resultado.hidden = true;
+                listaAvisos.textContent = "";
+                esconderThumb();
+                esconderConfig();
+            }
+
+            // Apaga só o que a IA preencheu antes (o que o usuário digitou fica)
+            function limparMarcas() {
+                form.querySelectorAll(".ia-preenchido").forEach(function(campo) {
+                    campo.value = "";
+                    campo.classList.remove("ia-preenchido");
+                });
+
+                form.querySelectorAll(".ia-faltando").forEach(function(campo) {
+                    campo.classList.remove("ia-faltando");
+                });
+            }
+
+            function setCarregando(ativo) {
+                btnCamera.disabled = ativo;
+                inputArquivo.disabled = ativo;
+                dropzone.classList.toggle("is-disabled", ativo);
+                overlay.hidden = !ativo;
+            }
+
+            function preencherLista(lista, itens) {
+                (itens || []).forEach(function(texto) {
+                    var li = document.createElement("li");
+                    li.textContent = texto;
+                    lista.appendChild(li);
+                });
+            }
+
+            function formatar(numero) {
+                return numero.toLocaleString("pt-BR", {
+                    maximumFractionDigits: 2,
+                    useGrouping: false
+                });
+            }
+
+            function definir(id, valor) {
+                var campo = document.getElementById(id);
+
+                if (!campo || valor === null || valor === undefined || valor === "") {
+                    return;
+                }
+
+                campo.value = typeof valor === "number" ? formatar(valor) : valor;
+                campo.classList.add("ia-preenchido");
+            }
+
+            // Usado ao trocar a configuração: valor ausente limpa o campo e avisa
+            function definirConfig(id, valor) {
+                var campo = document.getElementById(id);
+
+                campo.classList.remove("ia-faltando");
+
+                if (valor === null || valor === undefined) {
+                    campo.value = "";
+                    campo.classList.remove("ia-preenchido");
+                    campo.classList.add("ia-faltando");
+                    return;
+                }
+
+                definir(id, valor);
+            }
+
+            function rotuloConfig(c) {
+                var partes = [];
+
+                if (c.tensaoV !== null && c.tensaoV !== undefined) {
+                    partes.push(formatar(c.tensaoV) + " V");
+                }
+
+                if (c.correnteA !== null && c.correnteA !== undefined) {
+                    partes.push(formatar(c.correnteA) + " A");
+                }
+
+                var texto = partes.join(" · ");
+
+                if (c.descricao) {
+                    texto += " (" + c.descricao + ")";
+                }
+
+                return texto || "Configuração";
+            }
+
+            function montarSelectConfig(lista) {
+                configuracoes = lista;
+                configSelect.textContent = "";
+
+                lista.forEach(function(c, i) {
+                    var opcao = document.createElement("option");
+                    opcao.value = String(i);
+                    opcao.textContent = rotuloConfig(c);
+                    configSelect.appendChild(opcao);
+                });
+
+                configSelect.value = "0";
+                configBox.hidden = false;
+            }
+
+            // Reduz a foto no navegador (fotos de celular passam de 5 MB)
+            async function prepararImagem(arquivo) {
+                try {
+                    var bitmap = await createImageBitmap(arquivo, { imageOrientation: "from-image" });
+                    var escala = Math.min(1, LADO_MAX / Math.max(bitmap.width, bitmap.height));
+                    var canvas = document.createElement("canvas");
+
+                    canvas.width = Math.round(bitmap.width * escala);
+                    canvas.height = Math.round(bitmap.height * escala);
+                    canvas.getContext("2d").drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+                    bitmap.close();
+
+                    var blob = await new Promise(function(ok) {
+                        canvas.toBlob(ok, "image/jpeg", 0.9);
+                    });
+
+                    return blob || arquivo;
+                } catch (e) {
+                    return arquivo;
+                }
+            }
+
+            function aplicar(json, imagem) {
+                var faltando = json.camposNaoIdentificados || [];
+
+                // Nenhum campo identificado: não é uma placa (ou está ilegível)
+                if (faltando.length >= 5) {
+                    mostrarStatus(MSG_SEM_PLACA, "erro");
+                    return;
+                }
+
+                limparMarcas();
+                mostrarThumb(imagem);
+
+                definir("Fabricante", json.fabricante);
+                definir("Modelo", json.modelo);
+                definir("Potencia", json.potenciaKw);
+                definir("Tensao", json.tensaoV);
+                definir("Corrente", json.correnteA);
+
+                faltando.forEach(function(nome) {
+                    var campo = document.getElementById(CAMPOS[nome]);
+
+                    if (campo) {
+                        campo.classList.add("ia-faltando");
+                    }
+                });
+
+                var alertas = [];
+                var configs = json.configuracoes || [];
+
+                if (configs.length > 1) {
+                    montarSelectConfig(configs);
+                    alertas.push(
+                        "Esta placa tem mais de uma configuração elétrica. " +
+                        "Escolha a correta em Dados elétricos.");
+                }
+
+                if (faltando.length > 0) {
+                    alertas.push(textoFaltando(faltando));
+                }
+
+                mostrarAlerta(alertas);
+
+                preencherLista(listaAvisos, json.avisos);
+                resultado.hidden = false;
+
+                mostrarStatus("Dados sugeridos pela IA. Revise antes de cadastrar.", "");
+            }
+
+            async function analisar(arquivo) {
+                if (!arquivo) {
+                    return;
+                }
+
+                limparResultado();
+                setCarregando(true);
+
+                var controle = new AbortController();
+                var timer = setTimeout(function() { controle.abort(); }, 120000);
+
+                try {
+                    var imagem = await prepararImagem(arquivo);
+
+                    if (imagem.size > LIMITE_BYTES) {
+                        mostrarStatus("Imagem maior que 5 MB.", "erro");
+                        return;
+                    }
+
+                    var dados = new FormData();
+                    dados.append("imagem", imagem, "placa.jpg");
+                    dados.append("__RequestVerificationToken", token.value);
+
+                    var resposta = await fetch(URL_ANALISE, {
+                        method: "POST",
+                        body: dados,
+                        signal: controle.signal
+                    });
+
+                    var json = await resposta.json().catch(function() { return null; });
+
+                    if (!json || !json.sucesso) {
+                        mostrarStatus(
+                            (json && json.erro) || "Não foi possível analisar a imagem. Preencha manualmente.",
+                            "erro");
+                        return;
+                    }
+
+                    aplicar(json, imagem);
+                } catch (e) {
+                    mostrarStatus("Falha ao enviar a imagem. Preencha manualmente.", "erro");
+                } finally {
+                    clearTimeout(timer);
+                    setCarregando(false);
+                    inputCamera.value = "";
+                    inputArquivo.value = "";
+                }
+            }
+
+            // Acorda a IA em segundo plano (no plano gratuito ela dorme sem uso).
+            // O usuário leva alguns segundos escolhendo a foto, tempo suficiente para ela iniciar.
+            fetch('@Url.Action("Aquecer", "Ia")', { credentials: "same-origin" }).catch(function() { });
+
+            btnCamera.addEventListener("click", function() { inputCamera.click(); });
+
+            inputCamera.addEventListener("change", function() { analisar(inputCamera.files[0]); });
+            inputArquivo.addEventListener("change", function() { analisar(inputArquivo.files[0]); });
+
+            // Escolher outra configuração elétrica preenche tensão e corrente juntas
+            configSelect.addEventListener("change", function() {
+                var c = configuracoes[parseInt(configSelect.value, 10)];
+
+                if (!c) {
+                    return;
+                }
+
+                definirConfig("Tensao", c.tensaoV);
+                definirConfig("Corrente", c.correnteA);
+            });
+
+            // Arrastar e soltar
+            ["dragenter", "dragover"].forEach(function(nome) {
+                dropzone.addEventListener(nome, function(e) {
+                    e.preventDefault();
+                    if (!inputArquivo.disabled) {
+                        dropzone.classList.add("is-dragover");
+                    }
+                });
+            });
+
+            ["dragleave", "drop"].forEach(function(nome) {
+                dropzone.addEventListener(nome, function(e) {
+                    e.preventDefault();
+                    dropzone.classList.remove("is-dragover");
+                });
+            });
+
+            dropzone.addEventListener("drop", function(e) {
+                if (inputArquivo.disabled) {
+                    return;
+                }
+
+                var arquivo = e.dataTransfer && e.dataTransfer.files[0];
+
+                if (!arquivo) {
+                    return;
+                }
+
+                if (TIPOS_ACEITOS.indexOf(arquivo.type) === -1) {
+                    mostrarStatus("Use uma imagem JPG, PNG ou WEBP.", "erro");
+                    return;
+                }
+
+                analisar(arquivo);
+            });
+
+            // Soltar o arquivo fora da área não pode abrir a imagem e perder o formulário
+            ["dragover", "drop"].forEach(function(nome) {
+                window.addEventListener(nome, function(e) { e.preventDefault(); });
+            });
+
+            // Ao editar um campo, remove os destaques "preenchido pela IA" e "preencha"
+            form.addEventListener("input", function(evento) {
+                evento.target.classList.remove("ia-preenchido");
+                evento.target.classList.remove("ia-faltando");
+            });
+        })();
+    </script>
+}

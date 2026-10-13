@@ -1,0 +1,114 @@
+﻿@page
+@model EmailModel
+
+@{
+    ViewData["Title"] = "E-mail";
+    ViewData["ActivePage"] = ManageNavPages.Email;
+}
+
+<section class="dsc-card">
+
+    <h2 class="dsc-card__title">E-mail</h2>
+
+    <p class="dsc-card__text">
+        Para trocar o e-mail, confirme a sua senha atual. Se o novo e-mail já pertencer a outra conta,
+        a troca não é feita. Todos os seus equipamentos e registros continuam na sua conta.
+    </p>
+
+    <form id="email-form" method="post">
+
+        <div asp-validation-summary="ModelOnly"
+             class="dsc-alert"
+             role="alert"></div>
+
+        <div class="dsc-field dsc-field--readonly">
+
+            <input id="email-atual"
+                   type="text"
+                   class="dsc-field__input"
+                   value="@Model.Email"
+                   placeholder=" "
+                   readonly />
+
+            <label for="email-atual" class="dsc-field__label">
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     aria-hidden="true">
+                    <rect x="3" y="5" width="18" height="14" rx="2" />
+                    <path d="m3 7 9 6 9-6" />
+                </svg>
+                <span>E-mail atual</span>
+            </label>
+
+        </div>
+
+        <div class="dsc-field">
+
+            <input asp-for="Input.NovoEmail"
+                   class="dsc-field__input"
+                   autocomplete="email"
+                   aria-required="true"
+                   placeholder=" " />
+
+            <label asp-for="Input.NovoEmail" class="dsc-field__label">
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     aria-hidden="true">
+                    <rect x="3" y="5" width="18" height="14" rx="2" />
+                    <path d="m3 7 9 6 9-6" />
+                </svg>
+                <span>Novo e-mail</span>
+            </label>
+
+            <span asp-validation-for="Input.NovoEmail" class="dsc-field__error"></span>
+
+        </div>
+
+        <div class="dsc-field">
+
+            <input asp-for="Input.SenhaAtual"
+                   class="dsc-field__input"
+                   autocomplete="current-password"
+                   aria-required="true"
+                   placeholder=" " />
+
+            <label asp-for="Input.SenhaAtual" class="dsc-field__label">
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     aria-hidden="true">
+                    <rect x="4" y="11" width="16" height="10" rx="2" />
+                    <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                </svg>
+                <span>Senha atual</span>
+            </label>
+
+            <span asp-validation-for="Input.SenhaAtual" class="dsc-field__error"></span>
+
+        </div>
+
+        <button id="change-email-button"
+                type="submit"
+                class="form-submit"
+                data-loading-text="Salvando…">
+            Alterar e-mail
+        </button>
+
+    </form>
+
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

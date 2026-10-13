@@ -1,0 +1,117 @@
+﻿@page
+@model IndexModel
+
+@{
+    ViewData["Title"] = "Perfil";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+}
+
+<section class="dsc-card">
+
+    <h2 class="dsc-card__title">Perfil</h2>
+
+    <p class="dsc-card__text">
+        Atualize o seu nome. O e-mail é usado para entrar e pode ser alterado na aba E-mail.
+    </p>
+
+    <form id="profile-form" method="post">
+
+        <div asp-validation-summary="ModelOnly"
+             class="dsc-alert"
+             role="alert"></div>
+
+        <div class="dsc-field-row">
+
+            <div class="dsc-field">
+
+                <input asp-for="Input.Nome"
+                       class="dsc-field__input"
+                       autocomplete="given-name"
+                       aria-required="true"
+                       placeholder=" " />
+
+                <label asp-for="Input.Nome" class="dsc-field__label">
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+                        <circle cx="12" cy="8" r="4" />
+                        <path d="M4 21c0-4 3.5-7 8-7s8 3 8 7" />
+                    </svg>
+                    <span>Nome</span>
+                </label>
+
+                <span asp-validation-for="Input.Nome" class="dsc-field__error"></span>
+
+            </div>
+
+            <div class="dsc-field">
+
+                <input asp-for="Input.Sobrenome"
+                       class="dsc-field__input"
+                       autocomplete="family-name"
+                       aria-required="true"
+                       placeholder=" " />
+
+                <label asp-for="Input.Sobrenome" class="dsc-field__label">
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+                        <circle cx="12" cy="8" r="4" />
+                        <path d="M4 21c0-4 3.5-7 8-7s8 3 8 7" />
+                    </svg>
+                    <span>Sobrenome</span>
+                </label>
+
+                <span asp-validation-for="Input.Sobrenome" class="dsc-field__error"></span>
+
+            </div>
+
+        </div>
+
+        <div class="dsc-field dsc-field--readonly">
+
+            <input id="email-atual"
+                   type="text"
+                   class="dsc-field__input"
+                   value="@Model.Email"
+                   placeholder=" "
+                   readonly />
+
+            <label for="email-atual" class="dsc-field__label">
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     aria-hidden="true">
+                    <rect x="3" y="5" width="18" height="14" rx="2" />
+                    <path d="m3 7 9 6 9-6" />
+                </svg>
+                <span>E-mail</span>
+            </label>
+
+        </div>
+
+        <button id="update-profile-button"
+                type="submit"
+                class="form-submit"
+                data-loading-text="Salvando…">
+            Salvar alterações
+        </button>
+
+    </form>
+
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,1807 @@
+﻿/* =========================================================
+   COMPONENTES
+   Elementos reutilizáveis (loader, e os próximos que vierem).
+   ========================================================= */
+
+
+/* ---------- Loader ----------
+   Adaptado de Uiverse.io, por dovatgabriel.
+   Uso: <span class="dsc-loader" aria-hidden="true">
+          <span class="dsc-loader__dot"></span> (x3)
+        </span>
+   Cor: herda a cor do texto (currentColor).
+   Tamanho: --dsc-loader-size. */
+
+.dsc-loader {
+    --dsc-loader-size: 35px;
+    --dsc-loader-speed: .8s;
+    --dsc-loader-color: currentColor;
+    position: relative;
+    display: inline-block;
+    flex-shrink: 0;
+    width: var(--dsc-loader-size);
+    height: var(--dsc-loader-size);
+    animation: dsc-spin calc(var(--dsc-loader-speed) * 2.5) infinite linear;
+}
+
+.dsc-loader__dot {
+    position: absolute;
+    width: 30%;
+    height: 100%;
+}
+
+    .dsc-loader__dot::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 0;
+        padding-bottom: 100%;
+        border-radius: 50%;
+        background-color: var(--dsc-loader-color);
+    }
+
+    .dsc-loader__dot:nth-child(1) {
+        bottom: 5%;
+        left: 0;
+        transform: rotate(60deg);
+        transform-origin: 50% 85%;
+    }
+
+        .dsc-loader__dot:nth-child(1)::after {
+            bottom: 0;
+            left: 0;
+            animation: dsc-wobble-1 var(--dsc-loader-speed) ease-in-out infinite;
+            animation-delay: calc(var(--dsc-loader-speed) * -.3);
+        }
+
+    .dsc-loader__dot:nth-child(2) {
+        right: 0;
+        bottom: 5%;
+        transform: rotate(-60deg);
+        transform-origin: 50% 85%;
+    }
+
+        .dsc-loader__dot:nth-child(2)::after {
+            bottom: 0;
+            left: 0;
+            animation: dsc-wobble-1 var(--dsc-loader-speed) ease-in-out infinite;
+            animation-delay: calc(var(--dsc-loader-speed) * -.15);
+        }
+
+    .dsc-loader__dot:nth-child(3) {
+        bottom: -5%;
+        left: 0;
+        transform: translateX(116.666%);
+    }
+
+        .dsc-loader__dot:nth-child(3)::after {
+            top: 0;
+            left: 0;
+            animation: dsc-wobble-2 var(--dsc-loader-speed) ease-in-out infinite;
+        }
+
+@keyframes dsc-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes dsc-wobble-1 {
+    0%, 100% {
+        transform: translateY(0%) scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: translateY(-66%) scale(.65);
+        opacity: .8;
+    }
+}
+
+@keyframes dsc-wobble-2 {
+    0%, 100% {
+        transform: translateY(0%) scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: translateY(66%) scale(.65);
+        opacity: .8;
+    }
+}
+
+/* Sem animação para quem prefere menos movimento */
+@media (prefers-reduced-motion: reduce) {
+
+    .dsc-loader,
+    .dsc-loader__dot::after {
+        animation: none;
+    }
+}
+
+
+/* ---------- Botão em carregamento ---------- */
+
+.form-submit .dsc-loader,
+.delete-confirm .dsc-loader {
+    --dsc-loader-size: 18px;
+}
+
+.form-submit.is-loading,
+.delete-confirm.is-loading {
+    gap: 10px;
+    cursor: progress;
+    pointer-events: none;
+}
+
+/* ---------- Notificação (toast) ----------
+   Adaptado de Uiverse.io, por hoshikawamaki.
+   Tipos: dsc-toast--success (padrão) e dsc-toast--error. */
+
+.dsc-toast-region {
+    position: fixed;
+    right: 20px;
+    bottom: 112px;
+    z-index: 1080;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 380px;
+    max-width: calc(100vw - 32px);
+    pointer-events: none;
+}
+
+.dsc-toast {
+    --dsc-toast-wave: #5da22c;
+    --dsc-toast-title: #3f8a17;
+    display: flex;
+    align-items: stretch;
+    overflow: hidden;
+    min-height: 72px;
+    border: 1px solid #dfe5e1;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(20, 30, 25, .14);
+    pointer-events: auto;
+    animation: dsc-toast-in .3s ease both;
+    transition: opacity .25s ease, transform .25s ease;
+}
+
+.dsc-toast--error,
+.dsc-toast--danger {
+    --dsc-toast-wave: #b34a4a;
+    --dsc-toast-title: #a94747;
+}
+
+.dsc-toast.is-hiding {
+    opacity: 0;
+    transform: translateX(24px);
+}
+
+/* Borda ondulada */
+
+.dsc-toast__wave {
+    position: relative;
+    flex: 0 0 16px;
+    color: var(--dsc-toast-wave);
+}
+
+    .dsc-toast__wave svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+/* Conteúdo */
+
+.dsc-toast__body {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 6px 12px 12px;
+}
+
+.dsc-toast__title {
+    margin: 0;
+    color: var(--dsc-toast-title);
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.dsc-toast__text {
+    margin: 2px 0 0;
+    color: #55615a;
+    font-size: 13px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+/* Botão de fechar */
+
+.dsc-toast__close {
+    flex: 0 0 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #66716b;
+    cursor: pointer;
+    transition: background-color .15s ease, color .15s ease;
+}
+
+    .dsc-toast__close:hover {
+        background: #f3f5f3;
+        color: #27352e;
+    }
+
+    .dsc-toast__close:focus-visible {
+        outline: 2px solid #76b34a;
+        outline-offset: -2px;
+    }
+
+    .dsc-toast__close svg {
+        width: 18px;
+        height: 18px;
+    }
+
+@keyframes dsc-toast-in {
+    from {
+        opacity: 0;
+        transform: translateX(24px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* Tema escuro */
+
+html[data-theme="dark"] .dsc-toast {
+    --dsc-toast-title: #86c95f;
+    border-color: #303a34;
+    background: #1a211d;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .40);
+}
+
+html[data-theme="dark"] .dsc-toast--error,
+html[data-theme="dark"] .dsc-toast--danger {
+    --dsc-toast-wave: #b34a4a;
+    --dsc-toast-title: #df8888;
+}
+
+html[data-theme="dark"] .dsc-toast__text {
+    color: #aeb8b1;
+}
+
+html[data-theme="dark"] .dsc-toast__close {
+    color: #aeb8b1;
+}
+
+    html[data-theme="dark"] .dsc-toast__close:hover {
+        background: #242d28;
+        color: #e4ebe6;
+    }
+
+/* Celular */
+
+@media (max-width: 600px) {
+
+    .dsc-toast-region {
+        right: 16px;
+        bottom: 100px;
+        left: 16px;
+        width: auto;
+        max-width: none;
+    }
+}
+
+/* Sem animação para quem prefere menos movimento */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .dsc-toast {
+        animation: none;
+        transition: none;
+    }
+}
+
+/* ---------- Links sociais ----------
+   Inspirado em Uiverse.io (Social Media Links): botão redondo que se
+   expande no hover e mostra o nome da rede. */
+
+.dsc-social-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.dsc-social {
+    display: inline-flex;
+    align-items: center;
+    height: 44px;
+    padding: 0 12px;
+    overflow: hidden;
+    border: 1px solid #dfe5e1;
+    border-radius: 999px;
+    background: rgba(39, 53, 46, .06);
+    color: #55615a;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color .35s ease, border-color .35s ease, color .35s ease, box-shadow .35s ease, transform .45s cubic-bezier(.22, 1, .36, 1);
+}
+
+    .dsc-social svg {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+    }
+
+/* Rótulo: abre de 0 até a largura real do texto */
+.dsc-social__label {
+    display: grid;
+    grid-template-columns: 0fr;
+    margin-left: 0;
+    opacity: 0;
+    transition: grid-template-columns .5s cubic-bezier(.22, 1, .36, 1), margin-left .5s cubic-bezier(.22, 1, .36, 1), opacity .4s ease;
+}
+
+    .dsc-social__label > span {
+        min-width: 0;
+        overflow: hidden;
+        transform: translateX(-8px);
+        transition: transform .5s cubic-bezier(.22, 1, .36, 1);
+    }
+
+.dsc-social:not(.is-disabled):hover,
+.dsc-social:not(.is-disabled):focus-visible {
+    border-color: #27352e;
+    background: #27352e;
+    color: #fff;
+    text-decoration: none;
+    box-shadow: 0 8px 18px rgba(39, 53, 46, .22);
+    transform: translateY(-3px);
+}
+
+    .dsc-social:not(.is-disabled):hover .dsc-social__label,
+    .dsc-social:not(.is-disabled):focus-visible .dsc-social__label {
+        grid-template-columns: 1fr;
+        margin-left: 8px;
+        opacity: 1;
+    }
+
+        .dsc-social:not(.is-disabled):hover .dsc-social__label > span,
+        .dsc-social:not(.is-disabled):focus-visible .dsc-social__label > span {
+            transform: translateX(0);
+        }
+
+.dsc-social:focus-visible {
+    outline: 2px solid #76b34a;
+    outline-offset: 3px;
+}
+
+.dsc-social.is-disabled {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+html[data-theme="dark"] .dsc-social:not(.is-disabled):hover,
+html[data-theme="dark"] .dsc-social:not(.is-disabled):focus-visible {
+    box-shadow: 0 8px 18px rgba(93, 162, 44, .28);
+}
+
+/* Celular: sem hover, o nome fica sempre visível */
+@media (hover: none) {
+
+    .dsc-social__label {
+        grid-template-columns: 1fr;
+        margin-left: 8px;
+        opacity: 1;
+    }
+
+        .dsc-social__label > span {
+            transform: none;
+        }
+}
+
+/* Quem prefere menos movimento: só a cor muda suavemente */
+@media (prefers-reduced-motion: reduce) {
+
+    .dsc-social {
+        transition: background-color .2s ease, border-color .2s ease, color .2s ease;
+    }
+
+        .dsc-social:not(.is-disabled):hover,
+        .dsc-social:not(.is-disabled):focus-visible {
+            box-shadow: none;
+            transform: none;
+        }
+
+    .dsc-social__label {
+        transition: opacity .2s ease;
+    }
+
+        .dsc-social__label > span {
+            transform: none;
+            transition: none;
+        }
+}
+
+
+/* ---------- Página de privacidade e créditos ---------- */
+
+.dsc-about-page {
+    max-width: 1000px;
+    padding-bottom: 30px;
+}
+
+.dsc-section {
+    margin-top: 44px;
+}
+
+.dsc-section__header {
+    margin-bottom: 18px;
+}
+
+.dsc-section__title {
+    margin: 0;
+    color: #18201c;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.dsc-section__text {
+    max-width: 640px;
+    margin: 6px 0 0;
+    color: #55615a;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Créditos */
+
+.dsc-credits {
+    padding: 30px 32px;
+    border: 1px solid #cfe3c4;
+    border-radius: 12px;
+    background: #f4f9f1;
+}
+
+    .dsc-credits .data-page-kicker {
+        color: #3f8a17;
+    }
+
+    .dsc-credits h2 {
+        margin: 6px 0 12px;
+        color: #18201c;
+        font-size: 22px;
+        font-weight: 600;
+        line-height: 1.35;
+    }
+
+    .dsc-credits p {
+        max-width: 640px;
+        margin: 0;
+        color: #55615a;
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+/* Equipe */
+
+.dsc-team {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.dsc-member {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    border: 1px solid #dfe5e1;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.dsc-member__avatar {
+    position: relative;
+    flex: 0 0 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    overflow: hidden;
+    border-radius: 50%;
+    background: #5da22c;
+    box-shadow: 0 0 0 3px #edf5e9;
+    color: #fff;
+    font-size: 24px;
+    font-weight: 700;
+}
+
+    .dsc-member__avatar img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+.dsc-member__info {
+    flex: 1;
+    min-width: 0;
+}
+
+.dsc-member__name {
+    margin: 0;
+    color: #18201c;
+    font-size: 16px;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+/* Cartões de privacidade */
+
+.dsc-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.dsc-info-card {
+    padding: 24px;
+    border: 1px solid #dfe5e1;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.dsc-info-card__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    margin-bottom: 16px;
+    border-radius: 10px;
+    background: #edf5e9;
+    color: #4d9f20;
+}
+
+    .dsc-info-card__icon svg {
+        width: 21px;
+        height: 21px;
+    }
+
+.dsc-info-card h3 {
+    margin: 0 0 8px;
+    color: #18201c;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.dsc-info-card p,
+.dsc-info-card ul {
+    margin: 0;
+    color: #3d4a43;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.dsc-info-card ul {
+    padding-left: 18px;
+}
+
+@media (max-width: 767px) {
+
+    .dsc-info-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dsc-credits {
+        padding: 24px 20px;
+    }
+}
+
+/* Tema escuro */
+
+html[data-theme="dark"] .dsc-social {
+    border-color: #303a34;
+    background: rgba(255, 255, 255, .05);
+    color: #aeb8b1;
+}
+
+    html[data-theme="dark"] .dsc-social:not(.is-disabled):hover,
+    html[data-theme="dark"] .dsc-social:not(.is-disabled):focus-visible {
+        border-color: #5da22c;
+        background: #5da22c;
+        color: #fff;
+    }
+
+html[data-theme="dark"] .dsc-section__title,
+html[data-theme="dark"] .dsc-credits h2,
+html[data-theme="dark"] .dsc-member__name,
+html[data-theme="dark"] .dsc-info-card h3 {
+    color: #edf2ee;
+}
+
+html[data-theme="dark"] .dsc-section__text,
+html[data-theme="dark"] .dsc-credits p {
+    color: #aeb8b1;
+}
+
+html[data-theme="dark"] .dsc-credits {
+    border-color: #38502f;
+    background: #202a20;
+}
+
+    html[data-theme="dark"] .dsc-credits .data-page-kicker {
+        color: #86c95f;
+    }
+
+html[data-theme="dark"] .dsc-member,
+html[data-theme="dark"] .dsc-info-card {
+    border-color: #303a34;
+    background: #1a211d;
+}
+
+html[data-theme="dark"] .dsc-member__avatar {
+    box-shadow: 0 0 0 3px #242c27;
+}
+
+html[data-theme="dark"] .dsc-info-card__icon {
+    background: #242c27;
+    color: #86c95f;
+}
+
+html[data-theme="dark"] .dsc-info-card p,
+html[data-theme="dark"] .dsc-info-card ul {
+    color: #c3ccc6;
+}
+
+/* ---------- Texto de apoio dos formulários ---------- */
+
+.form-hint {
+    display: block;
+    margin-top: 6px;
+    color: #5f6b64;
+    font-size: 12px;
+}
+
+html[data-theme="dark"] .form-hint {
+    color: #8c978f;
+}
+
+/* ---------- Aviso de lista vazia nos formulários ---------- */
+
+.form-empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 16px 18px;
+    border: 1px dashed #cfd8d2;
+    border-radius: 10px;
+    background: #f8faf8;
+    color: #55615a;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+    .form-empty-state strong {
+        color: #1f2923;
+        font-size: 14px;
+    }
+
+.form-empty-action {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    margin-top: 6px;
+    padding: 0 14px;
+    border-radius: 7px;
+    background: #edf5e9;
+    color: #3f7a1d;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+    .form-empty-action:hover {
+        background: #e3efdd;
+        color: #346a17;
+        text-decoration: none;
+    }
+
+html[data-theme="dark"] .form-empty-state {
+    border-color: #3a4640;
+    background: #202822;
+    color: #aeb8b1;
+}
+
+    html[data-theme="dark"] .form-empty-state strong {
+        color: #e4ebe6;
+    }
+
+html[data-theme="dark"] .form-empty-action {
+    background: #242c27;
+    color: #86c95f;
+}
+
+/* =========================================================
+   LOGIN, CADASTRO E CONFIGURAÇÕES DA CONTA
+   ========================================================= */
+
+/* ---------- Campo com rótulo flutuante e ícone ----------
+   O nome do campo fica dentro dele; ao focar ou preencher,
+   sobe para a borda junto com o ícone. Ideia: Uiverse.io. */
+
+.dsc-field {
+    --dsc-field-bg: #fff;
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.dsc-field--readonly {
+    --dsc-field-bg: #f3f6f4;
+}
+
+.dsc-field__input {
+    display: block;
+    width: 100%;
+    height: 52px;
+    padding: 0 16px;
+    border: 1px solid #cfd8d2;
+    border-radius: 10px;
+    background: var(--dsc-field-bg);
+    color: #1f2923;
+    font-size: 14px;
+    outline: none;
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+    .dsc-field__input:hover {
+        border-color: #b4c0b8;
+    }
+
+    .dsc-field__input:focus {
+        border-color: #5da22c;
+        box-shadow: 0 0 0 3px rgba(93, 162, 44, .14);
+    }
+
+    .dsc-field__input.input-validation-error {
+        border-color: #b34a4a;
+    }
+
+    .dsc-field__input[readonly] {
+        color: #55615a;
+        cursor: default;
+    }
+
+    .dsc-field__input:-webkit-autofill {
+        -webkit-text-fill-color: #1f2923;
+        box-shadow: 0 0 0 1000px var(--dsc-field-bg) inset;
+    }
+
+.dsc-field__label {
+    position: absolute;
+    top: 26px;
+    left: 11px;
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+    padding: 0 6px;
+    background: transparent;
+    color: #66716b;
+    font-size: 14px;
+    line-height: 1;
+    white-space: nowrap;
+    pointer-events: none;
+    transform: translateY(-50%);
+    transition: top .2s ease, left .2s ease, font-size .2s ease, color .2s ease, background-color .2s ease;
+}
+
+    .dsc-field__label svg {
+        flex-shrink: 0;
+        width: 0;
+        height: 14px;
+        margin-right: 0;
+        opacity: 0;
+        transition: width .2s ease, margin-right .2s ease, opacity .2s ease;
+    }
+
+/* Rótulo no alto: campo preenchido */
+.dsc-field__input:not(:placeholder-shown) ~ .dsc-field__label,
+.dsc-field__input:-webkit-autofill ~ .dsc-field__label {
+    top: 0;
+    left: 10px;
+    background: var(--dsc-field-bg);
+    color: #55615a;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* Rótulo no alto: campo em foco */
+.dsc-field__input:focus ~ .dsc-field__label {
+    top: 0;
+    left: 10px;
+    background: var(--dsc-field-bg);
+    color: #3f8a17;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+    .dsc-field__input:not(:placeholder-shown) ~ .dsc-field__label svg,
+    .dsc-field__input:-webkit-autofill ~ .dsc-field__label svg,
+    .dsc-field__input:focus ~ .dsc-field__label svg {
+        width: 14px;
+        margin-right: 6px;
+        opacity: 1;
+    }
+
+.dsc-field__input.input-validation-error ~ .dsc-field__label {
+    color: #a94747;
+}
+
+.dsc-field__error {
+    display: block;
+    margin-top: 6px;
+    padding-left: 4px;
+    color: #a94747;
+    font-size: 12px;
+}
+
+    .dsc-field__error:empty {
+        display: none;
+    }
+
+.dsc-field-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 14px;
+}
+
+@media (max-width: 600px) {
+
+    .dsc-field-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+html[data-theme="dark"] .dsc-field {
+    --dsc-field-bg: #1a211d;
+}
+
+    html[data-theme="dark"] .dsc-field.dsc-field--readonly {
+        --dsc-field-bg: #202822;
+    }
+
+html[data-theme="dark"] .dsc-field__input {
+    border-color: #3a4640;
+    color: #e4ebe6;
+}
+
+    html[data-theme="dark"] .dsc-field__input:hover {
+        border-color: #4b5a51;
+    }
+
+    html[data-theme="dark"] .dsc-field__input:focus {
+        border-color: #75b94b;
+    }
+
+    html[data-theme="dark"] .dsc-field__input.input-validation-error {
+        border-color: #b34a4a;
+    }
+
+    html[data-theme="dark"] .dsc-field__input[readonly] {
+        color: #aeb8b1;
+    }
+
+    html[data-theme="dark"] .dsc-field__input:-webkit-autofill {
+        -webkit-text-fill-color: #e4ebe6;
+    }
+
+html[data-theme="dark"] .dsc-field__label {
+    color: #8c978f;
+}
+
+html[data-theme="dark"] .dsc-field__input:not(:placeholder-shown) ~ .dsc-field__label,
+html[data-theme="dark"] .dsc-field__input:-webkit-autofill ~ .dsc-field__label {
+    color: #aeb8b1;
+}
+
+html[data-theme="dark"] .dsc-field__input:focus ~ .dsc-field__label {
+    color: #86c95f;
+}
+
+html[data-theme="dark"] .dsc-field__input.input-validation-error ~ .dsc-field__label,
+html[data-theme="dark"] .dsc-field__error {
+    color: #df8888;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .dsc-field__input,
+    .dsc-field__label,
+    .dsc-field__label svg {
+        transition: none;
+    }
+}
+
+
+/* ---------- Caixa de seleção e botão de largura total ---------- */
+
+.dsc-check {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 22px;
+    color: #3d4a43;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+    .dsc-check input {
+        width: 16px;
+        height: 16px;
+        margin: 0;
+        accent-color: #5da22c;
+    }
+
+html[data-theme="dark"] .dsc-check {
+    color: #c3ccc6;
+}
+
+.dsc-btn-block {
+    width: 100%;
+    min-height: 46px;
+}
+
+a.delete-confirm,
+a.delete-confirm:hover {
+    color: #fff;
+    text-decoration: none;
+}
+
+
+/* ---------- Aviso de erro dentro de formulários ---------- */
+
+.dsc-alert {
+    margin-bottom: 18px;
+    padding: 12px 14px;
+    border: 1px solid #ebc9c9;
+    border-radius: 10px;
+    background: #fdf3f3;
+    color: #a94747;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+    .dsc-alert.validation-summary-valid {
+        display: none;
+    }
+
+    .dsc-alert ul {
+        margin: 0;
+        padding-left: 18px;
+    }
+
+html[data-theme="dark"] .dsc-alert {
+    border-color: #4d3333;
+    background: #261d1d;
+    color: #df8888;
+}
+
+
+/* ---------- Tela de login e cadastro ---------- */
+
+body:has(.dsc-auth):not(:has(.sidebar)) .main-content {
+    width: 100%;
+    margin-left: 0;
+}
+
+body:has(.dsc-auth):not(:has(.sidebar)) .content-area {
+    padding: 0;
+}
+
+.dsc-auth {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 32px 20px;
+}
+
+.dsc-auth__card {
+    width: 100%;
+    max-width: 430px;
+    padding: 36px 34px 30px;
+    border: 1px solid #dfe5e1;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: 0 18px 50px rgba(24, 40, 30, .08);
+}
+
+.dsc-auth__brand {
+    display: inline-block;
+    margin-bottom: 26px;
+    color: #18201c;
+    font-size: 18px;
+    font-weight: 750;
+    letter-spacing: 1px;
+    text-decoration: none;
+}
+
+    .dsc-auth__brand span {
+        color: #68ad32;
+    }
+
+    .dsc-auth__brand:hover {
+        color: #18201c;
+        text-decoration: none;
+    }
+
+.dsc-auth__title {
+    margin: 0;
+    color: #18201c;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -.8px;
+}
+
+.dsc-auth__subtitle {
+    margin: 8px 0 26px;
+    color: #55615a;
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+.dsc-auth__switch {
+    margin: 22px 0 0;
+    color: #55615a;
+    font-size: 13px;
+    text-align: center;
+}
+
+    .dsc-auth__switch a {
+        color: #3f8a17;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+        .dsc-auth__switch a:hover {
+            text-decoration: underline;
+        }
+
+html[data-theme="dark"] .dsc-auth__card {
+    border-color: #303a34;
+    background: #1a211d;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, .35);
+}
+
+html[data-theme="dark"] .dsc-auth__brand,
+html[data-theme="dark"] .dsc-auth__brand:hover,
+html[data-theme="dark"] .dsc-auth__title {
+    color: #edf2ee;
+}
+
+html[data-theme="dark"] .dsc-auth__subtitle,
+html[data-theme="dark"] .dsc-auth__switch {
+    color: #aeb8b1;
+}
+
+    html[data-theme="dark"] .dsc-auth__switch a {
+        color: #86c95f;
+    }
+
+@media (max-width: 480px) {
+
+    .dsc-auth__card {
+        padding: 28px 22px 24px;
+    }
+}
+
+
+/* ---------- Configurações da conta ---------- */
+
+.dsc-settings-page {
+    max-width: 1000px;
+    padding-bottom: 30px;
+}
+
+.dsc-settings {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 24px;
+    align-items: start;
+}
+
+.dsc-settings-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px;
+    border: 1px solid #dfe5e1;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.dsc-settings-nav__link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    color: #55615a;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color .2s ease, color .2s ease;
+}
+
+    .dsc-settings-nav__link svg {
+        flex-shrink: 0;
+        width: 18px;
+        height: 18px;
+    }
+
+    .dsc-settings-nav__link:hover {
+        background: #f3f6f4;
+        color: #1f2923;
+        text-decoration: none;
+    }
+
+    .dsc-settings-nav__link.active {
+        background: #edf5e9;
+        color: #3f7a1d;
+        font-weight: 600;
+    }
+
+.dsc-card {
+    padding: 28px;
+    border: 1px solid #dfe5e1;
+    border-radius: 12px;
+    background: #fff;
+}
+
+    .dsc-card + .dsc-card {
+        margin-top: 16px;
+    }
+
+    .dsc-card form {
+        max-width: 460px;
+    }
+
+.dsc-card--danger {
+    border-color: #ebc9c9;
+}
+
+.dsc-card__title {
+    margin: 0 0 6px;
+    color: #18201c;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.dsc-card__text {
+    max-width: 520px;
+    margin: 0 0 24px;
+    color: #55615a;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.dsc-card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.dsc-note {
+    max-width: 520px;
+    margin-bottom: 22px;
+    padding: 14px 16px;
+    border: 1px solid #ebc9c9;
+    border-radius: 10px;
+    background: #fdf3f3;
+    color: #8f3b3b;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+    .dsc-note ul {
+        margin: 6px 0 0;
+        padding-left: 18px;
+    }
+
+html[data-theme="dark"] .dsc-settings-nav,
+html[data-theme="dark"] .dsc-card {
+    border-color: #303a34;
+    background: #1a211d;
+}
+
+html[data-theme="dark"] .dsc-card--danger {
+    border-color: #4d3333;
+}
+
+html[data-theme="dark"] .dsc-settings-nav__link {
+    color: #aeb8b1;
+}
+
+    html[data-theme="dark"] .dsc-settings-nav__link:hover {
+        background: #242c27;
+        color: #e4ebe6;
+    }
+
+    html[data-theme="dark"] .dsc-settings-nav__link.active {
+        background: #242c27;
+        color: #86c95f;
+    }
+
+html[data-theme="dark"] .dsc-card__title {
+    color: #edf2ee;
+}
+
+html[data-theme="dark"] .dsc-card__text {
+    color: #aeb8b1;
+}
+
+html[data-theme="dark"] .dsc-note {
+    border-color: #4d3333;
+    background: #261d1d;
+    color: #e0a8a8;
+}
+
+@media (max-width: 900px) {
+
+    .dsc-settings {
+        grid-template-columns: 1fr;
+    }
+
+    .dsc-settings-nav {
+        flex-direction: row;
+        overflow-x: auto;
+    }
+
+    .dsc-settings-nav__link {
+        white-space: nowrap;
+    }
+}
+
+
+/* ---------- Janela de confirmação (sair da conta) ---------- */
+
+.dsc-dialog {
+    width: min(400px, calc(100vw - 32px));
+    padding: 0;
+    border: 1px solid #dfe5e1;
+    border-radius: 14px;
+    background: #fff;
+    color: #1f2923;
+    box-shadow: 0 24px 60px rgba(20, 30, 25, .28);
+}
+
+    .dsc-dialog::backdrop {
+        background: rgba(17, 23, 20, .55);
+        backdrop-filter: blur(3px);
+    }
+
+    .dsc-dialog[open] {
+        animation: dsc-dialog-in .22s ease both;
+    }
+
+.dsc-dialog__body {
+    padding: 26px 26px 8px;
+}
+
+.dsc-dialog__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    margin-bottom: 14px;
+    border-radius: 10px;
+    background: #edf5e9;
+    color: #4d9f20;
+}
+
+    .dsc-dialog__icon svg {
+        width: 22px;
+        height: 22px;
+    }
+
+.dsc-dialog__title {
+    margin: 0 0 6px;
+    color: #18201c;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.dsc-dialog__text {
+    margin: 0;
+    color: #55615a;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.dsc-dialog__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    padding: 20px 26px 24px;
+}
+
+@keyframes dsc-dialog-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+html[data-theme="dark"] .dsc-dialog {
+    border-color: #303a34;
+    background: #1a211d;
+    color: #e4ebe6;
+}
+
+html[data-theme="dark"] .dsc-dialog__icon {
+    background: #242c27;
+    color: #86c95f;
+}
+
+html[data-theme="dark"] .dsc-dialog__title {
+    color: #edf2ee;
+}
+
+html[data-theme="dark"] .dsc-dialog__text {
+    color: #aeb8b1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .dsc-dialog[open] {
+        animation: none;
+    }
+}
+
+/* ---------- Logo ---------- */
+
+.dsc-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.dsc-brand__text {
+    display: inline-block;
+    font-weight: inherit;
+}
+
+.dsc-logo {
+    --dsc-logo-size: 34px;
+    display: block;
+    flex-shrink: 0;
+    width: var(--dsc-logo-size);
+    height: var(--dsc-logo-size);
+    object-fit: contain;
+    border-radius: calc(var(--dsc-logo-size) * .28);
+}
+
+.dsc-logo--sm {
+    --dsc-logo-size: 28px;
+}
+
+.dsc-logo--lg {
+    --dsc-logo-size: 44px;
+}
+
+/* Placa clara onde o fundo é escuro */
+.sidebar .dsc-logo,
+html[data-theme="dark"] .dsc-logo {
+    padding: calc(var(--dsc-logo-size) * .12);
+    background: #f4f6f5;
+}
+
+/* Barra lateral: logo e nome lado a lado */
+.sidebar-brand a.dsc-brand {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 17px;
+    white-space: nowrap;
+}
+
+.sidebar-brand .dsc-logo {
+    --dsc-logo-size: 32px;
+}
+
+/* =========================================================
+   PREENCHER COM IA (cadastro de máquina)
+   ========================================================= */
+
+.ia-btn {
+    cursor: pointer;
+    font-family: inherit;
+}
+
+    .ia-btn:disabled {
+        opacity: .55;
+        cursor: not-allowed;
+    }
+
+/* O botão "Tirar foto" só aparece em celular/tablet */
+/* O botão "Tirar foto" só aparece em celular/tablet */
+.ia-btn--camera {
+    display: none;
+}
+
+@media (pointer: coarse) {
+    .ia-btn--camera {
+        display: inline-flex;
+        margin-top: 10px;
+    }
+}
+
+.ia-dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 12px;
+    padding: 26px 20px;
+    border: 2px dashed rgba(39, 53, 46, .35);
+    border-radius: 14px;
+    background: rgba(123, 207, 56, .06);
+    color: inherit;
+    font-size: 13px;
+    text-align: center;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+    .ia-dropzone:hover,
+    .ia-dropzone.is-dragover {
+        border-color: #7bcf38;
+        background: rgba(123, 207, 56, .14);
+    }
+
+    .ia-dropzone.is-disabled {
+        opacity: .55;
+        cursor: not-allowed;
+    }
+
+.ia-dropzone__icon {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 4px;
+    color: #5da22c;
+}
+
+.ia-dropzone__titulo {
+    font-weight: 600;
+}
+
+.ia-dropzone__ou {
+    font-size: 12px;
+    opacity: .65;
+}
+
+.ia-dropzone__botao {
+    padding: 6px 16px;
+    border-radius: 8px;
+    background: #27352e;
+    color: #fff;
+    font-weight: 600;
+    transition: .2s ease;
+}
+
+.ia-dropzone:hover .ia-dropzone__botao {
+    background: #1d2922;
+}
+
+html[data-theme="dark"] .ia-dropzone {
+    border-color: rgba(255, 255, 255, .25);
+}
+
+html[data-theme="dark"] .ia-dropzone__botao {
+    background: #7bcf38;
+    color: #10170f;
+}
+
+@media (pointer: coarse) {
+    .ia-btn--camera {
+        display: inline-flex;
+    }
+}
+
+.ia-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+    padding: 11px 14px;
+    border: 1px solid rgba(39, 53, 46, .18);
+    border-radius: 8px;
+    background: rgba(123, 207, 56, .08);
+    font-size: 13px;
+}
+
+    .ia-status .dsc-loader {
+        --dsc-loader-size: 18px;
+    }
+
+.ia-status--erro {
+    border-color: rgba(220, 38, 38, .55);
+    background: rgba(220, 38, 38, .10);
+    color: #b42318;
+    font-weight: 600;
+}
+
+html[data-theme="dark"] .ia-status--erro {
+    color: #ff9b9b;
+}
+
+.ia-status[hidden],
+.ia-resultado[hidden] {
+    display: none;
+}
+
+.ia-resultado {
+    margin-top: 12px;
+    font-size: 13px;
+}
+
+    .ia-resultado ul {
+        margin: 6px 0 0;
+        padding-left: 18px;
+    }
+
+    .ia-resultado summary {
+        margin-top: 8px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+.form-control.ia-preenchido {
+    border-color: #7bcf38;
+    box-shadow: 0 0 0 3px rgba(123, 207, 56, .18);
+}
+
+/* Miniatura da foto no lugar do ícone da nuvem */
+.ia-dropzone__thumb {
+    display: none;
+    max-width: 150px;
+    max-height: 72px;
+    margin-bottom: 4px;
+    border: 1px solid rgba(39, 53, 46, .25);
+    border-radius: 8px;
+    object-fit: contain;
+}
+
+.ia-dropzone.has-thumb .ia-dropzone__thumb {
+    display: block;
+}
+
+.ia-dropzone.has-thumb .ia-dropzone__icon {
+    display: none;
+}
+
+/* Loader de tela inteira (análise da IA) */
+.ia-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1050;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 24px;
+    background: rgba(255, 255, 255, .85);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    color: #27352e;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+}
+
+    .ia-overlay[hidden] {
+        display: none;
+    }
+
+    .ia-overlay .dsc-loader {
+        --dsc-loader-size: 44px;
+    }
+
+.ia-overlay__sub {
+    font-size: 13px;
+    font-weight: 400;
+    opacity: .7;
+}
+
+html[data-theme="dark"] .ia-overlay {
+    background: rgba(16, 23, 15, .85);
+    color: #e8f0e4;
+}
+
+/* Aviso de campos não identificados e seletor de configuração elétrica */
+.ia-alerta {
+    margin-top: 10px;
+    padding: 11px 14px;
+    border: 1px solid rgba(217, 119, 6, .55);
+    border-radius: 8px;
+    background: rgba(245, 158, 11, .12);
+    color: #92400e;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+    .ia-alerta[hidden] {
+        display: none;
+    }
+
+    .ia-alerta div + div {
+        margin-top: 4px;
+    }
+
+html[data-theme="dark"] .ia-alerta {
+    color: #fcd34d;
+}
+
+.form-control.ia-faltando {
+    border-color: #f59e0b;
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, .18);
+}
+
+.ia-config {
+    margin-bottom: 18px;
+    padding: 14px;
+    border: 1px solid rgba(217, 119, 6, .45);
+    border-radius: 10px;
+    background: rgba(245, 158, 11, .08);
+}
+
+    .ia-config[hidden] {
+        display: none;
+    }
+
+    .ia-config select.form-control {
+        appearance: auto;
+        -webkit-appearance: menulist;
+        cursor: pointer;
+    }
+
+/* =========================================================
+   Links sociais — movimento extra no hover
+   ========================================================= */
+
+.dsc-social {
+    position: relative;
+}
+
+    /* Tudo que é conteúdo fica acima do brilho e do degradê */
+    .dsc-social > svg,
+    .dsc-social__label {
+        position: relative;
+        z-index: 2;
+    }
+
+    /* Brilho que atravessa o botão */
+    .dsc-social::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: -70%;
+        width: 45%;
+        z-index: 1;
+        background: linear-gradient(105deg, transparent, rgba(255, 255, 255, .38), transparent);
+        transform: skewX(-18deg);
+        pointer-events: none;
+        transition: left .7s cubic-bezier(.22, 1, .36, 1);
+    }
+
+    .dsc-social:not(.is-disabled):hover::after,
+    .dsc-social:not(.is-disabled):focus-visible::after {
+        left: 130%;
+    }
+
+    /* Ícone balança com efeito de mola */
+    .dsc-social:not(.is-disabled):hover > svg,
+    .dsc-social:not(.is-disabled):focus-visible > svg {
+        animation: dsc-social-wiggle .7s cubic-bezier(.34, 1.56, .64, 1) both;
+    }
+
+@keyframes dsc-social-wiggle {
+    0% {
+        transform: rotate(0) scale(1);
+    }
+
+    25% {
+        transform: rotate(-16deg) scale(1.22);
+    }
+
+    55% {
+        transform: rotate(11deg) scale(1.16);
+    }
+
+    80% {
+        transform: rotate(-4deg) scale(1.1);
+    }
+
+    100% {
+        transform: rotate(0) scale(1.1);
+    }
+}
+
+/* Clique: o botão "afunda" um pouco */
+.dsc-social:not(.is-disabled):active {
+    transform: translateY(-1px) scale(.96);
+}
+
+/* Instagram: degradê de cores da marca, que aparece suavemente */
+.dsc-social[aria-label^="Instagram"]::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(45deg, #f09433, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888);
+    opacity: 0;
+    transition: opacity .4s ease;
+}
+
+html .dsc-social[aria-label^="Instagram"]:not(.is-disabled):hover,
+html .dsc-social[aria-label^="Instagram"]:not(.is-disabled):focus-visible {
+    border-color: #dc2743;
+    background: transparent;
+    box-shadow: 0 8px 18px rgba(220, 39, 67, .30);
+}
+
+.dsc-social[aria-label^="Instagram"]:not(.is-disabled):hover::before,
+.dsc-social[aria-label^="Instagram"]:not(.is-disabled):focus-visible::before {
+    opacity: 1;
+}
+
+/* Quem prefere menos movimento: sem balanço, brilho nem mola */
+@media (prefers-reduced-motion: reduce) {
+
+    .dsc-social::after {
+        display: none;
+    }
+
+    .dsc-social:not(.is-disabled):hover > svg,
+    .dsc-social:not(.is-disabled):focus-visible > svg {
+        animation: none;
+    }
+
+    .dsc-social:not(.is-disabled):active {
+        transform: none;
+    }
+}

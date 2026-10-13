@@ -1,0 +1,296 @@
+﻿@model IEnumerable<Descarboniza.Areas.Identity.Data.EmissaoCarbono>
+
+@{
+    ViewData["Title"] = "Emissões";
+}
+
+<div class="data-page">
+
+    <div class="data-page-header">
+
+        <div class="data-page-title-wrap">
+
+            <span class="data-page-kicker">IMPACTO AMBIENTAL</span>
+
+            <h1>Emissões de carbono</h1>
+
+            <p class="data-page-description">
+                Acompanhe as emissões de CO₂ associadas ao consumo dos equipamentos.
+            </p>
+
+        </div>
+
+        <a asp-action="Create" class="data-page-action">
+
+            <svg viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="2"
+                 stroke-linecap="round"
+                 stroke-linejoin="round">
+                <path d="M12 5v14" />
+                <path d="M5 12h14" />
+            </svg>
+
+            Nova emissão
+
+        </a>
+
+    </div>
+
+
+    <div class="data-table-card">
+
+        <div class="data-table-wrapper">
+
+            <table class="data-table">
+
+                <thead>
+                    <tr>
+                        <th>Máquina</th>
+                        <th>Registro</th>
+                        <th class="text-end">Consumo</th>
+                        <th class="text-end">Fator</th>
+                        <th class="text-end">Emissão</th>
+                        <th class="text-end">Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <!-- MÁQUINA -->
+                                <td>
+                                    <div class="table-entity">
+
+                                        <div class="table-entity-icon">
+
+                                            <svg viewBox="0 0 24 24"
+                                                 fill="none"
+                                                 stroke="currentColor"
+                                                 stroke-width="1.8"
+                                                 stroke-linecap="round"
+                                                 stroke-linejoin="round">
+
+                                                <path d="M7 18h10a4 4 0 0 0 .7-7.94A6 6 0 0 0 6.08 8.5A4.5 4.5 0 0 0 7 18Z" />
+
+                                                <path d="M9 13h2" />
+
+                                                <path d="M13 13h2" />
+
+                                                <path d="M10 15h4" />
+
+                                            </svg>
+
+                                        </div>
+
+                                        <div>
+
+                                            <span class="table-primary-text">
+                                                @(item.Maquina != null
+                                                    ? item.Maquina.Fabricante
+                                                    : "Máquina não encontrada")
+                                            </span>
+
+                                            <span class="table-secondary-text">
+                                                @(item.Maquina != null
+                                                    ? item.Maquina.Modelo
+                                                    : "Registro sem máquina")
+                                            </span>
+
+                                        </div>
+
+                                    </div>
+                                </td>
+
+
+                                <!-- DATA -->
+                                <td class="table-date">
+                                    @item.DataRegistro.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                                </td>
+
+
+                                <!-- CONSUMO -->
+                                <td class="table-number">
+
+                                    @item.ConsumoKwh.ToString("N2")
+
+                                    <span class="table-unit">
+                                        kWh
+                                    </span>
+
+                                </td>
+
+
+                                <!-- FATOR -->
+                                <td class="table-number">
+
+                                    @item.FatorEmissao.ToString("N4")
+
+                                    <span class="table-unit">
+                                        kg CO₂/kWh
+                                    </span>
+
+                                </td>
+
+
+                                <!-- EMISSÃO -->
+                                <td class="table-number">
+
+                                    <span class="table-badge">
+                                        @item.EmissaoKgCo2.ToString("N2") kg CO₂
+                                    </span>
+
+                                </td>
+
+
+                                <!-- AÇÕES -->
+                                <td>
+
+                                    <div class="table-actions">
+
+                                        <a asp-action="Edit"
+                                           asp-route-id="@item.IdEmissao"
+                                           class="table-action edit"
+                                           title="Editar"
+                                           aria-label="Editar emissão">
+
+                                            <svg viewBox="0 0 24 24"
+                                                 fill="none"
+                                                 stroke="currentColor"
+                                                 stroke-width="2"
+                                                 stroke-linecap="round"
+                                                 stroke-linejoin="round">
+
+                                                <path d="M12 20h9" />
+
+                                                <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z" />
+
+                                            </svg>
+
+                                        </a>
+
+
+                                        <a asp-action="Details"
+                                           asp-route-id="@item.IdEmissao"
+                                           class="table-action view"
+                                           title="Visualizar"
+                                           aria-label="Visualizar emissão">
+
+                                            <svg viewBox="0 0 24 24"
+                                                 fill="none"
+                                                 stroke="currentColor"
+                                                 stroke-width="2"
+                                                 stroke-linecap="round"
+                                                 stroke-linejoin="round">
+
+                                                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+
+                                                <circle cx="12" cy="12" r="3" />
+
+                                            </svg>
+
+                                        </a>
+
+
+                                        <a asp-action="Delete"
+                                           asp-route-id="@item.IdEmissao"
+                                           class="table-action delete"
+                                           title="Excluir"
+                                           aria-label="Excluir emissão">
+
+                                            <svg viewBox="0 0 24 24"
+                                                 fill="none"
+                                                 stroke="currentColor"
+                                                 stroke-width="2"
+                                                 stroke-linecap="round"
+                                                 stroke-linejoin="round">
+
+                                                <path d="M3 6h18" />
+
+                                                <path d="M8 6V4h8v2" />
+
+                                                <path d="M19 6l-1 14H6L5 6" />
+
+                                                <path d="M10 11v5" />
+
+                                                <path d="M14 11v5" />
+
+                                            </svg>
+
+                                        </a>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+
+                            <td colspan="6" class="table-empty">
+
+                                <div class="table-empty-icon">
+
+                                    <svg viewBox="0 0 24 24"
+                                         fill="none"
+                                         stroke="currentColor"
+                                         stroke-width="1.7"
+                                         stroke-linecap="round"
+                                         stroke-linejoin="round">
+
+                                        <path d="M7 18h10a4 4 0 0 0 .7-7.94A6 6 0 0 0 6.08 8.5A4.5 4.5 0 0 0 7 18Z" />
+
+                                        <path d="M9 13h2" />
+
+                                        <path d="M13 13h2" />
+
+                                        <path d="M10 15h4" />
+
+                                    </svg>
+
+                                </div>
+
+                                <div class="table-empty-title">
+                                    Nenhuma emissão registrada
+                                </div>
+
+                                <div class="table-empty-text">
+                                    As emissões calculadas aparecerão aqui.
+                                </div>
+
+                                <a asp-action="Create" class="table-empty-action">
+                                    Registrar emissão
+                                </a>
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <div class="table-footer">
+
+            <span>
+                @Model.Count() registro(s) de emissão
+            </span>
+
+        </div>
+
+    </div>
+
+</div>

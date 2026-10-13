@@ -1,0 +1,78 @@
+﻿@{
+    var sucesso = TempData["Sucesso"] as string;
+    var excluido = TempData["Excluido"] as string;
+    var erro = TempData["Erro"] as string;
+
+    var avisos = new List<(string Tipo, string Titulo, string Mensagem, int Duracao)>();
+
+    if (!string.IsNullOrWhiteSpace(sucesso))
+    {
+        avisos.Add(("success", "Sucesso", sucesso, 5000));
+    }
+
+    if (!string.IsNullOrWhiteSpace(excluido))
+    {
+        avisos.Add(("danger", "Excluído", excluido, 5000));
+    }
+
+    if (!string.IsNullOrWhiteSpace(erro))
+    {
+        avisos.Add(("error", "Algo deu errado", erro, 8000));
+    }
+}
+
+@if (avisos.Count > 0)
+{
+    <div class="dsc-toast-region">
+
+        @foreach (var aviso in avisos)
+        {
+            <div class="dsc-toast dsc-toast--@aviso.Tipo"
+                 role="@(aviso.Tipo == "error" ? "alert" : "status")"
+                 data-duracao="@aviso.Duracao">
+
+                <div class="dsc-toast__wave" aria-hidden="true">
+                    <svg viewBox="0 0 16 96"
+                         preserveAspectRatio="none"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 8 0
+                        Q 4 4.8, 8 9.6 T 8 19.2
+                        Q 4 24, 8 28.8 T 8 38.4
+                        Q 4 43.2, 8 48 T 8 57.6
+                        Q 4 62.4, 8 67.2 T 8 76.8
+                        Q 4 81.6, 8 86.4 T 8 96
+                        L 0 96 L 0 0 Z"
+                              fill="currentColor"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              vector-effect="non-scaling-stroke" />
+                    </svg>
+                </div>
+
+                <div class="dsc-toast__body">
+                    <p class="dsc-toast__title">@aviso.Titulo</p>
+                    <p class="dsc-toast__text">@aviso.Mensagem</p>
+                </div>
+
+                <button type="button"
+                        class="dsc-toast__close"
+                        aria-label="Fechar notificação">
+
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path d="M18 6 6 18" />
+                        <path d="M6 6l12 12" />
+                    </svg>
+
+                </button>
+
+            </div>
+        }
+
+    </div>
+}

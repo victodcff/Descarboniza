@@ -1,0 +1,992 @@
+﻿@model Descarboniza.ViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Home";
+
+    var nome = User.FindFirst("Nome")?.Value
+        ?? User.Identity?.Name
+        ?? "Usuário";
+}
+
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <div class="home-page">
+
+        <!-- BOAS-VINDAS -->
+
+        <section class="home-welcome">
+
+            <div class="home-user-greeting">
+
+                <span class="home-welcome-label">
+                    PAINEL DE CONTROLE
+                </span>
+
+                <h1>
+                    Olá, <span>@nome.</span>
+                </h1>
+
+                <p>
+                    Acompanhe sua operação e tome decisões mais eficientes.
+                </p>
+
+            </div>
+
+            <a asp-controller="Dashboard"
+               asp-action="Index"
+               class="home-button">
+
+                <span>Acessar Dashboard</span>
+
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+
+                    <path d="M5 12h14" />
+                    <path d="M13 6l6 6-6 6" />
+
+                </svg>
+
+            </a>
+
+        </section>
+
+
+        <!-- VISÃO GERAL -->
+
+        <section class="home-overview">
+
+            <div class="home-section-header">
+
+                <div>
+
+                    <span class="home-section-label">
+                        VISÃO GERAL
+                    </span>
+
+                    <h2>
+                        Sua operação em números
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="home-stats">
+
+                <!-- MÁQUINAS -->
+
+                <div class="home-stat-card">
+
+                    <div class="home-stat-top">
+
+                        <span>
+                            MÁQUINAS
+                        </span>
+
+                        <div class="home-stat-icon">
+
+                            <svg viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="1.8"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round">
+
+                                <circle cx="12" cy="12" r="3" />
+
+                                <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.8 1.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V20h-2.5v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1-1.8-1.8.1-.1A1.7 1.7 0 0 0 8 15a1.7 1.7 0 0 0-1.6-1H6v-2.5h.4a1.7 1.7 0 0 0 1.6-1A1.7 1.7 0 0 0 7.7 8l-.1-.1 1.8-1.8.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V5h2.5v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1 1.8 1.8-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.4V14h-.4a1.7 1.7 0 0 0-1.6 1z" />
+
+                            </svg>
+
+                        </div>
+
+                    </div>
+
+                    <strong>
+                        @Model.QuantidadeMaquinas
+                    </strong>
+
+                    <small>
+                        equipamentos cadastrados
+                    </small>
+
+                </div>
+
+
+                <!-- CONSUMO -->
+
+                <div class="home-stat-card">
+
+                    <div class="home-stat-top">
+
+                        <span>
+                            CONSUMO MENSAL
+                        </span>
+
+                        <div class="home-stat-icon">
+
+                            <svg viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="1.8"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round">
+
+                                <path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" />
+
+                            </svg>
+
+                        </div>
+
+                    </div>
+
+                    <strong>
+                        @Model.ConsumoMensal.ToString("N0")
+                        <small>kWh</small>
+                    </strong>
+
+                    <small>
+                        consumo registrado
+                    </small>
+
+                </div>
+
+
+                <!-- CUSTO -->
+
+                <div class="home-stat-card">
+
+                    <div class="home-stat-top">
+
+                        <span>
+                            CUSTO MENSAL
+                        </span>
+
+                        <div class="home-stat-icon">
+
+                            <svg viewBox="0 0 24 24"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="1.8"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round">
+
+                                <circle cx="12" cy="12" r="9" />
+
+                                <path d="M15 8.5c-.8-.6-1.8-.9-3-.9-1.8 0-3 .8-3 2s1.2 2 3 2 3 .8 3 2-1.2 2-3 2c-1.2 0-2.3-.3-3.1-1" />
+
+                                <path d="M12 6v12" />
+
+                            </svg>
+
+                        </div>
+
+                    </div>
+
+                    <strong>
+                        @Model.CustoMensal.ToString("C")
+                    </strong>
+
+                    <small>
+                        custo energético
+                    </small>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ACESSO RÁPIDO -->
+
+        <section class="home-quick">
+
+            <div class="home-section-header">
+
+                <div>
+
+                    <span class="home-section-label">
+                        ACESSO RÁPIDO
+                    </span>
+
+                    <h2>
+                        Gerencie sua operação
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="home-cards">
+
+                <!-- MÁQUINAS -->
+
+                <a asp-controller="Maquina"
+                   asp-action="Index"
+                   class="home-card">
+
+                    <div class="home-card-icon">
+
+                        <svg viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.8"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
+
+                            <circle cx="12" cy="12" r="3" />
+
+                            <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.8 1.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V20h-2.5v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1-1.8-1.8.1-.1A1.7 1.7 0 0 0 8 15a1.7 1.7 0 0 0-1.6-1H6v-2.5h.4a1.7 1.7 0 0 0 1.6-1A1.7 1.7 0 0 0 7.7 8l-.1-.1 1.8-1.8.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V5h2.5v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1 1.8 1.8-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.4V14h-.4a1.7 1.7 0 0 0-1.6 1z" />
+
+                        </svg>
+
+                    </div>
+
+                    <div class="home-card-content">
+
+                        <h3>Máquinas</h3>
+
+                        <p>
+                            Cadastre e gerencie seus equipamentos.
+                        </p>
+
+                    </div>
+
+                    <span class="home-card-arrow">→</span>
+
+                </a>
+
+
+                <!-- CONSUMO -->
+
+                <a asp-controller="Consumo"
+                   asp-action="Index"
+                   class="home-card">
+
+                    <div class="home-card-icon">
+
+                        <svg viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.8"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
+
+                            <path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" />
+
+                        </svg>
+
+                    </div>
+
+                    <div class="home-card-content">
+
+                        <h3>Consumo</h3>
+
+                        <p>
+                            Registre e acompanhe o consumo energético.
+                        </p>
+
+                    </div>
+
+                    <span class="home-card-arrow">→</span>
+
+                </a>
+
+
+                <!-- EMISSÕES -->
+
+                <a asp-controller="EmissaoCarbono"
+                   asp-action="Index"
+                   class="home-card">
+
+                    <div class="home-card-icon">
+
+                        <svg viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.8"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
+
+                            <path d="M20 4c-8.5.5-13.5 4-13.5 9.5 0 3.5 2.5 6 6 6 5.5 0 7-6 7.5-15.5z" />
+
+                            <path d="M4 21c2.5-5 6-8 11-10" />
+
+                        </svg>
+
+                    </div>
+
+                    <div class="home-card-content">
+
+                        <h3>Emissões</h3>
+
+                        <p>
+                            Acompanhe suas emissões de carbono.
+                        </p>
+
+                    </div>
+
+                    <span class="home-card-arrow">→</span>
+
+                </a>
+
+            </div>
+
+        </section>
+
+    </div>
+}
+else
+{
+    <!-- =====================================================
+         HOME DESLOGADA
+         ===================================================== -->
+
+    <div class="home-landing">
+
+        <header class="landing-navbar">
+
+            <a asp-controller="Home"
+               asp-action="Index"
+               class="landing-brand dsc-brand">
+
+                <img class="dsc-logo"
+                     src="~/img/logo.png"
+                     alt=""
+                     asp-append-version="true" />
+
+                <b class="dsc-brand__text"><span>DES</span>CARBONIZA</b>
+
+            </a>
+
+            <nav class="landing-nav">
+
+                <a href="#recursos">
+                    Recursos
+                </a>
+
+                <a href="#como-funciona">
+                    Como funciona
+                </a>
+
+                <a asp-area="Identity"
+                   asp-page="/Account/Login"
+                   class="landing-login">
+
+                    Entrar
+
+                </a>
+
+                <a asp-area="Identity"
+                   asp-page="/Account/Register"
+                   class="landing-register">
+
+                    Criar conta
+
+                </a>
+
+            </nav>
+
+        </header>
+
+
+        <section class="landing-hero">
+
+            <div class="landing-hero-content">
+
+                <span class="landing-kicker">
+                    GESTÃO ENERGÉTICA INTELIGENTE
+                </span>
+
+                <h1>
+                    Transforme dados
+                    em <span>eficiência.</span>
+                </h1>
+
+                <p>
+                    Monitore máquinas, consumo energético e emissões
+                    de carbono em um só lugar.
+                </p>
+
+                <div class="landing-hero-actions">
+
+                    <a asp-area="Identity"
+                       asp-page="/Account/Register"
+                       class="landing-primary-button">
+
+                        Começar agora
+
+                        <svg viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
+
+                            <path d="M5 12h14" />
+                            <path d="M13 6l6 6-6 6" />
+
+                        </svg>
+
+                    </a>
+
+                    <a asp-area="Identity"
+                       asp-page="/Account/Login"
+                       class="landing-secondary-button">
+
+                        Já tenho uma conta
+
+                    </a>
+
+                </div>
+
+                <div class="landing-trust">
+
+                    <span class="landing-trust-dot"></span>
+
+                    Gestão energética mais inteligente e sustentável.
+
+                </div>
+
+            </div>
+
+
+            <div class="landing-dashboard">
+
+                <div class="landing-dashboard-top">
+
+                    <div>
+
+                        <span>
+                            VISÃO GERAL
+                        </span>
+
+                        <strong>
+                            Descarboniza
+                        </strong>
+
+                    </div>
+
+                    <div class="landing-dashboard-status">
+                        <span></span>
+                        Monitorando
+                    </div>
+
+                </div>
+
+
+                <div class="landing-dashboard-main">
+
+                    <div class="landing-dashboard-main-title">
+
+                        <span>
+                            Consumo energético
+                        </span>
+
+                        <strong>
+                            1.248 <small>kWh</small>
+                        </strong>
+
+                        <em>
+                            ↓ 12,4% este mês
+                        </em>
+
+                    </div>
+
+
+                    <div class="landing-chart">
+
+                        <div class="chart-grid chart-grid-1"></div>
+                        <div class="chart-grid chart-grid-2"></div>
+                        <div class="chart-grid chart-grid-3"></div>
+
+                        <svg viewBox="0 0 420 150"
+                             preserveAspectRatio="none"
+                             aria-hidden="true">
+
+                            <defs>
+
+                                <linearGradient id="chartFill"
+                                                x1="0"
+                                                y1="0"
+                                                x2="0"
+                                                y2="1">
+
+                                    <stop offset="0%"
+                                          stop-color="#6fc238"
+                                          stop-opacity=".22" />
+
+                                    <stop offset="100%"
+                                          stop-color="#6fc238"
+                                          stop-opacity="0" />
+
+                                </linearGradient>
+
+                            </defs>
+
+                            <path class="chart-area"
+                                  d="M0 120 C35 115 45 90 80 96 C115 102 125 65 160 75 C195 85 205 52 240 63 C275 74 290 45 320 53 C350 61 370 28 420 38 L420 150 L0 150 Z" />
+
+                            <path class="chart-line"
+                                  d="M0 120 C35 115 45 90 80 96 C115 102 125 65 160 75 C195 85 205 52 240 63 C275 74 290 45 320 53 C350 61 370 28 420 38" />
+
+                            <circle cx="370"
+                                    cy="28"
+                                    r="4"
+                                    class="chart-point" />
+
+                        </svg>
+
+                    </div>
+
+                </div>
+
+
+                <div class="landing-dashboard-stats">
+
+                    <div>
+
+                        <span>
+                            Emissões
+                        </span>
+
+                        <strong>
+                            384 <small>kg CO₂</small>
+                        </strong>
+
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Equipamentos
+                        </span>
+
+                        <strong>
+                            12
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="landing-dashboard-note">
+
+                    <div class="landing-ai-icon">
+
+                        <svg viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.8"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
+
+                            <path d="M12 3v18" />
+                            <path d="M3 12h18" />
+                            <path d="M5.5 5.5l13 13" />
+                            <path d="M18.5 5.5l-13 13" />
+
+                        </svg>
+
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            Análise inteligente
+                        </strong>
+
+                        <span>
+                            Identifique oportunidades de eficiência.
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <small class="landing-dashboard-disclaimer">
+                    Visual ilustrativo do sistema
+                </small>
+
+            </div>
+
+        </section>
+
+
+        <section id="recursos"
+                 class="landing-section landing-features">
+
+            <div class="landing-section-heading">
+
+                <span>
+                    RECURSOS
+                </span>
+
+                <h2>
+                    Tudo o que sua operação precisa.
+                </h2>
+
+                <p>
+                    Centralize as principais informações energéticas da sua empresa
+                    em uma única plataforma.
+                </p>
+
+            </div>
+
+
+            <div class="landing-feature-grid">
+
+                <article class="landing-feature-card">
+
+                    <div class="landing-feature-icon">
+
+                        <svg viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.8"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
+
+                            <circle cx="12" cy="12" r="3" />
+
+                            <path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-1.8 1.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6V20h-2.5v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1-1.8-1.8.1-.1A1.7 1.7 0 0 0 8 15a1.7 1.7 0 0 0-1.6-1H6v-2.5h.4a1.7 1.7 0 0 0 1.6-1A1.7 1.7 0 0 0 7.7 8l-.1-.1 1.8-1.8.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6V5h2.5v.1a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1 1.8 1.8-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.4V14h-.4a1.7 1.7 0 0 0-1.6 1z" />
+
+                        </svg>
+
+                    </div>
+
+                    <h3>
+                        Máquinas
+                    </h3>
+
+                    <p>
+                        Cadastre e organize os equipamentos da sua operação.
+                    </p>
+
+                </article>
+
+
+                <article class="landing-feature-card">
+
+                    <div class="landing-feature-icon">
+
+                        <svg viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.8"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
+
+                            <path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" />
+
+                        </svg>
+
+                    </div>
+
+                    <h3>
+                        Consumo
+                    </h3>
+
+                    <p>
+                        Registre e acompanhe o uso energético dos equipamentos.
+                    </p>
+
+                </article>
+
+
+                <article class="landing-feature-card">
+
+                    <div class="landing-feature-icon">
+
+                        <svg viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.8"
+                             stroke-linecap="round"
+                             stroke-linejoin="round">
+
+                            <path d="M20 4c-8.5.5-13.5 4-13.5 9.5 0 3.5 2.5 6 6 6 5.5 0 7-6 7.5-15.5z" />
+
+                            <path d="M4 21c2.5-5 6-8 11-10" />
+
+                        </svg>
+
+                    </div>
+
+                    <h3>
+                        Emissões
+                    </h3>
+
+                    <p>
+                        Acompanhe o impacto ambiental relacionado ao consumo.
+                    </p>
+
+                </article>
+
+            </div>
+
+        </section>
+
+
+        <section id="como-funciona"
+                 class="landing-section landing-how">
+
+            <div class="landing-section-heading">
+
+                <span>
+                    COMO FUNCIONA
+                </span>
+
+                <h2>
+                    Da informação à decisão.
+                </h2>
+
+                <p>
+                    Um fluxo simples para transformar dados energéticos
+                    em oportunidades de melhoria.
+                </p>
+
+            </div>
+
+
+            <div class="landing-steps">
+
+                <div class="landing-step">
+
+                    <span class="landing-step-number">
+                        01
+                    </span>
+
+                    <div>
+                        <h3>
+                            Cadastre
+                        </h3>
+
+                        <p>
+                            Registre suas máquinas e equipamentos.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="landing-step-line"></div>
+
+                <div class="landing-step">
+
+                    <span class="landing-step-number">
+                        02
+                    </span>
+
+                    <div>
+                        <h3>
+                            Monitore
+                        </h3>
+
+                        <p>
+                            Informe e acompanhe o consumo energético.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="landing-step-line"></div>
+
+                <div class="landing-step">
+
+                    <span class="landing-step-number">
+                        03
+                    </span>
+
+                    <div>
+                        <h3>
+                            Analise
+                        </h3>
+
+                        <p>
+                            Visualize custos, consumo e emissões.
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="landing-step-line"></div>
+
+                <div class="landing-step">
+
+                    <span class="landing-step-number">
+                        04
+                    </span>
+
+                    <div>
+                        <h3>
+                            Otimize
+                        </h3>
+
+                        <p>
+                            Encontre oportunidades para melhorar a eficiência.
+                        </p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="landing-ai-section">
+
+            <div class="landing-ai-content">
+
+                <span class="landing-kicker">
+                    INTELIGÊNCIA ARTIFICIAL
+                </span>
+
+                <h2>
+                    Dados que ajudam
+                    a tomar decisões melhores.
+                </h2>
+
+                <p>
+                    O Descarboniza foi pensado para utilizar inteligência artificial
+                    na análise dos equipamentos e do consumo energético, ajudando a
+                    identificar oportunidades de eficiência e redução de impactos.
+                </p>
+
+                <a asp-area="Identity"
+                   asp-page="/Account/Register"
+                   class="landing-primary-button">
+
+                    Conhecer o sistema
+
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+
+                        <path d="M5 12h14" />
+                        <path d="M13 6l6 6-6 6" />
+
+                    </svg>
+
+                </a>
+
+            </div>
+
+
+            <div class="landing-ai-visual">
+
+                <div class="ai-orbit ai-orbit-one"></div>
+                <div class="ai-orbit ai-orbit-two"></div>
+
+                <div class="ai-core">
+
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.5"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+
+                        <path d="M12 3v18" />
+                        <path d="M3 12h18" />
+                        <path d="M5.5 5.5l13 13" />
+                        <path d="M18.5 5.5l-13 13" />
+
+                    </svg>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="landing-cta">
+
+            <span>
+                PRONTO PARA COMEÇAR?
+            </span>
+
+            <h2>
+                Torne sua operação
+                mais eficiente.
+            </h2>
+
+            <p>
+                Comece a organizar seus dados energéticos hoje.
+            </p>
+
+            <a asp-area="Identity"
+               asp-page="/Account/Register"
+               class="landing-primary-button">
+
+                Criar minha conta
+
+                <svg viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round">
+
+                    <path d="M5 12h14" />
+                    <path d="M13 6l6 6-6 6" />
+
+                </svg>
+
+            </a>
+
+        </section>
+
+
+        <footer class="landing-footer">
+
+            <div class="landing-footer-brand">
+
+                <strong class="dsc-brand">
+
+                    <img class="dsc-logo dsc-logo--sm"
+                         src="~/img/logo.png"
+                         alt=""
+                         asp-append-version="true" />
+
+                    <b class="dsc-brand__text"><span>DES</span>CARBONIZA</b>
+
+                </strong>
+
+                <p>
+                    Gestão energética mais inteligente e sustentável.
+                </p>
+
+            </div>
+
+            <div class="landing-footer-links">
+
+                <a asp-controller="Home"
+                   asp-action="Privacy">
+
+                    Privacidade
+
+                </a>
+
+                <span>
+                    © 2026 Descarboniza
+                </span>
+
+            </div>
+
+        </footer>
+
+    </div>
+}

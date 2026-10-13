@@ -1,0 +1,9 @@
+**/bin/
+**/obj/
+**/.vs/
+**/.git/
+**/*.user
+**/.env
+**/.venv/
+**/node_modules/
+DescarbonizaIA-API/

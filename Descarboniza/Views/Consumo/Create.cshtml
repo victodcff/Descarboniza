@@ -1,0 +1,276 @@
+@model Descarboniza.Areas.Identity.Data.Consumo
+
+@{
+    ViewData["Title"] = "Novo Consumo";
+}
+
+<div class="data-page consumo-form-page">
+
+    <div class="data-page-header">
+
+        <div class="data-page-title-wrap">
+
+            <span class="data-page-kicker">GESTÃO ENERGÉTICA</span>
+
+            <h1>Novo consumo</h1>
+
+            <p class="data-page-description">
+                Registre os dados de utilização e consumo do equipamento.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="data-form-card">
+
+        <form asp-action="Create" id="createForm">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger"></div>
+
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+                    Equipamento
+                </div>
+
+                <div class="form-group">
+
+                    <label asp-for="IdMaquina" class="form-label">
+                        Máquina
+                    </label>
+
+                    <select asp-for="IdMaquina"
+                            class="form-control">
+
+                        <option value="0">
+                            -- Selecione uma máquina --
+                        </option>
+
+                        @foreach (var maquina in ViewBag.Maquinas)
+                        {
+                            <option value="@maquina.IdMaquina">
+                                @maquina.Fabricante - @maquina.Modelo
+                            </option>
+                        }
+
+                    </select>
+
+                    <span asp-validation-for="IdMaquina"
+                          class="text-danger"></span>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+                    Registro
+                </div>
+
+                <div class="form-group">
+
+                    <label class="form-label" for="DataAutomatica">
+                        Data do registro
+                    </label>
+
+                    <input type="text"
+                           id="DataAutomatica"
+                           class="form-control"
+                           data-relogio
+                           readonly
+                           tabindex="-1" />
+
+                    <span class="form-hint">
+                        Preenchida automaticamente ao salvar.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+                    Utilização
+                </div>
+
+                <div class="form-grid-2">
+
+                    <div class="form-group">
+
+                        <label asp-for="HorasUsoDia" class="form-label">
+                            Horas por dia
+                        </label>
+
+                        <div class="input-with-unit">
+
+                            <input asp-for="HorasUsoDia"
+                                   type="text"
+                                   inputmode="decimal"
+                                   class="form-control decimal"
+                                   placeholder="0,00"
+                                   data-val="false" />
+
+                            <span>h</span>
+
+                        </div>
+
+                        <span asp-validation-for="HorasUsoDia"
+                              class="text-danger"></span>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label asp-for="DiasUsoMes" class="form-label">
+                            Dias por mês
+                        </label>
+
+                        <div class="input-with-unit">
+
+                            <input asp-for="DiasUsoMes"
+                                   type="text"
+                                   inputmode="decimal"
+                                   class="form-control decimal"
+                                   placeholder="0"
+                                   data-val="false" />
+
+                            <span>dias</span>
+
+                        </div>
+
+                        <span asp-validation-for="DiasUsoMes"
+                              class="text-danger"></span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+                    Consumo
+                </div>
+
+                <div class="form-grid-2">
+
+                    <div class="form-group">
+
+                        <label asp-for="ConsumoKwhMes" class="form-label">
+                            Consumo mensal
+                        </label>
+
+                        <div class="input-with-unit">
+
+                            <input asp-for="ConsumoKwhMes"
+                                   type="text"
+                                   inputmode="decimal"
+                                   class="form-control decimal"
+                                   placeholder="0,00"
+                                   data-val="false" />
+
+                            <span>kWh</span>
+
+                        </div>
+
+                        <span asp-validation-for="ConsumoKwhMes"
+                              class="text-danger"></span>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label asp-for="TarifaKwh" class="form-label">
+                            Tarifa
+                        </label>
+
+                        <div class="input-with-unit">
+
+                            <input asp-for="TarifaKwh"
+                                   type="text"
+                                   inputmode="decimal"
+                                   class="form-control decimal"
+                                   placeholder="0,00"
+                                   data-val="false" />
+
+                            <span>R$/kWh</span>
+
+                        </div>
+
+                        <span asp-validation-for="TarifaKwh"
+                              class="text-danger"></span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a asp-action="Index"
+                   class="form-cancel">
+                    Cancelar
+                </a>
+
+                <button type="submit"
+                        class="form-submit">
+                    Registrar consumo
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+
+        document
+            .querySelectorAll(".decimal")
+            .forEach(function (campo) {
+
+                campo.value = campo.value.replace(".", ",");
+
+            });
+
+
+        document
+            .getElementById("createForm")
+            .addEventListener("submit", function () {
+
+                document
+                    .querySelectorAll(".decimal")
+                    .forEach(function (campo) {
+
+                        campo.value =
+                            campo.value.replace(".", ",");
+
+                    });
+
+            });
+
+    </script>
+}

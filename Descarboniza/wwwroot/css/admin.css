@@ -1,0 +1,169 @@
+﻿/* =========================================================
+   ADMIN — painel do administrador
+   Só acrescenta classes novas (prefixo adm-). Tabelas, formulários,
+   botões e o diálogo reaproveitam datapages.css e components.css,
+   então o tema escuro e o mobile já funcionam.
+   ========================================================= */
+
+/* ---------- Cartões do painel ---------- */
+
+.adm-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.adm-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 18px 20px;
+    border: 1px solid #dfe5e1;
+    border-radius: 14px;
+    background: #fff;
+    color: inherit;
+    text-decoration: none;
+    box-shadow: 0 3px 14px rgba(20, 30, 25, .045);
+    transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+a.adm-stat:hover {
+    border-color: #c7d9bc;
+    box-shadow: 0 8px 22px rgba(93, 162, 44, .10);
+    color: inherit;
+}
+
+.adm-stat__label {
+    color: #55615a;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.adm-stat__value {
+    color: #1f2923;
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.15;
+    font-variant-numeric: tabular-nums;
+}
+
+    .adm-stat__value small {
+        margin-left: 4px;
+        color: #6c776f;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+.adm-card-title {
+    padding: 16px 20px 4px;
+    color: #1f2923;
+    font-size: 14px;
+    font-weight: 650;
+}
+
+
+/* ---------- Filtro por usuário ---------- */
+
+.adm-filtro {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 12px;
+    margin-bottom: 16px;
+}
+
+.adm-filtro__label {
+    color: #55615a;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.adm-filtro .form-control {
+    width: auto;
+    min-width: 260px;
+    max-width: 100%;
+}
+
+.adm-filtro__limpar {
+    color: #3f7a1d;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+    .adm-filtro__limpar:hover {
+        text-decoration: underline;
+    }
+
+
+/* Botões de ação feitos com <button> ficam iguais aos <a> */
+
+button.table-action {
+    padding: 0;
+    cursor: pointer;
+    font: inherit;
+}
+
+
+/* ---------- Tema escuro ---------- */
+
+html[data-theme="dark"] .adm-stat {
+    background: #181b19;
+    border-color: #292e2b;
+    box-shadow: 0 3px 14px rgba(0, 0, 0, .20);
+}
+
+html[data-theme="dark"] a.adm-stat:hover {
+    border-color: #3b4a3b;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, .30);
+}
+
+html[data-theme="dark"] .adm-stat__label,
+html[data-theme="dark"] .adm-filtro__label {
+    color: #aab2ad;
+}
+
+html[data-theme="dark"] .adm-stat__value,
+html[data-theme="dark"] .adm-card-title {
+    color: #e1e5e2;
+}
+
+html[data-theme="dark"] .adm-stat__value small {
+    color: #8f9892;
+}
+
+html[data-theme="dark"] .adm-filtro__limpar {
+    color: #9bd678;
+}
+
+
+/* ---------- Mobile ---------- */
+
+@media (max-width: 767px) {
+
+    .adm-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .adm-stat {
+        padding: 14px 14px;
+    }
+
+    .adm-stat__value {
+        font-size: 21px;
+    }
+
+    .adm-filtro {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+        .adm-filtro .form-control {
+            width: 100%;
+            min-width: 0;
+        }
+}

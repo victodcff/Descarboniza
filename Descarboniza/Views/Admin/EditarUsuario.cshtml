@@ -1,0 +1,76 @@
+﻿@model Descarboniza.ViewModels.AdminUsuarioEditViewModel
+
+@{
+    ViewData["Title"] = "Editar usuário";
+}
+
+<div class="data-page">
+
+    <div class="data-page-header">
+        <div class="data-page-title-wrap">
+            <span class="data-page-kicker">ADMINISTRAÇÃO</span>
+
+            <h1>Editar usuário</h1>
+
+            <p class="data-page-description">
+                Atualize o nome e o e-mail da conta. A senha só pode ser alterada pelo próprio usuário.
+            </p>
+        </div>
+    </div>
+
+
+    <div class="data-form-card">
+
+        <form asp-action="EditarUsuario" method="post">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="Id" />
+
+            <div class="form-section">
+
+                <div class="form-section-title">Dados da conta</div>
+
+                <div class="form-grid-2">
+
+                    <div class="form-group">
+                        <label asp-for="Nome" class="form-label">Nome</label>
+                        <input asp-for="Nome" class="form-control" autocomplete="off" />
+                        <span asp-validation-for="Nome" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Sobrenome" class="form-label">Sobrenome</label>
+                        <input asp-for="Sobrenome" class="form-control" autocomplete="off" />
+                        <span asp-validation-for="Sobrenome" class="text-danger"></span>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Email" class="form-label">E-mail</label>
+                    <input asp-for="Email" class="form-control" autocomplete="off" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+
+                <a asp-action="Usuarios" class="form-cancel">Cancelar</a>
+
+                <button type="submit" class="form-submit">Salvar alterações</button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

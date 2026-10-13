@@ -1,0 +1,269 @@
+﻿@model Descarboniza.Areas.Identity.Data.EmissaoCarbono
+
+@{
+    ViewData["Title"] = "Nova Emissão";
+}
+
+<div class="data-page emissao-form-page">
+
+    <div class="data-page-header">
+
+        <div class="data-page-title-wrap">
+
+            <span class="data-page-kicker">IMPACTO AMBIENTAL</span>
+
+            <h1>Nova emissão</h1>
+
+            <p class="data-page-description">
+                Selecione uma máquina para calcular sua emissão de CO₂.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="data-form-card">
+
+        <form asp-action="Create" id="createForm">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger"></div>
+
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+                    Equipamento
+                </div>
+
+                <div class="form-group">
+
+                    <label asp-for="IdMaquina" class="form-label">
+                        Máquina
+                    </label>
+
+                    @if (ViewBag.Maquinas != null && ViewBag.Maquinas.Count > 0)
+                    {
+                        <select asp-for="IdMaquina"
+                                class="form-control"
+                                id="IdMaquina">
+
+                            <option value="">
+                                Selecione uma máquina
+                            </option>
+
+                            @foreach (var maquina in ViewBag.Maquinas)
+                            {
+                                <option value="@maquina.IdMaquina">
+                                    @maquina.Fabricante - @maquina.Modelo
+                                </option>
+                            }
+
+                        </select>
+
+                        <span asp-validation-for="IdMaquina"
+                              class="text-danger"></span>
+                    }
+                    else
+                    {
+                        <div class="form-empty-state">
+                            <strong>Nenhuma máquina disponível</strong>
+
+                            <span>
+                                Cadastre um consumo antes de registrar uma emissão.
+                            </span>
+
+                            <a asp-controller="Consumo"
+                               asp-action="Create"
+                               class="form-empty-action">
+                                Cadastrar consumo
+                            </a>
+                        </div>
+                    }
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label class="form-label" for="DataAutomatica">
+                        Data do registro
+                    </label>
+
+                    <input type="text"
+                           id="DataAutomatica"
+                           class="form-control"
+                           data-relogio
+                           readonly
+                           tabindex="-1" />
+
+                    <span class="form-hint">
+                        Preenchida automaticamente ao salvar.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-section">
+
+                <div class="form-section-title">
+                    Dados calculados
+                </div>
+
+                <div class="form-grid-3">
+
+                    <div class="form-group">
+
+                        <label asp-for="ConsumoKwh" class="form-label">
+                            Consumo
+                        </label>
+
+                        <div class="input-with-unit">
+
+                            <input asp-for="ConsumoKwh"
+                                   class="form-control"
+                                   id="ConsumoKwh"
+                                   readonly />
+
+                            <span>kWh/mês</span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label asp-for="FatorEmissao" class="form-label">
+                            Fator de emissão
+                        </label>
+
+                        <div class="input-with-unit">
+
+                            <input asp-for="FatorEmissao"
+                                   class="form-control"
+                                   id="FatorEmissao"
+                                   readonly />
+
+                            <span>kg CO₂/kWh</span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label asp-for="EmissaoKgCo2" class="form-label">
+                            Emissão
+                        </label>
+
+                        <div class="input-with-unit">
+
+                            <input asp-for="EmissaoKgCo2"
+                                   class="form-control"
+                                   id="EmissaoKgCo2"
+                                   readonly />
+
+                            <span>kg CO₂/mês</span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a asp-action="Index"
+                   class="form-cancel">
+                    Cancelar
+                </a>
+
+                @if (ViewBag.Maquinas != null && ViewBag.Maquinas.Count > 0)
+                {
+                    <button type="submit"
+                            class="form-submit">
+                        Cadastrar emissão
+                    </button>
+                }
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+
+        async function carregarDadosMaquina(idMaquina) {
+
+            const campoConsumo =
+                document.getElementById("ConsumoKwh");
+
+            const campoFator =
+                document.getElementById("FatorEmissao");
+
+            const campoEmissao =
+                document.getElementById("EmissaoKgCo2");
+
+
+            campoConsumo.value = "";
+            campoFator.value = "";
+            campoEmissao.value = "";
+
+
+            if (!idMaquina) {
+                return;
+            }
+
+
+            const resposta = await fetch(
+                `/EmissaoCarbono/ObterDadosDaMaquina?idMaquina=${idMaquina}`
+            );
+
+            const dados = await resposta.json();
+
+
+            if (dados.encontrado) {
+
+                campoConsumo.value = dados.consumoKwh;
+                campoFator.value = dados.fatorEmissao;
+                campoEmissao.value = dados.emissaoKgCo2;
+
+            }
+
+        }
+
+
+        const selectMaquina =
+            document.getElementById("IdMaquina");
+
+
+        if (selectMaquina) {
+
+            selectMaquina.addEventListener("change", function () {
+
+                carregarDadosMaquina(this.value);
+
+            });
+
+        }
+
+    </script>
+}

@@ -1,0 +1,370 @@
+﻿/* =========================================================
+   DESCARBONIZA — VERSÃO MOBILE
+
+   Carregado por último (depois de components.css).
+   Tudo que muda o layout está dentro de @media (max-width: 767px),
+   então a versão para PC não é afetada.
+   ========================================================= */
+
+
+/* ---------------------------------------------------------
+   Elementos que só existem no mobile (escondidos no PC)
+   --------------------------------------------------------- */
+
+.mobile-topbar,
+.sidebar-backdrop,
+.sidebar-close {
+    display: none;
+}
+
+
+@media (max-width: 767px) {
+
+    /* =====================================================
+       ESTRUTURA
+       ===================================================== */
+
+    .app-layout {
+        display: block;
+    }
+
+        .app-layout .main-content {
+            width: 100%;
+            margin-left: 0;
+        }
+
+    /* Espaço para a barra fixa do topo (só existe logado) */
+    .mobile-topbar ~ .main-content {
+        padding-top: calc(56px + env(safe-area-inset-top, 0px));
+    }
+
+    .app-layout .content-area {
+        padding: 20px 16px 64px;
+    }
+
+    .app-layout .footer {
+        padding: 16px;
+    }
+
+
+    /* =====================================================
+       BARRA DO TOPO
+       ===================================================== */
+
+    .mobile-topbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 900;
+        height: calc(56px + env(safe-area-inset-top, 0px));
+        padding: env(safe-area-inset-top, 0px) 12px 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background-color: #18201c;
+        border-bottom: 1px solid #303a34;
+        color: #fff;
+    }
+
+    .mobile-topbar__toggle {
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        border-radius: 10px;
+        background: transparent;
+        color: #c9cfcb;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+        .mobile-topbar__toggle:active {
+            background-color: #26342b;
+            color: #7bcf38;
+        }
+
+        .mobile-topbar__toggle svg {
+            width: 24px;
+            height: 24px;
+        }
+
+    .mobile-topbar__brand {
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #fff;
+        font-size: 16px;
+        letter-spacing: 1px;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+        .mobile-topbar__brand:hover {
+            color: #fff;
+        }
+
+        .mobile-topbar__brand img {
+            width: 34px;
+            height: 34px;
+            padding: 3px;
+            border-radius: 9px;
+            background: #fff;
+            object-fit: contain;
+        }
+
+
+    /* =====================================================
+       MENU LATERAL (GAVETA)
+       ===================================================== */
+
+    .app-layout .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: min(84vw, 300px);
+        height: 100vh;
+        height: 100dvh;
+        padding: 20px 12px calc(20px + env(safe-area-inset-bottom, 0px));
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        z-index: 1100;
+        transform: translateX(-102%);
+        visibility: hidden;
+        transition: transform .26s ease, visibility 0s linear .26s;
+    }
+
+    body.menu-open .app-layout .sidebar {
+        transform: translateX(0);
+        visibility: visible;
+        box-shadow: 8px 0 30px rgba(0, 0, 0, .35);
+        transition: transform .26s ease, visibility 0s;
+    }
+
+    /* Desfaz o menu "em bloco" antigo do sidebar.css */
+    .app-layout .sidebar-brand {
+        margin-bottom: 20px;
+        padding: 8px 44px 30px 0;
+    }
+
+    .app-layout .sidebar-nav {
+        flex-direction: column;
+        flex-wrap: nowrap;
+    }
+
+    .app-layout .sidebar-link {
+        width: 100%;
+    }
+
+    .app-layout .sidebar-middle {
+        flex: 1;
+        padding: 20px 0;
+    }
+
+    .app-layout .sidebar-bottom {
+        margin-top: 0;
+    }
+
+    .sidebar-close {
+        position: absolute;
+        top: 12px;
+        right: 10px;
+        z-index: 1;
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        border-radius: 10px;
+        background: transparent;
+        color: #8f9993;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+        .sidebar-close:active {
+            background-color: #26342b;
+            color: #7bcf38;
+        }
+
+        .sidebar-close svg {
+            width: 20px;
+            height: 20px;
+        }
+
+    .sidebar-backdrop {
+        display: block;
+        position: fixed;
+        inset: 0;
+        z-index: 1090;
+        background: rgba(8, 12, 10, .55);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .26s ease, visibility 0s linear .26s;
+    }
+
+    body.menu-open .sidebar-backdrop {
+        opacity: 1;
+        visibility: visible;
+        transition: opacity .26s ease, visibility 0s;
+    }
+
+    /* Trava a rolagem da página com o menu aberto */
+    body.menu-open,
+    html:has(body.menu-open) {
+        overflow: hidden;
+    }
+
+
+    /* =====================================================
+       FORMULÁRIOS
+       ===================================================== */
+
+    /* 16px evita o zoom automático do iPhone ao tocar no campo */
+    .form-control,
+    .form-select {
+        font-size: 16px;
+    }
+
+    .form-submit,
+    .form-cancel,
+    .data-page-action {
+        min-height: 46px;
+    }
+
+    .ia-dropzone {
+        padding: 20px 14px;
+    }
+
+
+    /* =====================================================
+       TABELAS → CARTÕES
+       ===================================================== */
+
+    .data-page .data-table-wrapper {
+        overflow-x: visible;
+    }
+
+    .data-page .data-table,
+    .data-page .data-table tbody {
+        display: block;
+        width: 100%;
+    }
+
+        .data-page .data-table thead {
+            display: none;
+        }
+
+        .data-page .data-table tbody tr {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px 20px;
+            padding: 14px 16px;
+            border-top: 1px solid #edf0ee;
+        }
+
+            .data-page .data-table tbody tr:first-child {
+                border-top: 0;
+            }
+
+            .data-page .data-table tbody tr > td.table-empty {
+                flex: 1 1 100%;
+            }
+
+    .data-page .data-table-card .data-table tbody tr > td:not(.table-empty) {
+        display: block;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        white-space: normal;
+    }
+
+    .data-page .data-table-card .data-table tbody tr > td:first-child:not(.table-empty) {
+        flex: 1 1 100%;
+    }
+
+    .data-page .data-table-card .data-table tbody tr > td.table-number {
+        text-align: left;
+    }
+
+    .data-page .data-table-card .data-table tbody tr > td:has(.table-actions) {
+        flex: 1 1 100%;
+    }
+
+    .table-action {
+        width: 40px;
+        height: 40px;
+    }
+
+    html[data-theme="dark"] .data-page .data-table tbody tr {
+        border-top-color: #29332e;
+    }
+}
+
+
+/* Telas baixas: o cartão "Nosso propósito" sai da gaveta para sobrar espaço */
+@media (max-width: 767px) and (max-height: 640px) {
+
+    .app-layout .sidebar-middle {
+        display: none;
+    }
+}
+
+
+@media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+
+    .app-layout .sidebar,
+    .sidebar-backdrop {
+        transition: none;
+    }
+}
+
+/* =========================================================
+   DASHBOARD E CONFIGURAÇÕES (mobile)
+   ========================================================= */
+
+@media (max-width: 767px) {
+
+    /* O "flex: 1 1 0" das telas largas, em coluna, encolhe os cartões
+       (que têm overflow: hidden) e corta o conteúdo */
+    .dsh-col > .dsh-card,
+    .dsh-col > .dsh-card:last-child,
+    .dsh-col--main > .dsh-card {
+        flex: 0 0 auto;
+    }
+
+    /* Menu de abas das configurações rola dentro dele mesmo,
+       sem alargar a página */
+    .dsc-settings {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+        .dsc-settings > * {
+            min-width: 0;
+        }
+
+    .dsc-settings-nav {
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+    }
+
+        .dsc-settings-nav::-webkit-scrollbar {
+            display: none;
+        }
+
+    .dsc-settings-nav__link {
+        flex: 0 0 auto;
+    }
+
+    .dsc-card {
+        padding: 20px;
+    }
+}

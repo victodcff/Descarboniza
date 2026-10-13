@@ -1,0 +1,39 @@
+﻿@page
+@model PersonalDataModel
+
+@{
+    ViewData["Title"] = "Dados pessoais";
+    ViewData["ActivePage"] = ManageNavPages.PersonalData;
+}
+
+<section class="dsc-card">
+
+    <h2 class="dsc-card__title">Baixar meus dados</h2>
+
+    <p class="dsc-card__text">
+        Baixe um arquivo com os dados da sua conta (nome, sobrenome e e-mail) e com todas as
+        máquinas, consumos e emissões que você cadastrou.
+    </p>
+
+    <form id="download-data" asp-page="DownloadPersonalData" method="post">
+        <button class="form-submit" type="submit">
+            Baixar meus dados
+        </button>
+    </form>
+
+</section>
+
+<section class="dsc-card dsc-card--danger">
+
+    <h2 class="dsc-card__title">Excluir minha conta</h2>
+
+    <p class="dsc-card__text">
+        Ao excluir a conta, o seu acesso e todos os seus equipamentos, consumos e emissões
+        são removidos de forma definitiva. Essa ação não pode ser desfeita.
+    </p>
+
+    <a id="delete" asp-page="DeletePersonalData" class="delete-confirm">
+        Excluir minha conta
+    </a>
+
+</section>

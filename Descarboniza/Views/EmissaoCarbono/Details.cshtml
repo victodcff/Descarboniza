@@ -1,0 +1,155 @@
+﻿@model Descarboniza.Areas.Identity.Data.EmissaoCarbono
+
+@{
+    ViewData["Title"] = "Detalhes da Emissão";
+}
+
+<div class="data-page emissao-details-page">
+
+    <div class="data-page-header">
+
+        <div class="data-page-title-wrap">
+
+            <span class="data-page-kicker">IMPACTO AMBIENTAL</span>
+
+            <h1>Detalhes da emissão</h1>
+
+            <p class="data-page-description">
+                Informações do registro de emissão de carbono.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="data-details-card">
+
+        <div class="details-section">
+
+            <span class="details-section-title">
+                Equipamento
+            </span>
+
+            <div class="details-row">
+
+                <span class="details-label">
+                    Máquina
+                </span>
+
+                <span class="details-value">
+                    @if (Model.Maquina != null)
+                    {
+                        @($"{Model.Maquina.Fabricante} - {Model.Maquina.Modelo}")
+                    }
+                    else
+                    {
+                        <span>Máquina não encontrada</span>
+                    }
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="details-section">
+
+            <span class="details-section-title">
+                Registro
+            </span>
+
+            <div class="details-row">
+
+                <span class="details-label">
+                    Data do registro
+                </span>
+
+                <span class="details-value">
+                    @Model.DataRegistro.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="details-section">
+
+            <span class="details-section-title">
+                Emissão de carbono
+            </span>
+
+            <div class="details-grid">
+
+                <div class="details-stat">
+
+                    <span>Consumo</span>
+
+                    <strong>
+                        @Model.ConsumoKwh.ToString("N2")
+                    </strong>
+
+                    <small>kWh/mês</small>
+
+                </div>
+
+
+                <div class="details-stat">
+
+                    <span>Fator de emissão</span>
+
+                    <strong>
+                        @Model.FatorEmissao.ToString("N5")
+                    </strong>
+
+                    <small>kg CO₂/kWh</small>
+
+                </div>
+
+
+                <div class="details-stat highlight">
+
+                    <span>Emissão</span>
+
+                    <strong>
+                        @Model.EmissaoKgCo2.ToString("N2")
+                    </strong>
+
+                    <small>kg CO₂/mês</small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="details-footer-actions">
+
+        <a asp-action="Delete"
+           asp-route-id="@Model.IdEmissao"
+           class="details-delete-link">
+            Excluir emissão
+        </a>
+
+        <div class="details-footer-group">
+
+            <a asp-action="Index"
+               class="form-cancel">
+                Voltar
+            </a>
+
+            <a asp-action="Edit"
+               asp-route-id="@Model.IdEmissao"
+               class="form-submit">
+                Editar emissão
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

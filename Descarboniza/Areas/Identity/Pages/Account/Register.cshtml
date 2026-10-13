@@ -1,0 +1,197 @@
+﻿@page
+@model RegisterModel
+
+@{
+    ViewData["Title"] = "Criar conta";
+}
+
+<div class="dsc-auth">
+
+    <div class="dsc-auth__card">
+
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="dsc-auth__brand dsc-brand">
+
+            <img class="dsc-logo dsc-logo--lg"
+                 src="~/img/logo.png"
+                 alt=""
+                 asp-append-version="true" />
+
+            <b class="dsc-brand__text"><span>DES</span>CARBONIZA</b>
+
+        </a>
+
+        <h1 class="dsc-auth__title">Criar conta</h1>
+
+        <p class="dsc-auth__subtitle">
+            Preencha os dados abaixo para começar a organizar seus dados energéticos.
+        </p>
+
+        <form id="registerForm"
+              asp-route-returnUrl="@Model.ReturnUrl"
+              method="post">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="dsc-alert"
+                 role="alert"></div>
+
+            <div class="dsc-field-row">
+
+                <div class="dsc-field">
+
+                    <input asp-for="Input.Nome"
+                           class="dsc-field__input"
+                           autocomplete="given-name"
+                           aria-required="true"
+                           placeholder=" " />
+
+                    <label asp-for="Input.Nome" class="dsc-field__label">
+                        <svg viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             aria-hidden="true">
+                            <circle cx="12" cy="8" r="4" />
+                            <path d="M4 21c0-4 3.5-7 8-7s8 3 8 7" />
+                        </svg>
+                        <span>Nome</span>
+                    </label>
+
+                    <span asp-validation-for="Input.Nome" class="dsc-field__error"></span>
+
+                </div>
+
+                <div class="dsc-field">
+
+                    <input asp-for="Input.Sobrenome"
+                           class="dsc-field__input"
+                           autocomplete="family-name"
+                           aria-required="true"
+                           placeholder=" " />
+
+                    <label asp-for="Input.Sobrenome" class="dsc-field__label">
+                        <svg viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             aria-hidden="true">
+                            <circle cx="12" cy="8" r="4" />
+                            <path d="M4 21c0-4 3.5-7 8-7s8 3 8 7" />
+                        </svg>
+                        <span>Sobrenome</span>
+                    </label>
+
+                    <span asp-validation-for="Input.Sobrenome" class="dsc-field__error"></span>
+
+                </div>
+
+            </div>
+
+            <div class="dsc-field">
+
+                <input asp-for="Input.Email"
+                       class="dsc-field__input"
+                       autocomplete="username"
+                       aria-required="true"
+                       placeholder=" " />
+
+                <label asp-for="Input.Email" class="dsc-field__label">
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+                        <rect x="3" y="5" width="18" height="14" rx="2" />
+                        <path d="m3 7 9 6 9-6" />
+                    </svg>
+                    <span>E-mail</span>
+                </label>
+
+                <span asp-validation-for="Input.Email" class="dsc-field__error"></span>
+
+            </div>
+
+            <div class="dsc-field">
+
+                <input asp-for="Input.Password"
+                       class="dsc-field__input"
+                       autocomplete="new-password"
+                       aria-required="true"
+                       placeholder=" " />
+
+                <label asp-for="Input.Password" class="dsc-field__label">
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+                        <rect x="4" y="11" width="16" height="10" rx="2" />
+                        <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                    </svg>
+                    <span>Senha</span>
+                </label>
+
+                <span asp-validation-for="Input.Password" class="dsc-field__error"></span>
+
+                <span class="form-hint">
+                    Pelo menos 6 caracteres, com letra maiúscula, minúscula, número e símbolo.
+                </span>
+
+            </div>
+
+            <div class="dsc-field">
+
+                <input asp-for="Input.ConfirmPassword"
+                       class="dsc-field__input"
+                       autocomplete="new-password"
+                       aria-required="true"
+                       placeholder=" " />
+
+                <label asp-for="Input.ConfirmPassword" class="dsc-field__label">
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="2"
+                         stroke-linecap="round"
+                         stroke-linejoin="round"
+                         aria-hidden="true">
+                        <path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6l-8-3Z" />
+                        <path d="m9 12 2 2 4-4" />
+                    </svg>
+                    <span>Confirmar senha</span>
+                </label>
+
+                <span asp-validation-for="Input.ConfirmPassword" class="dsc-field__error"></span>
+
+            </div>
+
+            <button id="registerSubmit"
+                    type="submit"
+                    class="form-submit dsc-btn-block"
+                    data-loading-text="Criando conta…">
+                Criar conta
+            </button>
+
+        </form>
+
+        <p class="dsc-auth__switch">
+            Já tem uma conta?
+            <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">Entrar</a>
+        </p>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

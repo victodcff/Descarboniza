@@ -1,0 +1,154 @@
+﻿@model Descarboniza.Areas.Identity.Data.EmissaoCarbono
+
+@{
+    ViewData["Title"] = "Editar emissão (admin)";
+}
+
+<div class="data-page emissao-form-page">
+
+    <div class="data-page-header">
+        <div class="data-page-title-wrap">
+            <span class="data-page-kicker">ADMINISTRAÇÃO</span>
+
+            <h1>Editar emissão</h1>
+
+            <p class="data-page-description">
+                Ajuste o consumo e o fator. A emissão é recalculada ao salvar.
+            </p>
+        </div>
+    </div>
+
+
+    <div class="data-form-card">
+
+        <form asp-action="EditEmissao" asp-route-id="@Model.IdEmissao" id="editForm">
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <input type="hidden" asp-for="IdEmissao" />
+
+
+            <div class="form-section">
+
+                <div class="form-section-title">Equipamento</div>
+
+                <div class="form-grid-2">
+
+                    <div class="form-group">
+                        <label class="form-label" for="MaquinaNome">Máquina</label>
+
+                        <input type="text"
+                               id="MaquinaNome"
+                               class="form-control"
+                               value="@Model.Maquina?.Fabricante - @Model.Maquina?.Modelo"
+                               readonly
+                               tabindex="-1" />
+
+                        <span class="form-hint">A máquina da emissão não pode ser alterada.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="Dono">Usuário</label>
+
+                        <input type="text"
+                               id="Dono"
+                               class="form-control"
+                               value="@ViewBag.Dono"
+                               readonly
+                               tabindex="-1" />
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="DataAtual">Data do registro</label>
+
+                    <input type="text"
+                           id="DataAtual"
+                           class="form-control"
+                           value="@Model.DataRegistro.ToLocalTime().ToString("dd/MM/yyyy HH:mm")"
+                           readonly
+                           tabindex="-1" />
+                </div>
+
+            </div>
+
+
+            <div class="form-section">
+
+                <div class="form-section-title">Dados da emissão</div>
+
+                <div class="form-grid-3">
+
+                    <div class="form-group">
+                        <label asp-for="ConsumoKwh" class="form-label">Consumo</label>
+                        <div class="input-with-unit">
+                            <input asp-for="ConsumoKwh" type="text" inputmode="decimal" class="form-control decimal" data-val="false" />
+                            <span>kWh/mês</span>
+                        </div>
+                        <span asp-validation-for="ConsumoKwh" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="FatorEmissao" class="form-label">Fator de emissão</label>
+                        <div class="input-with-unit">
+                            <input asp-for="FatorEmissao" type="text" inputmode="decimal" class="form-control decimal" data-val="false" />
+                            <span>kg CO₂/kWh</span>
+                        </div>
+                        <span asp-validation-for="FatorEmissao" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="EmissaoAtual">Emissão atual</label>
+                        <div class="input-with-unit">
+                            <input type="text"
+                                   id="EmissaoAtual"
+                                   class="form-control"
+                                   value="@Model.EmissaoKgCo2.ToString("N2")"
+                                   readonly
+                                   tabindex="-1" />
+                            <span>kg CO₂/mês</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <a asp-action="Emissoes" class="form-cancel">Cancelar</a>
+
+                <button type="submit" class="form-submit">Salvar alterações</button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+
+        const form = document.getElementById("editForm");
+
+        document.querySelectorAll(".decimal").forEach(function (campo) {
+            campo.value = campo.value.replace(".", ",");
+        });
+
+        form.addEventListener("submit", function () {
+            document.querySelectorAll(".decimal").forEach(function (campo) {
+                campo.value = campo.value.replace(".", ",");
+            });
+        });
+
+    </script>
+}

@@ -1,0 +1,38 @@
+﻿@* Filtro por usuário usado nas listas do painel admin. *@
+
+@model Descarboniza.ViewModels.AdminFiltroViewModel
+
+@{
+    var acao = Model.Acao;
+    var filtro = Model.Filtro;
+    var usuarios = Model.Usuarios;
+}
+
+<form method="get"
+      asp-action="@acao"
+      class="adm-filtro">
+
+    <label for="admFiltroUsuario" class="adm-filtro__label">Filtrar por usuário</label>
+
+    <select id="admFiltroUsuario"
+            name="usuario"
+            class="form-control"
+            onchange="this.form.submit()">
+
+        <option value="">Todos os usuários</option>
+
+        @foreach (var u in usuarios)
+        {
+            <option value="@u.Id" selected="@(u.Id == filtro)">
+                @u.NomeCompleto (@u.Email)
+            </option>
+        }
+
+    </select>
+
+    @if (!string.IsNullOrWhiteSpace(filtro))
+    {
+        <a asp-action="@acao" class="adm-filtro__limpar">Limpar</a>
+    }
+
+</form>
