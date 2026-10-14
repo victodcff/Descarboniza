@@ -1,0 +1,172 @@
+﻿@model Descarboniza.Areas.Identity.Data.Maquina
+
+@{
+    ViewData["Title"] = "Excluir Máquina";
+}
+
+<div class="data-page maquina-delete-page">
+
+    <div class="data-page-header">
+
+        <div class="data-page-title-wrap">
+
+            <span class="data-page-kicker">GESTÃO DE ATIVOS</span>
+
+            <h1>Excluir máquina</h1>
+
+            <p class="data-page-description">
+                Confirme a exclusão deste equipamento.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="delete-warning-card">
+
+        <div class="delete-warning-icon">
+
+            <svg viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="2">
+                <path d="M12 9v4" />
+                <path d="M12 17h.01" />
+                <path d="M10.3 3.5 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.5a2 2 0 0 0-3.4 0Z" />
+            </svg>
+
+        </div>
+
+        <div>
+
+            <h2>Tem certeza que deseja excluir?</h2>
+
+            <p>
+                Esta ação removerá o equipamento dos seus registros e não poderá ser desfeita.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="data-details-card">
+
+        <div class="details-section">
+
+            <span class="details-section-title">
+                Equipamento
+            </span>
+
+            <div class="details-row">
+
+                <span class="details-label">
+                    Fabricante
+                </span>
+
+                <span class="details-value">
+                    @Model.Fabricante
+                </span>
+
+            </div>
+
+
+            <div class="details-row">
+
+                <span class="details-label">
+                    Modelo
+                </span>
+
+                <span class="details-value">
+                    @Model.Modelo
+                </span>
+
+            </div>
+
+
+            <div class="details-row">
+
+                <span class="details-label">
+                    Data de cadastro
+                </span>
+
+                <span class="details-value">
+                    @Model.DataCadastro.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="details-section">
+
+            <span class="details-section-title">
+                Dados elétricos
+            </span>
+
+            <div class="details-grid">
+
+                <div class="details-stat">
+
+                    <span>Potência</span>
+
+                    <strong>
+                        @Model.Potencia.ToString("N2")
+                    </strong>
+
+                    <small>kW</small>
+
+                </div>
+
+
+                <div class="details-stat">
+
+                    <span>Tensão</span>
+
+                    <strong>
+                        @Model.Tensao.ToString("N2")
+                    </strong>
+
+                    <small>V</small>
+
+                </div>
+
+
+                <div class="details-stat">
+
+                    <span>Corrente</span>
+
+                    <strong>
+                        @Model.Corrente.ToString("N2")
+                    </strong>
+
+                    <small>A</small>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <form asp-action="Delete" method="post" class="delete-actions">
+
+        <input type="hidden" asp-for="IdMaquina" />
+
+        <a asp-action="Index"
+           class="form-cancel">
+            Cancelar
+        </a>
+
+        <button type="submit"
+                class="delete-confirm">
+            Excluir máquina
+        </button>
+
+    </form>
+
+</div>
