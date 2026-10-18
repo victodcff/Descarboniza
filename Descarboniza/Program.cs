@@ -5,6 +5,7 @@ using Descarboniza.Services;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,20 @@ builder.Services
     .AddRoles<IdentityRole>()
     .AddErrorDescriber<IdentityErrorDescriberPtBr>()
     .AddEntityFrameworkStores<DescarbonizaContext>();
+
+// O link de "Esqueci minha senha" vale por 1 hora.
+builder.Services.Configure<DataProtectionTokenProviderOptions>(opcoes =>
+{
+    opcoes.TokenLifespan = TimeSpan.FromHours(1);
+});
+
+// Envio de e-mail pela API do Brevo (recuperação de senha).
+// Precisa vir depois do AddDefaultIdentity para substituir o envio padrão (que não faz nada).
+builder.Services.AddHttpClient<IEmailSender, BrevoEmailSender>(client =>
+{
+    client.BaseAddress = new Uri("https://api.brevo.com/v3/");
+    client.Timeout = TimeSpan.FromSeconds(20);
+});
 
 // Guarda as chaves de proteção (login e formulários) no banco. Sem isso,
 // cada reinício do servidor deslogaria todo mundo.
@@ -85,17 +100,13 @@ if (!app.Environment.IsDevelopment())
 app.UseStaticFiles();
 
 // Páginas do Identity que o projeto não usa (dois fatores, login externo e
-// fluxos que dependem de envio de e-mail). Quem abrir o endereço é redirecionado.
-// Se um dia a recuperação de senha por e-mail for implementada, remova
-// "ForgotPassword" e "ResetPassword" da lista abaixo.
+// fluxos que dependem de confirmação por e-mail). Quem abrir o endereço é redirecionado.
+// "ForgotPassword" e "ResetPassword" ficam liberados: são a recuperação de senha por e-mail.
 var paginasParaLogin = new[]
 {
     "/Identity/Account/LoginWith2fa",
     "/Identity/Account/LoginWithRecoveryCode",
-    "/Identity/Account/ForgotPassword",
-    "/Identity/Account/ForgotPasswordConfirmation",
     "/Identity/Account/ResendEmailConfirmation",
-    "/Identity/Account/ResetPassword",
     "/Identity/Account/ResetPasswordConfirmation",
     "/Identity/Account/ConfirmEmail",
     "/Identity/Account/ConfirmEmailChange",
