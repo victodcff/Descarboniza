@@ -1418,11 +1418,13 @@ html[data-theme="dark"] .dsc-dialog__text {
     --dsc-logo-size: 44px;
 }
 
-/* Placa clara onde o fundo é escuro */
+/* Logo clara onde o fundo é escuro (barra lateral e tema escuro) */
 .sidebar .dsc-logo,
 html[data-theme="dark"] .dsc-logo {
-    padding: calc(var(--dsc-logo-size) * .12);
-    background: #f4f6f5;
+    padding: 0;
+    border-radius: 0;
+    background: url("../img/logoescuro.png") center / contain no-repeat;
+    object-position: -9999px 0;
 }
 
 /* Barra lateral: logo e nome lado a lado */
