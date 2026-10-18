@@ -1,19 +1,19 @@
-@model IEnumerable<Descarboniza.Areas.Identity.Data.Maquina>
+Ôªø@model IEnumerable<Descarboniza.Areas.Identity.Data.Maquina>
 
 @{
-    ViewData["Title"] = "M·quinas";
+    ViewData["Title"] = "M√°quinas";
 }
 
 <div class="data-page">
 
     <div class="data-page-header">
         <div class="data-page-title-wrap">
-            <span class="data-page-kicker">GEST√O DE ATIVOS</span>
+            <span class="data-page-kicker">GEST√ÉO DE ATIVOS</span>
 
-            <h1>Minhas m·quinas</h1>
+            <h1>Minhas m√°quinas</h1>
 
             <p class="data-page-description">
-                Gerencie os equipamentos cadastrados e acompanhe seus dados tÈcnicos.
+                Gerencie os equipamentos cadastrados e acompanhe seus dados t√©cnicos.
             </p>
         </div>
 
@@ -28,7 +28,7 @@
                 <path d="M5 12h14" />
             </svg>
 
-            Nova m·quina
+            Nova m√°quina
         </a>
     </div>
 
@@ -41,12 +41,12 @@
 
                 <thead>
                     <tr>
-                        <th>M·quina</th>
-                        <th class="text-end">PotÍncia</th>
-                        <th class="text-end">Tens„o</th>
+                        <th>M√°quina</th>
+                        <th class="text-end">Pot√™ncia</th>
+                        <th class="text-end">Tens√£o</th>
                         <th class="text-end">Corrente</th>
                         <th>Cadastro</th>
-                        <th class="text-end">AÁıes</th>
+                        <th class="text-end">A√ß√µes</th>
                     </tr>
                 </thead>
 
@@ -110,7 +110,7 @@
                                            asp-route-id="@item.IdMaquina"
                                            class="table-action edit"
                                            title="Editar"
-                                           aria-label="Editar m·quina">
+                                           aria-label="Editar m√°quina">
 
                                             <svg viewBox="0 0 24 24"
                                                  fill="none"
@@ -128,7 +128,7 @@
                                            asp-route-id="@item.IdMaquina"
                                            class="table-action view"
                                            title="Visualizar"
-                                           aria-label="Visualizar m·quina">
+                                           aria-label="Visualizar m√°quina">
 
                                             <svg viewBox="0 0 24 24"
                                                  fill="none"
@@ -146,7 +146,7 @@
                                            asp-route-id="@item.IdMaquina"
                                            class="table-action delete"
                                            title="Excluir"
-                                           aria-label="Excluir m·quina">
+                                           aria-label="Excluir m√°quina">
 
                                             <svg viewBox="0 0 24 24"
                                                  fill="none"
@@ -187,15 +187,15 @@
                                 </div>
 
                                 <div class="table-empty-title">
-                                    Nenhuma m·quina cadastrada
+                                    Nenhuma m√°quina cadastrada
                                 </div>
 
                                 <div class="table-empty-text">
-                                    Cadastre sua primeira m·quina para comeÁar.
+                                    Cadastre sua primeira m√°quina para come√ßar.
                                 </div>
 
                                 <a asp-action="Create" class="table-empty-action">
-                                    Cadastrar m·quina
+                                    Cadastrar m√°quina
                                 </a>
 
                             </td>
@@ -210,7 +210,7 @@
 
         <div class="table-footer">
             <span>
-                @Model.Count() m·quina(s) cadastrada(s)
+                @Model.Count() m√°quina(s) cadastrada(s)
             </span>
         </div>
 

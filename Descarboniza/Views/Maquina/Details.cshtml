@@ -1,7 +1,7 @@
-@model Descarboniza.Areas.Identity.Data.Maquina
+Ôªø@model Descarboniza.Areas.Identity.Data.Maquina
 
 @{
-    ViewData["Title"] = "Detalhes da M·quina";
+    ViewData["Title"] = "Detalhes da M√°quina";
 }
 
 <div class="data-page maquina-details-page">
@@ -10,12 +10,12 @@
 
         <div class="data-page-title-wrap">
 
-            <span class="data-page-kicker">GEST√O DE ATIVOS</span>
+            <span class="data-page-kicker">GEST√ÉO DE ATIVOS</span>
 
-            <h1>Detalhes da m·quina</h1>
+            <h1>Detalhes da m√°quina</h1>
 
             <p class="data-page-description">
-                Visualize as informaÁıes cadastradas deste equipamento.
+                Visualize as informa√ß√µes cadastradas deste equipamento.
             </p>
 
         </div>
@@ -62,14 +62,14 @@
         <div class="details-section">
 
             <span class="details-section-title">
-                Dados elÈtricos
+                Dados el√©tricos
             </span>
 
             <div class="details-grid">
 
                 <div class="details-stat">
 
-                    <span>PotÍncia</span>
+                    <span>Pot√™ncia</span>
 
                     <strong>
                         @Model.Potencia.ToString("N2")
@@ -82,7 +82,7 @@
 
                 <div class="details-stat">
 
-                    <span>Tens„o</span>
+                    <span>Tens√£o</span>
 
                     <strong>
                         @Model.Tensao.ToString("N2")
@@ -138,7 +138,7 @@
         <a asp-action="Delete"
            asp-route-id="@Model.IdMaquina"
            class="details-delete-link">
-            Excluir m·quina
+            Excluir m√°quina
         </a>
 
         <div class="details-footer-group">
@@ -151,7 +151,7 @@
             <a asp-action="Edit"
                asp-route-id="@Model.IdMaquina"
                class="form-submit">
-                Editar m·quina
+                Editar m√°quina
             </a>
 
         </div>
