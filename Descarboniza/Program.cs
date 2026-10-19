@@ -95,8 +95,16 @@ app.UseForwardedHeaders();
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
+    app.UseExceptionHandler("/Erro/500");
 }
+
+// Telas de erro (404, 403...) no estilo do site. Só valem para quem abre pelo navegador;
+// chamadas de JavaScript (que não pedem HTML) continuam recebendo a resposta original.
+app.UseWhen(
+    contexto => contexto.Request.Headers.Accept.ToString()
+        .Contains("text/html", StringComparison.OrdinalIgnoreCase),
+    ramo => ramo.UseStatusCodePagesWithReExecute("/Erro/{0}"));
+
 app.UseStaticFiles();
 
 // Páginas do Identity que o projeto não usa (dois fatores, login externo e
