@@ -4,6 +4,20 @@ namespace Descarboniza.Services
 {
     public class AnaliseConsumoService
     {
+        // Calcula o consumo mensal (kWh) a partir da potência da máquina (kW),
+        // das horas de uso por dia e dos dias de uso por mês.
+        // É o valor que passa a ser gravado em Consumo.ConsumoKwhMes.
+        public double CalcularConsumoMensal(
+            double potenciaKw,
+            double horasPorDia,
+            double diasPorMes)
+        {
+            if (potenciaKw <= 0 || horasPorDia <= 0 || diasPorMes <= 0)
+                return 0;
+
+            return Math.Round(potenciaKw * horasPorDia * diasPorMes, 2);
+        }
+
         // Calcula o consumo teórico mensal com base na potência da máquina.
         public double CalcularConsumoTeorico(Consumo consumo)
         {

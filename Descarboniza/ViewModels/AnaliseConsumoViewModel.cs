@@ -27,5 +27,13 @@ namespace Descarboniza.ViewModels
         public double PercentualDiferenca { get; set; }
 
         public string Classificacao { get; set; } = string.Empty;
+
+        // Emissão de CO2 estimada a partir do consumo mensal
+        public double EmissaoMensal { get; set; }
+
+        public double EmissaoAnual { get; set; }
+
+        // Quanto esta máquina representa do consumo total do usuário (%)
+        public double ParticipacaoPercentual { get; set; }
     }
 }

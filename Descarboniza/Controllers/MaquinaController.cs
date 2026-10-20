@@ -160,6 +160,28 @@ public class MaquinaController : Controller
             maquinaBanco.Tensao = maquina.Tensao;
             maquinaBanco.Corrente = maquina.Corrente;
 
+            var consumoDaMaquina = await _context.Consumos
+                .FirstOrDefaultAsync(c => c.IdMaquina == maquinaBanco.IdMaquina);
+
+            if (consumoDaMaquina != null)
+            {
+                consumoDaMaquina.ConsumoKwhMes = Math.Round(
+                    maquinaBanco.Potencia *
+                    consumoDaMaquina.HorasUsoDia *
+                    consumoDaMaquina.DiasUsoMes, 2);
+
+                var emissaoDaMaquina = await _context.EmissoesCarbono
+                    .FirstOrDefaultAsync(e => e.IdMaquina == maquinaBanco.IdMaquina);
+
+                if (emissaoDaMaquina != null)
+                {
+                    emissaoDaMaquina.ConsumoKwh = consumoDaMaquina.ConsumoKwhMes;
+                    emissaoDaMaquina.FatorEmissao = EmissaoCarbonoService.FatorEmissaoPadrao;
+                    emissaoDaMaquina.EmissaoKgCo2 =
+                        consumoDaMaquina.ConsumoKwhMes * EmissaoCarbonoService.FatorEmissaoPadrao;
+                }
+            }
+
             await _context.SaveChangesAsync();
 
             TempData["Sucesso"] = "Máquina atualizada com sucesso.";

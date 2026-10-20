@@ -6,36 +6,13 @@
     var consumo = Model.Consumo;
     var maquina = consumo.Maquina;
 
-    var status = Descarboniza.ViewModels.AnaliseStatus.Obter(
-        Model.ConsumoTeorico,
-        Model.PercentualDiferenca);
-
-    var classeStatus = status switch
-    {
-        "alerta" => "alert",
-        "abaixo" => "danger",
-        "indisponivel" => "neutral",
-        _ => ""
-    };
-
-    var tituloStatus = status switch
-    {
-        "alerta" => "Consumo acima do esperado",
-        "abaixo" => "Consumo abaixo do esperado",
-        "proximo" => "Consumo próximo do teórico",
-        _ => "Análise indisponível"
-    };
-
-    var orientacao = status switch
-    {
-        "alerta" => "O consumo teórico considera a máquina sempre na potência nominal. Como o valor informado passou disso, confira as horas de uso, os dias por mês, o consumo informado e a potência cadastrada.",
-        "abaixo" => "O consumo informado ficou bem abaixo do teórico. Confira as horas de uso, os dias por mês e o consumo informado. Se estiverem corretos, a máquina provavelmente opera com carga parcial.",
-        "proximo" => "Os dados informados são coerentes com a potência e o tempo de uso da máquina.",
-        _ => "Informe potência, horas e dias de uso válidos para calcular o consumo teórico."
-    };
+    var invariante = System.Globalization.CultureInfo.InvariantCulture;
+    var larguraParticipacao = Math.Min(100, Math.Max(0, Model.ParticipacaoPercentual)).ToString("0.##", invariante);
 }
 
-<div class="data-page analise-page">
+<link rel="stylesheet" href="~/css/analise.css" asp-append-version="true" />
+
+<div class="data-page analise-page an-page">
 
     <div class="data-page-header">
 
@@ -56,318 +33,190 @@
 
     @if (maquina != null)
     {
-        <div class="analise-machine-card">
+        <section class="an-machine">
 
-            <div class="analise-machine-icon">
-                <svg viewBox="0 0 24 24"
-                     fill="none"
-                     stroke="currentColor"
-                     stroke-width="1.8">
-                    <rect x="3" y="4" width="18" height="16" rx="2" />
-                    <path d="M7 8h10" />
-                    <path d="M7 12h4" />
-                    <path d="M7 16h7" />
-                </svg>
+            <span class="an-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2" /><path d="M7 8h10" /><path d="M7 12h4" /><path d="M7 16h7" /></svg></span>
+
+            <div class="an-machine__info">
+                <span class="an-kicker">Máquina analisada</span>
+                <h2>@maquina.Fabricante - @maquina.Modelo</h2>
             </div>
 
-            <div class="analise-machine-info">
+            <ul class="an-specs">
+                <li>
+                    <span>Potência</span>
+                    <strong>@maquina.Potencia.ToString("N2") <small>kW</small></strong>
+                </li>
+                <li>
+                    <span>Tensão</span>
+                    <strong>@maquina.Tensao.ToString("N2") <small>V</small></strong>
+                </li>
+                <li>
+                    <span>Corrente</span>
+                    <strong>@maquina.Corrente.ToString("N2") <small>A</small></strong>
+                </li>
+            </ul>
 
-                <span class="analise-label">
-                    MÁQUINA ANALISADA
-                </span>
-
-                <h2>
-                    @maquina.Fabricante - @maquina.Modelo
-                </h2>
-
-                <div class="analise-machine-specs">
-
-                    <span>
-                        <strong>@maquina.Potencia.ToString("N2")</strong>
-                        kW
-                    </span>
-
-                    <span>
-                        <strong>@maquina.Tensao.ToString("N2")</strong>
-                        V
-                    </span>
-
-                    <span>
-                        <strong>@maquina.Corrente.ToString("N2")</strong>
-                        A
-                    </span>
-
-                </div>
-
-            </div>
-
-        </div>
+        </section>
     }
     else
     {
-        <div class="analise-warning">
+        <div class="an-warning">
             <strong>Máquina não encontrada.</strong>
             Não foi possível carregar os dados da máquina deste consumo.
         </div>
     }
 
 
-    <div class="analise-classification @classeStatus">
+    <div class="an-kpis">
 
-        <div class="analise-classification-icon">
-
-            @if (status == "alerta" || status == "abaixo")
-            {
-                <svg viewBox="0 0 24 24"
-                     fill="none"
-                     stroke="currentColor"
-                     stroke-width="2"
-                     stroke-linecap="round"
-                     stroke-linejoin="round">
-                    <path d="M12 9v4" />
-                    <path d="M12 17h.01" />
-                    <path d="M10.3 3.5 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.5a2 2 0 0 0-3.4 0Z" />
-                </svg>
-            }
-            else if (status == "indisponivel")
-            {
-                <svg viewBox="0 0 24 24"
-                     fill="none"
-                     stroke="currentColor"
-                     stroke-width="2"
-                     stroke-linecap="round"
-                     stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="9" />
-                    <path d="M12 16v-4" />
-                    <path d="M12 8h.01" />
-                </svg>
-            }
-            else
-            {
-                <svg viewBox="0 0 24 24"
-                     fill="none"
-                     stroke="currentColor"
-                     stroke-width="2"
-                     stroke-linecap="round"
-                     stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="9" />
-                    <path d="M8 12.5l3 3 5-6" />
-                </svg>
-            }
-
+        <div class="an-kpi">
+            <div class="an-kpi__topo">
+                <span class="an-kpi__rotulo">Emissão de CO₂</span>
+                <span class="an-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" /><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12" /></svg></span>
+            </div>
+            <div class="an-kpi__valor">
+                @Model.EmissaoMensal.ToString("N2")<small>kg CO₂/mês</small>
+            </div>
+            <span class="an-kpi__nota">@Model.EmissaoAnual.ToString("N2") kg CO₂ por ano</span>
         </div>
 
-        <div>
+        <div class="an-kpi">
+            <div class="an-kpi__topo">
+                <span class="an-kpi__rotulo">Custo mensal</span>
+                <span class="an-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1" /><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4" /></svg></span>
+            </div>
+            <div class="an-kpi__valor">R$ @Model.CustoMensal.ToString("N2")</div>
+            <span class="an-kpi__nota">R$ @Model.CustoAnual.ToString("N2") por ano</span>
+        </div>
 
-            <span class="analise-section-kicker">
-                RESUMO DA ANÁLISE
+        <div class="an-kpi">
+            <div class="an-kpi__topo">
+                <span class="an-kpi__rotulo">% do consumo total</span>
+                <span class="an-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.21 15.89A10 10 0 1 1 8 2.83" /><path d="M22 12A10 10 0 0 0 12 2v10z" /></svg></span>
+            </div>
+            <div class="an-kpi__valor">@Model.ParticipacaoPercentual.ToString("N1")<small>%</small></div>
+            <div class="an-bar">
+                <span style="width:@(larguraParticipacao)%;"></span>
+            </div>
+            <span class="an-kpi__nota">da energia de todas as suas máquinas</span>
+        </div>
+
+    </div>
+
+    <details class="an-panel">
+
+        <summary>
+
+            <span class="an-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg></span>
+
+            <span class="an-panel__texto">
+                <span class="an-kicker">DADOS REGISTRADOS</span>
+                <h2>Utilização</h2>
             </span>
 
-            <h2>@tituloStatus</h2>
-
-            <p>@Model.Classificacao</p>
-
-            <p class="analise-hint">@orientacao</p>
-
-        </div>
-
-    </div>
-
-
-    <div class="analise-section">
-
-        <div class="analise-grid">
-
-            <div class="analise-info-card">
-                <span class="analise-card-label">Consumo informado</span>
-                <strong>
-                    @consumo.ConsumoKwhMes.ToString("N2")
-                    <small>kWh/mês</small>
-                </strong>
-            </div>
-
-            <div class="analise-result-card highlight">
-                <span class="analise-card-label">Consumo teórico</span>
-                <strong>
-                    @Model.ConsumoTeorico.ToString("N2")
-                    <small>kWh/mês</small>
-                </strong>
-            </div>
-
-            <div class="analise-info-card">
-                <span class="analise-card-label">Diferença percentual</span>
-                <strong>
-                    @Model.PercentualDiferenca.ToString("N2")%
-                </strong>
-                <small>@Model.DiferencaConsumo.ToString("N2") kWh/mês</small>
-            </div>
-
-            <div class="analise-info-card">
-                <span class="analise-card-label">Custo mensal</span>
-                <strong>
-                    R$ @Model.CustoMensal.ToString("N2")
-                </strong>
-            </div>
-
-        </div>
-
-    </div>
-
-
-    <details class="analise-collapse">
-
-        <summary>
-
-            <div>
-                <span class="analise-section-kicker">DADOS REGISTRADOS</span>
-                <h2>Utilização</h2>
-            </div>
-
-            <svg viewBox="0 0 24 24"
-                 fill="none"
-                 stroke="currentColor"
-                 stroke-width="2"
-                 stroke-linecap="round"
-                 stroke-linejoin="round">
-                <path d="m6 9 6 6 6-6" />
-            </svg>
+            <span class="an-panel__seta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></span>
 
         </summary>
 
-        <div class="analise-collapse-body">
+        <div class="an-panel__corpo">
 
-            <div class="analise-grid analise-grid-3">
+            <div class="an-stats">
 
-                <div class="analise-info-card">
-                    <span class="analise-card-label">Horas por dia</span>
-                    <strong>
-                        @consumo.HorasUsoDia.ToString("N2")
-                        <small>h</small>
-                    </strong>
+                <div class="an-stat">
+                    <span class="an-stat__rotulo">Horas por dia</span>
+                    <div class="an-stat__valor">@consumo.HorasUsoDia.ToString("N2") <small>h</small></div>
                 </div>
-
-                <div class="analise-info-card">
-                    <span class="analise-card-label">Dias por mês</span>
-                    <strong>
-                        @consumo.DiasUsoMes.ToString("N0")
-                        <small>dias</small>
-                    </strong>
+                <div class="an-stat">
+                    <span class="an-stat__rotulo">Dias por mês</span>
+                    <div class="an-stat__valor">@consumo.DiasUsoMes.ToString("N0") <small>dias</small></div>
                 </div>
-
-                <div class="analise-info-card">
-                    <span class="analise-card-label">Tarifa</span>
-                    <strong>
-                        R$ @consumo.TarifaKwh.ToString("N2")
-                        <small>/ kWh</small>
-                    </strong>
+                <div class="an-stat">
+                    <span class="an-stat__rotulo">Tarifa</span>
+                    <div class="an-stat__valor">R$ @consumo.TarifaKwh.ToString("N2") <small>/ kWh</small></div>
                 </div>
-
             </div>
 
         </div>
 
     </details>
 
-
-    <details class="analise-collapse">
+    <details class="an-panel">
 
         <summary>
 
-            <div>
-                <span class="analise-section-kicker">RESULTADOS</span>
+            <span class="an-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" /></svg></span>
+
+            <span class="an-panel__texto">
+                <span class="an-kicker">RESULTADOS</span>
                 <h2>Consumo energético</h2>
-            </div>
+            </span>
 
-            <svg viewBox="0 0 24 24"
-                 fill="none"
-                 stroke="currentColor"
-                 stroke-width="2"
-                 stroke-linecap="round"
-                 stroke-linejoin="round">
-                <path d="m6 9 6 6 6-6" />
-            </svg>
+            <span class="an-panel__seta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></span>
 
         </summary>
 
-        <div class="analise-collapse-body">
+        <div class="an-panel__corpo">
 
-            <div class="analise-grid analise-grid-3">
+            <div class="an-stats">
 
-                <div class="analise-result-card">
-                    <span class="analise-card-label">Consumo diário</span>
-                    <strong>
-                        @Model.ConsumoDiario.ToString("N2")
-                        <small>kWh/dia</small>
-                    </strong>
+                <div class="an-stat">
+                    <span class="an-stat__rotulo">Consumo mensal</span>
+                    <div class="an-stat__valor">@consumo.ConsumoKwhMes.ToString("N2") <small>kWh/mês</small></div>
                 </div>
-
-                <div class="analise-result-card">
-                    <span class="analise-card-label">Consumo por hora</span>
-                    <strong>
-                        @Model.ConsumoPorHora.ToString("N2")
-                        <small>kWh/h</small>
-                    </strong>
+                <div class="an-stat">
+                    <span class="an-stat__rotulo">Consumo diário</span>
+                    <div class="an-stat__valor">@Model.ConsumoDiario.ToString("N2") <small>kWh/dia</small></div>
                 </div>
-
-                <div class="analise-result-card">
-                    <span class="analise-card-label">Consumo anual</span>
-                    <strong>
-                        @Model.ConsumoAnual.ToString("N2")
-                        <small>kWh/ano</small>
-                    </strong>
+                <div class="an-stat">
+                    <span class="an-stat__rotulo">Consumo por hora</span>
+                    <div class="an-stat__valor">@Model.ConsumoPorHora.ToString("N2") <small>kWh/h</small></div>
                 </div>
-
+                <div class="an-stat">
+                    <span class="an-stat__rotulo">Consumo anual</span>
+                    <div class="an-stat__valor">@Model.ConsumoAnual.ToString("N2") <small>kWh/ano</small></div>
+                </div>
             </div>
 
         </div>
 
     </details>
 
-
-    <details class="analise-collapse">
+    <details class="an-panel">
 
         <summary>
 
-            <div>
-                <span class="analise-section-kicker">IMPACTO FINANCEIRO</span>
-                <h2>Custos estimados</h2>
-            </div>
+            <span class="an-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1" /><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4" /></svg></span>
 
-            <svg viewBox="0 0 24 24"
-                 fill="none"
-                 stroke="currentColor"
-                 stroke-width="2"
-                 stroke-linecap="round"
-                 stroke-linejoin="round">
-                <path d="m6 9 6 6 6-6" />
-            </svg>
+            <span class="an-panel__texto">
+                <span class="an-kicker">FINANCEIRO</span>
+                <h2>Custos estimados</h2>
+            </span>
+
+            <span class="an-panel__seta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg></span>
 
         </summary>
 
-        <div class="analise-collapse-body">
+        <div class="an-panel__corpo">
 
-            <div class="analise-grid">
+            <div class="an-stats">
 
-                <div class="analise-info-card">
-                    <span class="analise-card-label">Custo por hora</span>
-                    <strong>R$ @Model.CustoPorHora.ToString("N2")</strong>
+                <div class="an-stat">
+                    <span class="an-stat__rotulo">Custo por hora</span>
+                    <div class="an-stat__valor">R$ @Model.CustoPorHora.ToString("N2")</div>
                 </div>
-
-                <div class="analise-info-card">
-                    <span class="analise-card-label">Custo diário</span>
-                    <strong>R$ @Model.CustoDiario.ToString("N2")</strong>
+                <div class="an-stat">
+                    <span class="an-stat__rotulo">Custo diário</span>
+                    <div class="an-stat__valor">R$ @Model.CustoDiario.ToString("N2")</div>
                 </div>
-
-                <div class="analise-info-card">
-                    <span class="analise-card-label">Custo mensal</span>
-                    <strong>R$ @Model.CustoMensal.ToString("N2")</strong>
+                <div class="an-stat">
+                    <span class="an-stat__rotulo">Custo mensal</span>
+                    <div class="an-stat__valor">R$ @Model.CustoMensal.ToString("N2")</div>
                 </div>
-
-                <div class="analise-info-card">
-                    <span class="analise-card-label">Custo anual</span>
-                    <strong>R$ @Model.CustoAnual.ToString("N2")</strong>
+                <div class="an-stat">
+                    <span class="an-stat__rotulo">Custo anual</span>
+                    <div class="an-stat__valor">R$ @Model.CustoAnual.ToString("N2")</div>
                 </div>
-
             </div>
 
         </div>

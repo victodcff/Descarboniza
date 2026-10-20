@@ -1,4 +1,4 @@
-@model Descarboniza.Areas.Identity.Data.Consumo
+﻿@model Descarboniza.Areas.Identity.Data.Consumo
 
 @{
     ViewData["Title"] = "Novo Consumo";
@@ -52,7 +52,8 @@
 
                         @foreach (var maquina in ViewBag.Maquinas)
                         {
-                            <option value="@maquina.IdMaquina">
+                            <option value="@maquina.IdMaquina"
+                                    data-potencia="@(((double)maquina.Potencia).ToString("R", System.Globalization.CultureInfo.InvariantCulture))">
                                 @maquina.Fabricante - @maquina.Modelo
                             </option>
                         }
@@ -160,32 +161,34 @@
             <div class="form-section">
 
                 <div class="form-section-title">
-                    Consumo
+                    Consumo estimado
                 </div>
 
                 <div class="form-grid-2">
 
                     <div class="form-group">
 
-                        <label asp-for="ConsumoKwhMes" class="form-label">
+                        <label class="form-label" for="consumoCalculado">
                             Consumo mensal
                         </label>
 
                         <div class="input-with-unit">
 
-                            <input asp-for="ConsumoKwhMes"
-                                   type="text"
-                                   inputmode="decimal"
-                                   class="form-control decimal"
-                                   placeholder="0,00"
-                                   data-val="false" />
+                            <input type="text"
+                                   id="consumoCalculado"
+                                   class="form-control"
+                                   value="—"
+                                   data-fator="@(Descarboniza.Services.EmissaoCarbonoService.FatorEmissaoPadrao.ToString(System.Globalization.CultureInfo.InvariantCulture))"
+                                   readonly
+                                   tabindex="-1" />
 
                             <span>kWh</span>
 
                         </div>
 
-                        <span asp-validation-for="ConsumoKwhMes"
-                              class="text-danger"></span>
+                        <span class="form-hint">
+                            Calculado automaticamente: potência da máquina × horas por dia × dias por mês.
+                        </span>
 
                     </div>
 
@@ -215,6 +218,11 @@
                     </div>
 
                 </div>
+
+                <span class="form-hint"
+                      id="estimativa"
+                      style="display:block;margin-top:10px"
+                      aria-live="polite"></span>
 
             </div>
 
@@ -271,6 +279,66 @@
                     });
 
             });
+
+    </script>
+
+    <script>
+
+        (function () {
+
+            var selecao = document.getElementById("IdMaquina");
+            var horas = document.getElementById("HorasUsoDia");
+            var dias = document.getElementById("DiasUsoMes");
+            var tarifa = document.getElementById("TarifaKwh");
+            var saida = document.getElementById("consumoCalculado");
+            var estimativa = document.getElementById("estimativa");
+
+            if (!selecao || !horas || !dias || !tarifa || !saida || !estimativa) {
+                return;
+            }
+
+            var fator = parseFloat(saida.getAttribute("data-fator")) || 0;
+
+            function numero(valor) {
+                var n = parseFloat(String(valor).replace(",", "."));
+                return isNaN(n) ? 0 : n;
+            }
+
+            function formatar(n) {
+                return n.toLocaleString("pt-BR", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            }
+
+            function atualizar() {
+
+                var opcao = selecao.options[selecao.selectedIndex];
+                var potencia = opcao ? numero(opcao.getAttribute("data-potencia")) : 0;
+                var kwh = potencia * numero(horas.value) * numero(dias.value);
+
+                if (potencia <= 0 || kwh <= 0) {
+                    saida.value = "—";
+                    estimativa.textContent = "";
+                    return;
+                }
+
+                saida.value = formatar(kwh);
+
+                estimativa.textContent =
+                    "Custo estimado: R$ " + formatar(kwh * numero(tarifa.value)) +
+                    " por mês  ·  Emissão estimada: " + formatar(kwh * fator) +
+                    " kg CO₂ por mês";
+            }
+
+            [selecao, horas, dias, tarifa].forEach(function (campo) {
+                campo.addEventListener("input", atualizar);
+                campo.addEventListener("change", atualizar);
+            });
+
+            atualizar();
+
+        })();
 
     </script>
 }
