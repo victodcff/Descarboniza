@@ -385,6 +385,15 @@ html[data-theme="dark"] .an-warning {
 
 /* ---------- Lista de análises ---------- */
 
+/* Colunas centralizadas: o título fica exatamente sobre os valores */
+.an-list .data-table .an-col {
+    text-align: center;
+}
+
+.an-list .data-table .table-actions {
+    justify-content: center;
+}
+
 .an-share {
     display: flex;
     flex-direction: column;

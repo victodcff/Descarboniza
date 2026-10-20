@@ -4,7 +4,142 @@
 @{
     ViewData["Title"] = "Perfil";
     ViewData["ActivePage"] = ManageNavPages.Index;
+
+    var fotoVersao = User.FindFirst("FotoVersao")?.Value;
+    var temFoto = !string.IsNullOrEmpty(fotoVersao);
+    var inicial = (User.FindFirst("Nome")?.Value ?? Model.Email ?? "U").Trim();
+    inicial = inicial.Length > 0 ? inicial.Substring(0, 1).ToUpper() : "U";
 }
+
+<style>
+    .dsc-foto__linha {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+    }
+
+    .dsc-foto__avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 96px;
+        height: 96px;
+        min-width: 96px;
+        overflow: hidden;
+        border-radius: 50%;
+        background: #72bd36;
+        color: #fff;
+        font-size: 38px;
+        font-weight: 700;
+    }
+
+        .dsc-foto__avatar img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .dsc-foto__acoes {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .dsc-foto__acoes form {
+            margin: 0;
+        }
+
+        .dsc-foto__acoes .form-submit,
+        .dsc-foto__acoes .form-cancel {
+            width: auto;
+            margin: 0;
+        }
+
+    .dsc-foto__erro {
+        flex-basis: 100%;
+        margin: 2px 0 0;
+        color: #b3261e;
+        font-size: 13px;
+    }
+
+    html[data-theme="dark"] .dsc-foto__erro {
+        color: #f0a3a3;
+    }
+
+    @@media (max-width: 520px) {
+        .dsc-foto__linha {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<section class="dsc-card">
+
+    <h2 class="dsc-card__title">Foto de perfil</h2>
+
+    <div class="dsc-foto__linha">
+
+        <div class="dsc-foto__avatar">
+            @if (temFoto)
+            {
+                <img src="@Url.Content("~/Perfil/Foto")?v=@fotoVersao"
+                     alt="Sua foto de perfil" />
+            }
+            else
+            {
+                <span>@inicial</span>
+            }
+        </div>
+
+        <div class="dsc-foto__acoes">
+
+            <form id="foto-form"
+                  method="post"
+                  enctype="multipart/form-data"
+                  asp-area=""
+                  asp-controller="FotoPerfil"
+                  asp-action="Enviar">
+
+                <input type="file"
+                       id="foto-arquivo"
+                       accept="image/*"
+                       hidden />
+
+                <button type="button"
+                        id="foto-escolher"
+                        class="form-submit">
+                    @(temFoto ? "Trocar foto" : "Escolher foto")
+                </button>
+
+            </form>
+
+            @if (temFoto)
+            {
+                <form method="post"
+                      asp-area=""
+                      asp-controller="FotoPerfil"
+                      asp-action="Remover">
+
+                    <button type="submit" class="form-cancel">
+                        Remover foto
+                    </button>
+
+                </form>
+            }
+
+            <p id="foto-erro"
+               class="dsc-foto__erro"
+               role="alert"
+               hidden></p>
+
+        </div>
+
+    </div>
+
+</section>
 
 <section class="dsc-card">
 
@@ -114,4 +249,140 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        (function () {
+            var botao = document.getElementById("foto-escolher");
+            var entrada = document.getElementById("foto-arquivo");
+            var formulario = document.getElementById("foto-form");
+            var erro = document.getElementById("foto-erro");
+
+            if (!botao || !entrada || !formulario || !erro) {
+                return;
+            }
+
+            var textoOriginal = botao.textContent;
+
+            function mostrarErro(texto) {
+                erro.textContent = texto || "";
+                erro.hidden = !texto;
+            }
+
+            // Corta no centro em quadrado, reduz para 256x256 e converte para JPEG
+            function reduzir(arquivo) {
+                return new Promise(function (resolve, reject) {
+                    var endereco = URL.createObjectURL(arquivo);
+                    var imagem = new Image();
+
+                    imagem.onload = function () {
+                        var lado = Math.min(imagem.naturalWidth, imagem.naturalHeight);
+
+                        if (!lado) {
+                            URL.revokeObjectURL(endereco);
+                            reject(new Error("vazia"));
+                            return;
+                        }
+
+                        var tela = document.createElement("canvas");
+                        tela.width = 256;
+                        tela.height = 256;
+
+                        var contexto = tela.getContext("2d");
+                        // Fundo branco: PNG transparente não vira preto no JPEG
+                        contexto.fillStyle = "#ffffff";
+                        contexto.fillRect(0, 0, 256, 256);
+                        contexto.imageSmoothingQuality = "high";
+                        contexto.drawImage(
+                            imagem,
+                            (imagem.naturalWidth - lado) / 2,
+                            (imagem.naturalHeight - lado) / 2,
+                            lado, lado,
+                            0, 0, 256, 256);
+
+                        URL.revokeObjectURL(endereco);
+
+                        tela.toBlob(function (blob) {
+                            if (blob) { resolve(blob); } else { reject(new Error("falha")); }
+                        }, "image/jpeg", 0.88);
+                    };
+
+                    imagem.onerror = function () {
+                        URL.revokeObjectURL(endereco);
+                        reject(new Error("ilegivel"));
+                    };
+
+                    imagem.src = endereco;
+                });
+            }
+
+            function enviar(blob) {
+                var campoToken = formulario.querySelector('input[name="__RequestVerificationToken"]');
+                var dados = new FormData();
+
+                dados.append("arquivo", blob, "foto.jpg");
+
+                if (campoToken) {
+                    dados.append("__RequestVerificationToken", campoToken.value);
+                }
+
+                botao.disabled = true;
+                botao.textContent = "Enviando…";
+
+                return fetch(formulario.action, {
+                    method: "POST",
+                    body: dados,
+                    credentials: "same-origin"
+                })
+                    .then(function (resposta) {
+                        return resposta.json()
+                            .catch(function () { return {}; })
+                            .then(function (json) { return { ok: resposta.ok, json: json }; });
+                    })
+                    .then(function (resultado) {
+                        if (resultado.ok && resultado.json.ok) {
+                            // Recarrega para a foto nova aparecer aqui e na barra lateral
+                            window.location.reload();
+                            return;
+                        }
+
+                        throw new Error(resultado.json.erro || "Não foi possível enviar a foto. Tente novamente.");
+                    });
+            }
+
+            function restaurar() {
+                botao.disabled = false;
+                botao.textContent = textoOriginal;
+                entrada.value = "";
+            }
+
+            botao.addEventListener("click", function () {
+                entrada.click();
+            });
+
+            entrada.addEventListener("change", function () {
+                var arquivo = entrada.files && entrada.files[0];
+
+                if (!arquivo) {
+                    return;
+                }
+
+                mostrarErro("");
+
+                if (!/^image\//.test(arquivo.type)) {
+                    mostrarErro("Escolha um arquivo de imagem (JPG, PNG ou WEBP).");
+                    restaurar();
+                    return;
+                }
+
+                reduzir(arquivo)
+                    .then(enviar, function () {
+                        throw new Error("Não foi possível ler essa imagem. Tente outra.");
+                    })
+                    .catch(function (e) {
+                        mostrarErro(e.message);
+                        restaurar();
+                    });
+            });
+        })();
+    </script>
 }

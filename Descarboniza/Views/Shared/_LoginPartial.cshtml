@@ -19,9 +19,28 @@
 
         <div class="sidebar-account-header">
 
+            @{
+                var inicial = primeiroNome.Substring(0, 1).ToUpper();
+                var fotoVersao = User.FindFirst("FotoVersao")?.Value;
+                var fotoUrl = string.IsNullOrEmpty(fotoVersao)
+                    ? null
+                    : Url.Content("~/Perfil/Foto") + "?v=" + fotoVersao;
+            }
+
             <div class="sidebar-user-icon">
 
-                @(primeiroNome.Substring(0, 1).ToUpper())
+                @if (fotoUrl != null)
+                {
+                    <img src="@fotoUrl"
+                         alt=""
+                         data-inicial="@inicial"
+                         onerror="this.replaceWith(document.createTextNode(this.dataset.inicial))"
+                         style="display:block;width:100%;height:100%;border-radius:50%;object-fit:cover;" />
+                }
+                else
+                {
+                    <text>@inicial</text>
+                }
 
             </div>
 

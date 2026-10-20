@@ -63,6 +63,8 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<EmissaoCarbonoService>();
 
+builder.Services.AddScoped<FotoPerfilService>();
+
 var iaBaseUrl = builder.Configuration["IaService:BaseUrl"] ?? "http://127.0.0.1:8000/";
 var iaToken = builder.Configuration["IaService:Token"];
 
@@ -170,6 +172,7 @@ app.MapControllerRoute(
 using (var escopo = app.Services.CreateScope())
 {
     await AdminSeedService.GarantirAdminAsync(escopo.ServiceProvider);
+    await escopo.ServiceProvider.GetRequiredService<FotoPerfilService>().GarantirTabelaAsync();
 }
 
 app.Run();
