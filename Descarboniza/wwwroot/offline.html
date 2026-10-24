@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#4d9f20" />
+    <title>Sem conexão - Descarboniza</title>
+    <style>
+        :root {
+            --bg: #f3f6f4;
+            --card: #ffffff;
+            --texto: #1f2a22;
+            --suave: #5b6b60;
+            --verde: #4d9f20;
+            --borda: #dfe7e1;
+        }
+
+        html[data-theme="dark"] {
+            --bg: #121714;
+            --card: #1a211d;
+            --texto: #e8efe9;
+            --suave: #9fb0a4;
+            --borda: #2b352e;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            background: var(--bg);
+            color: var(--texto);
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+        }
+
+        main {
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+            background: var(--card);
+            border: 1px solid var(--borda);
+            border-radius: 18px;
+            padding: 32px 24px;
+        }
+
+        img {
+            width: 84px;
+            height: 84px;
+        }
+
+        h1 {
+            font-size: 1.35rem;
+            margin: 16px 0 8px;
+        }
+
+        p {
+            margin: 0 0 20px;
+            color: var(--suave);
+            line-height: 1.5;
+        }
+
+        button {
+            font: inherit;
+            font-weight: 600;
+            color: #fff;
+            background: var(--verde);
+            border: 0;
+            border-radius: 12px;
+            padding: 12px 22px;
+            cursor: pointer;
+            min-height: 44px;
+        }
+
+            button:hover {
+                filter: brightness(1.08);
+            }
+    </style>
+    <script>
+        try { if (localStorage.getItem("descarboniza-tema") === "dark") document.documentElement.setAttribute("data-theme", "dark"); } catch (e) { }
+    </script>
+</head>
+<body>
+    <main>
+        <img src="/img/logo.png" alt="Descarboniza" />
+        <h1>Você está sem conexão</h1>
+        <p>Não foi possível carregar o Descarboniza. Verifique sua internet e tente novamente.</p>
+        <button type="button" onclick="location.reload()">Tentar novamente</button>
+    </main>
+</body>
+</html>

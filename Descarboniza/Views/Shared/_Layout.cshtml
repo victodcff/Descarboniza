@@ -15,7 +15,15 @@
     </title>
 
     <link rel="icon" type="image/png" href="~/img/logo.png" asp-append-version="true" />
-    <link rel="apple-touch-icon" href="~/img/logo.png" asp-append-version="true" />
+    <link rel="apple-touch-icon" href="~/img/pwa/apple-touch-icon.png" asp-append-version="true" />
+
+    <!-- PWA: permite instalar o site como aplicativo -->
+    <link rel="manifest" href="~/manifest.webmanifest" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Descarboniza" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
 
     <link rel="stylesheet"
           href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -562,6 +570,18 @@
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+            // PWA: registra o service worker (só funciona em HTTPS ou localhost)
+            if ("serviceWorker" in navigator) {
+                window.addEventListener("load", function () {
+                    navigator.serviceWorker
+                        .register("@Url.Content("~/sw.js")")
+                        .catch(function () { });
+                });
+            }
+    </script>
+
 
 </body>
 
