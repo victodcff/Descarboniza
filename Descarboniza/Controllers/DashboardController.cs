@@ -48,9 +48,6 @@ public class DashboardController : Controller
 
         foreach (var consumo in maisRecentes)
         {
-            var teorico = _analiseService.CalcularConsumoTeorico(consumo);
-            var percentual = _analiseService.CalcularPercentualDiferenca(consumo);
-
             itens.Add(new DashboardMaquinaItem
             {
                 IdConsumo = consumo.IdConsumo,
@@ -58,8 +55,7 @@ public class DashboardController : Controller
                 Modelo = consumo.Maquina?.Modelo ?? string.Empty,
                 ConsumoKwh = consumo.ConsumoKwhMes,
                 CustoMensal = _analiseService.CalcularCustoMensal(consumo),
-                EmissaoKgCo2 = _emissaoService.CalcularEmissao(consumo.ConsumoKwhMes),
-                Status = AnaliseStatus.Obter(teorico, percentual)
+                EmissaoKgCo2 = _emissaoService.CalcularEmissao(consumo.ConsumoKwhMes)
             });
         }
 
@@ -87,9 +83,6 @@ public class DashboardController : Controller
             CustoMensal = custoMensal,
             CustoAnual = custoMensal * 12,
             EmissaoMensalKgCo2 = itens.Sum(i => i.EmissaoKgCo2),
-            MaquinasAcimaDoTeorico = itens.Count(i => i.Status == "alerta"),
-            MaquinasAbaixoDoTeorico = itens.Count(i => i.Status == "abaixo"),
-            MaquinasProximasDoTeorico = itens.Count(i => i.Status == "proximo"),
             Maquinas = itens
         };
 

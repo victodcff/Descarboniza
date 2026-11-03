@@ -16,14 +16,6 @@
         return Math.Max(valor / maximo * 100, 3).ToString("0.0", inv);
     }
 
-    string RotuloStatus(string status) => status switch
-    {
-        "alerta" => "Acima do teórico",
-        "abaixo" => "Abaixo do teórico",
-        "proximo" => "Dentro do esperado",
-        _ => "Sem análise"
-    };
-
     var temDados = Model.Maquinas.Count > 0;
 
     var ranking = Model.Maquinas.Take(5).ToList();
@@ -36,35 +28,6 @@
     var maxConsumo = temDados ? Model.Maquinas.Max(m => m.ConsumoKwh) : 0;
     var maxCusto = temDados ? Model.Maquinas.Max(m => m.CustoMensal) : 0;
     var maxEmissao = temDados ? Model.Maquinas.Max(m => m.EmissaoKgCo2) : 0;
-
-    var foraDoEsperado = Model.MaquinasAcimaDoTeorico + Model.MaquinasAbaixoDoTeorico;
-
-    var classeInsight =
-        Model.MaquinasAbaixoDoTeorico > 0 ? "danger" :
-        Model.MaquinasAcimaDoTeorico > 0 ? "alerta" :
-        "ok";
-
-    string tituloInsight;
-    string textoInsight;
-
-    if (foraDoEsperado > 0)
-    {
-        tituloInsight = foraDoEsperado == 1
-            ? "1 máquina fora do esperado"
-            : $"{foraDoEsperado} máquinas fora do esperado";
-
-        textoInsight = "O consumo informado difere mais de 10% do consumo teórico. Revise os dados dessas máquinas.";
-    }
-    else if (Model.MaquinasProximasDoTeorico > 0)
-    {
-        tituloInsight = "Tudo dentro do esperado";
-        textoInsight = "O consumo informado está coerente com a potência e o uso das suas máquinas.";
-    }
-    else
-    {
-        tituloInsight = "Análise indisponível";
-        textoInsight = "Informe potência, horas e dias de uso válidos para calcular o consumo teórico.";
-    }
 }
 
 <div class="dsh-page">
@@ -217,43 +180,34 @@
                 </section>
 
 
-                <section class="dsh-card dsh-insight dsh-insight--@classeInsight">
+                @{
+                    // Máquina que mais consome (a lista já vem ordenada do maior para o menor)
+                    var maior = Model.Maquinas[0];
+                }
+
+                <section class="dsh-card dsh-insight dsh-insight--ok">
 
                     <div class="dsh-insight__icon">
 
-                        @if (classeInsight == "ok")
-                        {
-                            <svg viewBox="0 0 24 24"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 stroke-width="2"
-                                 stroke-linecap="round"
-                                 stroke-linejoin="round"
-                                 aria-hidden="true">
-                                <circle cx="12" cy="12" r="9" />
-                                <path d="M8 12.5l3 3 5-6" />
-                            </svg>
-                        }
-                        else
-                        {
-                            <svg viewBox="0 0 24 24"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 stroke-width="2"
-                                 stroke-linecap="round"
-                                 stroke-linejoin="round"
-                                 aria-hidden="true">
-                                <path d="M12 9v4" />
-                                <path d="M12 17h.01" />
-                                <path d="M10.3 3.5 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3L13.7 3.5a2 2 0 0 0-3.4 0Z" />
-                            </svg>
-                        }
+                        <svg viewBox="0 0 24 24"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="2"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             aria-hidden="true">
+                            <path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z" />
+                        </svg>
 
                     </div>
 
-                    <h2 class="dsh-insight__title">@tituloInsight</h2>
+                    <h2 class="dsh-insight__title">Maior consumo</h2>
 
-                    <p class="dsh-insight__text">@textoInsight</p>
+                    <p class="dsh-insight__text">
+                        <strong>@maior.Fabricante @maior.Modelo</strong>
+                        responde por @maior.PercentualDoTotal.ToString("N1")%
+                        do consumo total, cerca de @maior.ConsumoKwh.ToString("N0") kWh por mês.
+                    </p>
 
                     <a asp-controller="Consumo"
                        asp-action="Analises"
@@ -303,11 +257,6 @@
                                     <strong>@item.ConsumoKwh.ToString("N0") kWh</strong>
                                     <small>@item.PercentualDoTotal.ToString("N1")%</small>
                                 </div>
-
-                                <span class="dsh-dot dsh-dot--@item.Status"
-                                      role="img"
-                                      aria-label="@RotuloStatus(item.Status)"
-                                      title="@RotuloStatus(item.Status)"></span>
 
                                 <div class="dsh-rank__bar">
                                     <span style="width:@(Largura(item.ConsumoKwh, maxConsumo))%"></span>
