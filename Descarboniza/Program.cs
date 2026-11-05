@@ -56,6 +56,9 @@ builder.Services.Configure<ForwardedHeadersOptions>(opcoes =>
     opcoes.KnownProxies.Clear();
 });
 
+// Guarda em memória as sugestões de retrofit (cache) e o intervalo entre pedidos.
+builder.Services.AddMemoryCache();
+
 builder.Services.AddScoped<AnaliseConsumoService>();
 
 // Add services to the container.

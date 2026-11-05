@@ -11,6 +11,7 @@
 }
 
 <link rel="stylesheet" href="~/css/analise.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/retrofit.css" asp-append-version="true" />
 
 <div class="data-page analise-page an-page">
 
@@ -125,7 +126,7 @@
 
                 <div class="an-stat">
                     <span class="an-stat__rotulo">Horas por dia</span>
-                    <div class="an-stat__valor">@consumo.HorasUsoDia.ToString("N2") <small>h</small></div>
+                    <div class="an-stat__valor">@Descarboniza.Helpers.FormatoHelper.Horas(consumo.HorasUsoDia)</div>
                 </div>
                 <div class="an-stat">
                     <span class="an-stat__rotulo">Dias por mês</span>
@@ -224,6 +225,34 @@
     </details>
 
 
+    <section class="an-panel rt-card"
+             id="retrofit"
+             data-url="@Url.Action("SugerirRetrofit", "Consumo")"
+             data-id="@consumo.IdConsumo">
+
+        @Html.AntiForgeryToken()
+
+        <div class="rt-head">
+
+            <span class="an-chip" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z" /><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z" /></svg>
+            </span>
+
+            <div class="rt-head__texto">
+                <h2>Sugestões de retrofit</h2>
+                <p>Melhorias possíveis para esta máquina consumir menos energia.</p>
+            </div>
+
+            <button type="button" class="form-submit rt-btn" id="rt-gerar">Ver sugestões</button>
+
+        </div>
+
+        <div class="rt-status" id="rt-status" role="status" aria-live="polite" hidden></div>
+
+        <div class="rt-resultado" id="rt-resultado" hidden></div>
+
+    </section>
+
     <div class="details-footer-actions end">
 
         <div class="details-footer-group">
@@ -244,3 +273,7 @@
     </div>
 
 </div>
+
+@section Scripts {
+    <script src="~/js/retrofit.js" asp-append-version="true"></script>
+}

@@ -1,4 +1,4 @@
-@model IEnumerable<Descarboniza.Areas.Identity.Data.Consumo>
+﻿@model IEnumerable<Descarboniza.Areas.Identity.Data.Consumo>
 
 @{
     ViewData["Title"] = "Consumos";
@@ -99,8 +99,7 @@
                                 </td>
 
                                 <td class="table-number">
-                                    @item.HorasUsoDia.ToString("N2")
-                                    <span class="table-unit">h</span>
+                                    @Descarboniza.Helpers.FormatoHelper.Horas(item.HorasUsoDia)
                                 </td>
 
                                 <td class="table-number">

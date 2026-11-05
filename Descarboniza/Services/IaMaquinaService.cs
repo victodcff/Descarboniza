@@ -1,4 +1,5 @@
-using System.Net;
+﻿using System.Net;
+using System.Net.Http.Json;
 using System.Text.Json;
 using Descarboniza.ViewModels;
 
@@ -139,6 +140,201 @@ namespace Descarboniza.Services
                 return Falha("Resposta inválida do serviço de IA.");
             }
         }
+
+        /// <summary>
+        /// Pede à IA sugestões qualitativas de retrofit. Nunca lança erro:
+        /// em caso de falha devolve Sucesso = false com uma mensagem amigável.
+        /// </summary>
+        public async Task<RetrofitResponse> SugerirRetrofitAsync(
+            RetrofitRequest dados,
+            CancellationToken ct = default)
+        {
+            try
+            {
+                HttpResponseMessage resposta;
+
+                for (var tentativa = 1; ; tentativa++)
+                {
+                    try
+                    {
+                        resposta = await _http.PostAsJsonAsync("sugerir-retrofit", dados, JsonOptions, ct);
+                    }
+                    catch (HttpRequestException) when (tentativa < Tentativas)
+                    {
+                        _logger.LogWarning(
+                            "Retrofit: IA ainda não respondeu (tentativa {Tentativa}). Aguardando...",
+                            tentativa);
+
+                        await Task.Delay(EsperaEntreTentativas, ct);
+                        continue;
+                    }
+
+                    // Página de "acordando" do Render (não é JSON): tenta de novo.
+                    if (!EhJson(resposta) && tentativa < Tentativas)
+                    {
+                        _logger.LogWarning(
+                            "Retrofit: IA respondeu {Status} sem JSON (tentativa {Tentativa}). Aguardando...",
+                            (int)resposta.StatusCode, tentativa);
+
+                        resposta.Dispose();
+                        await Task.Delay(EsperaEntreTentativas, ct);
+                        continue;
+                    }
+
+                    break;
+                }
+
+                using (resposta)
+                {
+                    if (resposta.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        _logger.LogError("Retrofit: IA recusou o token (401). Verifique IaService:Token.");
+                        return FalhaRetrofit("Serviço de IA não configurado corretamente.");
+                    }
+
+                    var corpo = await resposta.Content.ReadAsStringAsync(ct);
+
+                    // 422 = a IA rejeitou os dados enviados (ex.: potência zerada).
+                    if (resposta.StatusCode == HttpStatusCode.UnprocessableEntity)
+                        return FalhaRetrofit("Os dados desta máquina não são suficientes para gerar sugestões.");
+
+                    var resultado = JsonSerializer.Deserialize<RetrofitResponse>(corpo, JsonOptions);
+
+                    if (resultado is null)
+                        return FalhaRetrofit("Resposta inválida do serviço de IA.");
+
+                    if (!resposta.IsSuccessStatusCode)
+                    {
+                        _logger.LogWarning("Retrofit: IA respondeu {Status}.", (int)resposta.StatusCode);
+                        resultado.Sucesso = false;
+
+                        if (string.IsNullOrWhiteSpace(resultado.Erro))
+                            resultado.Erro = "Não foi possível gerar as sugestões agora.";
+                    }
+
+                    return resultado;
+                }
+            }
+            catch (OperationCanceledException) when (ct.IsCancellationRequested)
+            {
+                throw;
+            }
+            catch (TaskCanceledException)
+            {
+                _logger.LogWarning("Retrofit: timeout ao chamar o serviço de IA.");
+                return FalhaRetrofit("A IA demorou demais. Tente novamente em instantes.");
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "Retrofit: serviço de IA inacessível.");
+                return FalhaRetrofit("Serviço de IA indisponível no momento.");
+            }
+            catch (JsonException ex)
+            {
+                _logger.LogError(ex, "Retrofit: resposta da IA fora do formato esperado.");
+                return FalhaRetrofit("Resposta inválida do serviço de IA.");
+            }
+        }
+
+        private static RetrofitResponse FalhaRetrofit(string mensagem) =>
+            new() { Sucesso = false, Erro = mensagem };
+
+        /// <summary>
+        /// Envia a conversa para a IA e devolve a resposta. Nunca lança erro:
+        /// em caso de falha devolve Sucesso = false com uma mensagem amigável.
+        /// </summary>
+        public async Task<ChatIaResponse> ConversarAsync(
+            ChatIaRequest pedido,
+            CancellationToken ct = default)
+        {
+            try
+            {
+                HttpResponseMessage resposta;
+
+                for (var tentativa = 1; ; tentativa++)
+                {
+                    try
+                    {
+                        resposta = await _http.PostAsJsonAsync("chat", pedido, JsonOptions, ct);
+                    }
+                    catch (HttpRequestException) when (tentativa < Tentativas)
+                    {
+                        _logger.LogWarning(
+                            "Chat: IA ainda não respondeu (tentativa {Tentativa}). Aguardando...",
+                            tentativa);
+
+                        await Task.Delay(EsperaEntreTentativas, ct);
+                        continue;
+                    }
+
+                    // Página de "acordando" do Render (não é JSON): tenta de novo.
+                    if (!EhJson(resposta) && tentativa < Tentativas)
+                    {
+                        _logger.LogWarning(
+                            "Chat: IA respondeu {Status} sem JSON (tentativa {Tentativa}). Aguardando...",
+                            (int)resposta.StatusCode, tentativa);
+
+                        resposta.Dispose();
+                        await Task.Delay(EsperaEntreTentativas, ct);
+                        continue;
+                    }
+
+                    break;
+                }
+
+                using (resposta)
+                {
+                    if (resposta.StatusCode == HttpStatusCode.Unauthorized)
+                    {
+                        _logger.LogError("Chat: IA recusou o token (401). Verifique IaService:Token.");
+                        return FalhaChat("Serviço de IA não configurado corretamente.");
+                    }
+
+                    var corpo = await resposta.Content.ReadAsStringAsync(ct);
+
+                    if (resposta.StatusCode == HttpStatusCode.UnprocessableEntity)
+                        return FalhaChat("Não consegui entender essa conversa. Comece uma nova.");
+
+                    var resultado = JsonSerializer.Deserialize<ChatIaResponse>(corpo, JsonOptions);
+
+                    if (resultado is null)
+                        return FalhaChat("Resposta inválida do serviço de IA.");
+
+                    if (!resposta.IsSuccessStatusCode)
+                    {
+                        _logger.LogWarning("Chat: IA respondeu {Status}.", (int)resposta.StatusCode);
+                        resultado.Sucesso = false;
+
+                        if (string.IsNullOrWhiteSpace(resultado.Erro))
+                            resultado.Erro = "Não foi possível responder agora.";
+                    }
+
+                    return resultado;
+                }
+            }
+            catch (OperationCanceledException) when (ct.IsCancellationRequested)
+            {
+                throw;
+            }
+            catch (TaskCanceledException)
+            {
+                _logger.LogWarning("Chat: timeout ao chamar o serviço de IA.");
+                return FalhaChat("A IA demorou demais. Tente novamente em instantes.");
+            }
+            catch (HttpRequestException ex)
+            {
+                _logger.LogError(ex, "Chat: serviço de IA inacessível.");
+                return FalhaChat("Serviço de IA indisponível no momento.");
+            }
+            catch (JsonException ex)
+            {
+                _logger.LogError(ex, "Chat: resposta da IA fora do formato esperado.");
+                return FalhaChat("Resposta inválida do serviço de IA.");
+            }
+        }
+
+        private static ChatIaResponse FalhaChat(string mensagem) =>
+            new() { Sucesso = false, Erro = mensagem };
 
         private static bool EhJson(HttpResponseMessage resposta) =>
             string.Equals(

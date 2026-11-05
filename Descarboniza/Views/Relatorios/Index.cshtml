@@ -1,0 +1,235 @@
+@model Descarboniza.ViewModels.RelatorioViewModel
+@using System.Globalization
+
+@{
+    ViewData["Title"] = "Relatórios";
+    var pt = new CultureInfo("pt-BR");
+}
+
+<link rel="stylesheet" href="~/css/relatorios.css" asp-append-version="true" />
+
+<div class="data-page rel-page" id="rel" data-csv="@Url.Action("Csv", "Relatorios")">
+
+    <div class="data-page-header">
+        <div class="data-page-title-wrap">
+            <span class="data-page-kicker">EXPORTAÇÃO</span>
+            <h1>Relatórios</h1>
+            <p class="data-page-description">
+                Consumo, custo e emissão dos seus equipamentos, prontos para baixar.
+            </p>
+        </div>
+    </div>
+
+    @* Versão de impressão / PDF (só aparece ao imprimir; preenchida pelo relatorios.js) *@
+    <div class="rel-impressao" id="relImpressao" data-usuario="@Model.NomeUsuario" data-gerado="@Model.GeradoEm.ToString("dd/MM/yyyy 'às' HH:mm", pt)">
+
+        <header class="ri-topo">
+            <div class="ri-marca">
+                <span class="ri-logo">DES<b>CARBONIZA</b></span>
+                <small>Gestão de energia e emissões de CO₂</small>
+            </div>
+            <div class="ri-meta">
+                <strong>Relatório de consumo e emissões</strong>
+                <span>Emitido em @Model.GeradoEm.ToString("dd/MM/yyyy 'às' HH:mm", pt)</span>
+                <span>Conta: @Model.NomeUsuario</span>
+            </div>
+        </header>
+
+        <p class="ri-escopo">Escopo: <b id="riEscopo"></b></p>
+
+        <div class="ri-kpis">
+            <div><span>Consumo mensal</span><strong id="riKwh"></strong></div>
+            <div><span>Custo mensal</span><strong id="riCusto"></strong></div>
+            <div><span>Emissão mensal</span><strong id="riCo2"></strong></div>
+            <div><span>Equipamentos</span><strong id="riQtd"></strong></div>
+        </div>
+
+        <p class="ri-destaque" id="riDestaque"></p>
+
+        <h2 class="ri-titulo">Detalhamento por equipamento</h2>
+
+        <table class="ri-tabela">
+            <thead>
+                <tr>
+                    <th>Máquina</th>
+                    <th>Horas/dia</th>
+                    <th>Dias/mês</th>
+                    <th>Consumo (kWh)</th>
+                    <th>Custo mensal</th>
+                    <th>Emissão (kg CO₂)</th>
+                    <th class="ri-col-part">Participação</th>
+                </tr>
+            </thead>
+            <tbody id="riCorpo"></tbody>
+            <tfoot id="riRodape"></tfoot>
+        </table>
+
+        <footer class="ri-rodape">
+            <p><b>Como ler:</b> os valores são mensais e estimados a partir das horas de uso, dias de uso e potência cadastrados para cada equipamento. O custo usa a tarifa informada em cada consumo.</p>
+            <p><b>Emissão:</b> calculada com o fator médio do sistema elétrico brasileiro aplicado ao consumo em kWh.</p>
+            <p class="ri-assinatura">Descarboniza · Relatório gerado automaticamente pelo sistema</p>
+        </footer>
+
+    </div>
+
+    @* Barra única: o que incluir + baixar *@
+    <div class="rel-barra">
+
+        <div class="rel-seg" role="radiogroup" aria-label="Máquinas do relatório">
+            <label>
+                <input type="radio" name="relModo" value="todas" checked />
+                <span>Todas as máquinas</span>
+            </label>
+            <label>
+                <input type="radio" name="relModo" value="escolher" />
+                <span>Escolher máquinas <em id="relContagem"></em></span>
+            </label>
+        </div>
+
+    </div>
+
+    <div class="rel-picker" id="relEscolha" hidden>
+
+        <div class="rel-picker__linha">
+
+            <button type="button" class="rel-picker__botao" id="relAbrir" aria-haspopup="listbox" aria-expanded="false">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4" /></svg>
+                <span id="relAbrirTexto">Escolher máquinas</span>
+                <svg class="rel-picker__seta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+            </button>
+
+            <div class="rel-picker__marcadas" id="relMarcadas" aria-live="polite"></div>
+
+        </div>
+
+        <div class="rel-picker__painel" id="relPainel" role="listbox" aria-multiselectable="true" hidden>
+
+            <label class="rel-picker__busca">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
+                <input type="search" id="relBusca" placeholder="Buscar máquina" autocomplete="off" />
+            </label>
+
+            <div class="rel-picker__lista">
+                @foreach (var o in Model.Opcoes)
+                {
+                    <label class="rel-opcao" data-nome="@o.Nome.ToLowerInvariant()">
+                        <input type="checkbox" value="@o.IdConsumo" data-nome-original="@o.Nome" />
+                        <span class="rel-opcao__check" aria-hidden="true"></span>
+                        <span class="rel-opcao__nome">@o.Nome</span>
+                        <span class="rel-opcao__valor">@o.ConsumoKwhMes.ToString("N0", pt) kWh</span>
+                    </label>
+                }
+                <p class="rel-picker__vazio" id="relSemResultado" hidden>Nenhuma máquina encontrada.</p>
+            </div>
+
+            <div class="rel-picker__rodape">
+                <button type="button" class="rel-link" id="relTodas">Marcar todas</button>
+                <button type="button" class="rel-link" id="relNenhuma">Limpar</button>
+                <button type="button" class="rel-picker__ok" id="relConcluir">Concluir</button>
+            </div>
+
+        </div>
+
+    </div>
+
+    <p class="rel-escopo" id="relEscopo">Todas as máquinas</p>
+
+    <div class="data-table-card">
+        <div class="data-table-wrapper">
+            <table class="data-table rel-table">
+                <thead>
+                    <tr>
+                        <th>Máquina</th>
+                        <th class="table-number">Horas/dia</th>
+                        <th class="table-number">Dias/mês</th>
+                        <th class="table-number">Consumo (kWh)</th>
+                        <th class="table-number">Custo mensal</th>
+                        <th class="table-number">Emissão (kg CO₂)</th>
+                        <th class="table-number">% do total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Linhas.Any())
+                    {
+                        <tr>
+                            <td colspan="7" class="table-empty">Você ainda não tem consumos cadastrados.</td>
+                        </tr>
+                    }
+                    @foreach (var l in Model.Linhas)
+                    {
+                        <tr data-id="@l.IdConsumo"
+                            data-kwh="@l.ConsumoKwhMes.ToString(CultureInfo.InvariantCulture)"
+                            data-custo="@l.CustoMensal.ToString(CultureInfo.InvariantCulture)"
+                            data-co2="@l.EmissaoKgCo2.ToString(CultureInfo.InvariantCulture)">
+                            <td>@l.Maquina</td>
+                            <td class="table-number">@Descarboniza.Helpers.FormatoHelper.Horas(l.HorasUsoDia)</td>
+                            <td class="table-number">@l.DiasUsoMes.ToString("N0", pt)</td>
+                            <td class="table-number">@l.ConsumoKwhMes.ToString("N2", pt)</td>
+                            <td class="table-number">R$ @l.CustoMensal.ToString("N2", pt)</td>
+                            <td class="table-number">@l.EmissaoKgCo2.ToString("N2", pt)</td>
+                            <td class="table-number" data-pct>@l.ParticipacaoPercentual.ToString("N1", pt)%</td>
+                        </tr>
+                    }
+                </tbody>
+                @if (Model.Linhas.Any())
+                {
+                    <tfoot>
+                        <tr>
+                            <td>Total</td>
+                            <td></td>
+                            <td></td>
+                            <td class="table-number" id="relTfKwh">@Model.TotalKwhMes.ToString("N2", pt)</td>
+                            <td class="table-number">R$ <span id="relTfCusto">@Model.TotalCustoMes.ToString("N2", pt)</span></td>
+                            <td class="table-number" id="relTfCo2">@Model.TotalEmissaoMes.ToString("N2", pt)</td>
+                            <td class="table-number">100%</td>
+                        </tr>
+                    </tfoot>
+                }
+            </table>
+        </div>
+    </div>
+
+    <section class="rel-download" aria-label="Baixar relatório">
+
+        <div class="rel-download__texto">
+            <strong>Baixar relatório</strong>
+            <span id="relDownloadEscopo">Todas as máquinas</span>
+        </div>
+
+        <div class="rel-download__botoes">
+
+            <a class="rel-arquivo rel-arquivo--xls" id="relCsv" href="@Url.Action("Csv", "Relatorios")">
+                <span class="rel-arquivo__icone" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2.5" /><path d="M3 10h18M3 15h18M9 4v16" /></svg>
+                </span>
+                <span class="rel-arquivo__texto">
+                    <strong>Excel</strong>
+                    <small>Planilha .csv</small>
+                </span>
+                <svg class="rel-arquivo__seta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12" /><path d="m7 11 5 5 5-5" /><path d="M5 21h14" /></svg>
+            </a>
+
+            <button type="button" class="rel-arquivo rel-arquivo--pdf" id="relImprimir">
+                <span class="rel-arquivo__icone" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" /><path d="M14 3v5h5" /><path d="M9 13h6M9 17h4" /></svg>
+                </span>
+                <span class="rel-arquivo__texto">
+                    <strong>PDF</strong>
+                    <small>Documento para imprimir</small>
+                </span>
+                <svg class="rel-arquivo__seta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12" /><path d="m7 11 5 5 5-5" /><path d="M5 21h14" /></svg>
+            </button>
+
+        </div>
+
+    </section>
+
+    <p class="rel-nota">
+        Emissão calculada com o fator médio do sistema elétrico brasileiro. Valores mensais estimados a partir dos dados cadastrados.
+    </p>
+
+</div>
+
+@section Scripts {
+    <script src="~/js/relatorios.js" asp-append-version="true"></script>
+}

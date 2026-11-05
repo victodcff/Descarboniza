@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Eco, assistente do Descarboniza">
+  <defs>
+    <linearGradient id="fundo" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8fd45a"/>
+      <stop offset="1" stop-color="#2f7d12"/>
+    </linearGradient>
+    <linearGradient id="rosto" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#e6f2dc"/>
+    </linearGradient>
+  </defs>
+  <circle cx="32" cy="32" r="32" fill="url(#fundo)"/>
+  <!-- antena com folha -->
+  <path d="M32 15v-4" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M32 11c0-5 4-8 9-8 0 5-3 8-9 8Z" fill="#d8f5b8"/>
+  <!-- cabeça -->
+  <rect x="12" y="15" width="40" height="34" rx="14" fill="url(#rosto)"/>
+  <!-- orelhas -->
+  <rect x="7" y="28" width="5" height="10" rx="2.5" fill="#d8f5b8"/>
+  <rect x="52" y="28" width="5" height="10" rx="2.5" fill="#d8f5b8"/>
+  <!-- olhos -->
+  <ellipse cx="24" cy="30" rx="4" ry="5" fill="#1f5a0c"/>
+  <ellipse cx="40" cy="30" rx="4" ry="5" fill="#1f5a0c"/>
+  <circle cx="25.4" cy="28.2" r="1.4" fill="#ffffff"/>
+  <circle cx="41.4" cy="28.2" r="1.4" fill="#ffffff"/>
+  <!-- bochechas e sorriso -->
+  <circle cx="18" cy="38" r="2.6" fill="#ffb7a8" opacity=".55"/>
+  <circle cx="46" cy="38" r="2.6" fill="#ffb7a8" opacity=".55"/>
+  <path d="M26 39c2 3 10 3 12 0" fill="none" stroke="#1f5a0c" stroke-width="2.4" stroke-linecap="round"/>
+</svg>

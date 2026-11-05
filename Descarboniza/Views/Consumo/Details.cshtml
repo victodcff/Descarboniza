@@ -1,4 +1,4 @@
-@model Descarboniza.Areas.Identity.Data.Consumo
+﻿@model Descarboniza.Areas.Identity.Data.Consumo
 
 @{
     ViewData["Title"] = "Detalhes do Consumo";
@@ -89,10 +89,8 @@
                     <span>Horas por dia</span>
 
                     <strong>
-                        @Model.HorasUsoDia.ToString("N2")
+                        @Descarboniza.Helpers.FormatoHelper.Horas(Model.HorasUsoDia)
                     </strong>
-
-                    <small>h</small>
 
                 </div>
 

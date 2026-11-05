@@ -1,4 +1,4 @@
-﻿/* Service worker do Descarboniza.
+/* Service worker do Descarboniza.
  *
  * O que ele faz:
  *  - guarda só arquivos estáticos (css, js, imagens, bibliotecas) para o app abrir mais rápido;
@@ -11,7 +11,7 @@
  *
  * Quando mudar este arquivo ou a página offline, aumente a VERSAO.
  */
-const VERSAO = 'v1';
+const VERSAO = 'v12';
 const CACHE_ESTATICO = 'descarboniza-estatico-' + VERSAO;
 const PAGINA_OFFLINE = '/offline.html';
 
