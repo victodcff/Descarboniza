@@ -1,4 +1,4 @@
-@model IEnumerable<Descarboniza.Areas.Identity.Data.Consumo>
+﻿@model IEnumerable<Descarboniza.Areas.Identity.Data.Consumo>
 
 @{
     ViewData["Title"] = "Consumos";
@@ -43,8 +43,8 @@
                     <tr>
                         <th>Máquina</th>
                         <th>Registro</th>
-                        <th class="text-end">Horas/dia</th>
-                        <th class="text-end">Dias/mês</th>
+                        <th class="col-centro">Horas/dia</th>
+                        <th class="col-centro">Dias/mês</th>
                         <th class="text-end">Consumo</th>
                         <th class="text-end">Tarifa</th>
                         <th class="text-end">Ações</th>
@@ -98,12 +98,11 @@
                                     @item.DataRegistro.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
                                 </td>
 
-                                <td class="table-number">
-                                    @item.HorasUsoDia.ToString("N2")
-                                    <span class="table-unit">h</span>
+                                <td class="table-number col-centro">
+                                    @Descarboniza.Helpers.FormatoHelper.Horas(item.HorasUsoDia)
                                 </td>
 
-                                <td class="table-number">
+                                <td class="table-number col-centro">
                                     @item.DiasUsoMes.ToString("N0")
                                     <span class="table-unit">dias</span>
                                 </td>

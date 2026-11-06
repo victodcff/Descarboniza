@@ -1,0 +1,43 @@
+/* Olhinho de mostrar/ocultar senha + checklist de requisitos */
+.dsc-field__input--senha { padding-right: 48px; }
+
+.dsc-eye {
+    position: absolute; top: 26px; right: 8px; transform: translateY(-50%);
+    display: grid; place-items: center; width: 36px; height: 36px;
+    border: 0; border-radius: 8px; background: transparent; color: #66716b; cursor: pointer;
+    transition: background-color .15s ease, color .15s ease;
+}
+.dsc-eye:hover { background: rgba(93,162,44,.12); color: #3f8a17; }
+.dsc-eye:focus-visible { outline: 2px solid #5da22c; outline-offset: 1px; }
+.dsc-eye svg { width: 19px; height: 19px; }
+.dsc-eye__off { display: none; }
+.dsc-eye[aria-pressed="true"] .dsc-eye__on { display: none; }
+.dsc-eye[aria-pressed="true"] .dsc-eye__off { display: block; }
+
+.senha-req {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 12px;
+    margin: 8px 0 0; padding: 0 4px; list-style: none; font-size: 12px; color: #66716b;
+}
+.senha-req li { position: relative; padding-left: 20px; transition: color .15s ease; }
+.senha-req li::before {
+    content: ""; position: absolute; left: 0; top: 50%; width: 12px; height: 12px; margin-top: -6px;
+    border: 1.5px solid #b4c0b8; border-radius: 50%; transition: all .15s ease;
+}
+.senha-req li.ok { color: #3f8a17; }
+.senha-req li.ok::before {
+    border-color: #3f8a17; background: #3f8a17 center / 8px no-repeat
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12 5 5 9-10'/%3E%3C/svg%3E");
+}
+.senha-req.erro li:not(.ok) { color: #a94747; }
+.senha-req.erro li:not(.ok)::before { border-color: #a94747; }
+
+.senha-aviso { font-weight: 600; }
+
+html[data-theme="dark"] .dsc-eye { color: #969fac; }
+html[data-theme="dark"] .dsc-eye:hover { color: #7cc94a; }
+html[data-theme="dark"] .senha-req { color: #969fac; }
+html[data-theme="dark"] .senha-req li.ok { color: #7cc94a; }
+html[data-theme="dark"] .senha-req li.ok::before { border-color: #7cc94a; background-color: #4a9e1d; }
+html[data-theme="dark"] .senha-req.erro li:not(.ok) { color: #e08a8a; }
+
+@media (max-width: 420px) { .senha-req { grid-template-columns: 1fr; } }

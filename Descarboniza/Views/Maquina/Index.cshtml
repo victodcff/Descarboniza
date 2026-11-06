@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Descarboniza.Areas.Identity.Data.Maquina>
+@model IEnumerable<Descarboniza.Areas.Identity.Data.Maquina>
 
 @{
     ViewData["Title"] = "Máquinas";
@@ -45,7 +45,7 @@
                         <th class="text-end">Potência</th>
                         <th class="text-end">Tensão</th>
                         <th class="text-end">Corrente</th>
-                        <th>Cadastro</th>
+                        <th class="col-centro">Cadastro</th>
                         <th class="text-end">Ações</th>
                     </tr>
                 </thead>
@@ -99,7 +99,7 @@
                                     <span class="table-unit">A</span>
                                 </td>
 
-                                <td class="table-date">
+                                <td class="table-date col-centro">
                                     @item.DataCadastro.ToLocalTime().ToString("dd/MM/yyyy HH:mm")
                                 </td>
 

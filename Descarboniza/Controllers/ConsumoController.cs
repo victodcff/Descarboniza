@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using System.Security.Claims;
 
 [Authorize]
@@ -13,15 +14,27 @@ public class ConsumoController : Controller
     private readonly DescarbonizaContext _context;
     private readonly AnaliseConsumoService _analiseService;
     private readonly EmissaoCarbonoService _emissaoService;
+    private readonly IaMaquinaService _ia;
+    private readonly IMemoryCache _cache;
+
+    // Retrofit: mesma sugestão fica guardada por 6 horas e cada usuário
+    // só pode pedir uma nova a cada 15 segundos (protege a cota da IA).
+    private static readonly TimeSpan ValidadeRetrofit = TimeSpan.FromHours(6);
+    private static readonly TimeSpan IntervaloRetrofit = TimeSpan.FromSeconds(15);
+    private static readonly int[] ReducoesRetrofit = { 10, 20, 30 };
 
     public ConsumoController(
         DescarbonizaContext context,
         AnaliseConsumoService analiseService,
-        EmissaoCarbonoService emissaoService)
+        EmissaoCarbonoService emissaoService,
+        IaMaquinaService ia,
+        IMemoryCache cache)
     {
         _context = context;
         _analiseService = analiseService;
         _emissaoService = emissaoService;
+        _ia = ia;
+        _cache = cache;
     }
 
     // GET: Consumo
@@ -370,6 +383,127 @@ public class ConsumoController : Controller
         };
 
         return View(resultado);
+    }
+
+    // POST: Consumo/SugerirRetrofit  (chamado por JavaScript na tela de análise)
+    // A IA só dá sugestões qualitativas. Os números (economia em kWh, R$ e CO2)
+    // são calculados aqui, com a mesma fórmula do restante do sistema.
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SugerirRetrofit(int id, CancellationToken ct)
+    {
+        var usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var consumo = await _context.Consumos
+            .Include(c => c.Maquina)
+            .FirstOrDefaultAsync(c =>
+                c.IdConsumo == id &&
+                c.Maquina != null &&
+                c.Maquina.UsuarioId == usuarioId, ct);
+
+        if (consumo == null || consumo.Maquina == null)
+            return NotFound();
+
+        var maquina = consumo.Maquina;
+
+        if (maquina.Potencia <= 0 || consumo.HorasUsoDia <= 0 || consumo.ConsumoKwhMes <= 0)
+        {
+            return Json(new
+            {
+                sucesso = false,
+                erro = "Esta máquina ainda não tem potência e uso suficientes para a análise."
+            });
+        }
+
+        var cenarios = CalcularCenariosRetrofit(consumo);
+
+        // Chave muda quando o usuário edita a máquina ou o consumo.
+        var chave = string.Join("|",
+            "retrofit", usuarioId, consumo.IdConsumo,
+            maquina.Fabricante, maquina.Modelo,
+            maquina.Potencia, consumo.HorasUsoDia, consumo.DiasUsoMes, consumo.TarifaKwh);
+
+        if (_cache.TryGetValue(chave, out RetrofitResponse? guardada) && guardada != null)
+            return Json(MontarRespostaRetrofit(guardada, cenarios, true));
+
+        var chaveEspera = $"retrofit-espera|{usuarioId}";
+
+        if (_cache.TryGetValue(chaveEspera, out _))
+        {
+            Response.StatusCode = StatusCodes.Status429TooManyRequests;
+
+            return Json(new
+            {
+                sucesso = false,
+                erro = "Aguarde alguns segundos antes de pedir outra sugestão."
+            });
+        }
+
+        _cache.Set(chaveEspera, true, IntervaloRetrofit);
+
+        var totalDoUsuario = await _context.Consumos
+            .Where(c => c.Maquina != null && c.Maquina.UsuarioId == usuarioId)
+            .SumAsync(c => c.ConsumoKwhMes, ct);
+
+        var pedido = new RetrofitRequest
+        {
+            Fabricante = maquina.Fabricante ?? string.Empty,
+            Modelo = maquina.Modelo ?? string.Empty,
+            PotenciaKw = maquina.Potencia,
+            TensaoV = maquina.Tensao > 0 ? maquina.Tensao : null,
+            CorrenteA = maquina.Corrente > 0 ? maquina.Corrente : null,
+            HorasUsoDia = consumo.HorasUsoDia,
+            DiasUsoMes = consumo.DiasUsoMes,
+            ConsumoMensalKwh = consumo.ConsumoKwhMes,
+            CustoMensalReais = _analiseService.CalcularCustoMensal(consumo),
+            EmissaoMensalKg = _emissaoService.CalcularEmissao(consumo.ConsumoKwhMes),
+            ParticipacaoPercentual = totalDoUsuario > 0
+                ? Math.Min(100, consumo.ConsumoKwhMes / totalDoUsuario * 100)
+                : null
+        };
+
+        var resposta = await _ia.SugerirRetrofitAsync(pedido, ct);
+
+        // Só guarda no cache quando deu certo: falha tenta de novo no próximo clique.
+        if (resposta.Sucesso && resposta.Sugestoes.Count > 0)
+            _cache.Set(chave, resposta, ValidadeRetrofit);
+
+        return Json(MontarRespostaRetrofit(resposta, cenarios, false));
+    }
+
+    private List<RetrofitCenario> CalcularCenariosRetrofit(Consumo consumo)
+    {
+        return ReducoesRetrofit.Select(percentual =>
+        {
+            var economiaKwh = consumo.ConsumoKwhMes * percentual / 100.0;
+            var economiaReais = economiaKwh * consumo.TarifaKwh;
+
+            return new RetrofitCenario
+            {
+                ReducaoPercentual = percentual,
+                EconomiaKwhMes = economiaKwh,
+                EconomiaReaisMes = economiaReais,
+                EconomiaReaisAno = economiaReais * 12,
+                EconomiaCo2KgAno = _emissaoService.CalcularEmissao(economiaKwh) * 12
+            };
+        }).ToList();
+    }
+
+    private static object MontarRespostaRetrofit(
+        RetrofitResponse ia,
+        List<RetrofitCenario> cenarios,
+        bool doCache)
+    {
+        return new
+        {
+            sucesso = ia.Sucesso,
+            erro = ia.Erro,
+            resumo = ia.Resumo,
+            sugestoes = ia.Sugestoes,
+            avisos = ia.Avisos,
+            cenarios = ia.Sucesso ? cenarios : new List<RetrofitCenario>(),
+            doCache
+        };
     }
 
     // GET: Consumo/Delete/5

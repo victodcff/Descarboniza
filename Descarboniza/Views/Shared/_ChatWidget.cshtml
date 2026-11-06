@@ -1,0 +1,52 @@
+﻿@* Assistente com IA: botão flutuante que aparece em todas as telas para quem está logado. *@
+@if (User.Identity?.IsAuthenticated == true
+    && !string.Equals(ViewContext.RouteData.Values["controller"]?.ToString(), "Conversa", StringComparison.OrdinalIgnoreCase))
+{
+    <link rel="stylesheet" href="~/css/chat.css" asp-append-version="true" />
+
+    <div class="chat-widget" id="chat-widget" data-url="@Url.Action("Enviar", "Chat")" data-avatar="@Url.Content("~/img/ia-avatar.svg")" data-github="https://github.com/victodcff/Descarboniza">
+
+        @Html.AntiForgeryToken()
+
+        <section class="chat-painel" id="chat-painel" role="dialog" aria-label="Eco, assistente do Descarboniza" hidden>
+
+            <header class="chat-topo" id="chat-topo" title="Arraste para mover">
+                <img class="chat-avatar" src="@Url.Content("~/img/ia-avatar.svg")" alt="" width="40" height="40" draggable="false" />
+                <div class="chat-topo__texto">
+                    <strong>Eco</strong>
+                    <span><i class="chat-online" aria-hidden="true"></i>Consultor de energia e CO₂</span>
+                </div>
+                <button type="button" class="chat-icone" id="chat-limpar" title="Nova conversa" aria-label="Nova conversa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8" /><path d="M3 3v5h5" /></svg></button>
+                <button type="button" class="chat-icone" id="chat-fixar" title="Fixar posição" aria-label="Fixar posição" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 17v5" /><path d="M9 3h6l-1 6 3 3v2H7v-2l3-3-1-6z" /></svg></button>
+                <button type="button" class="chat-icone" id="chat-minimizar" title="Minimizar" aria-label="Minimizar" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /></svg></button>
+                <button type="button" class="chat-icone" id="chat-fechar" title="Fechar" aria-label="Fechar o assistente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg></button>
+            </header>
+
+            <div class="chat-msgs" id="chat-msgs" role="log" aria-live="polite"></div>
+
+            <div class="chat-sugestoes" id="chat-sugestoes">
+                <button type="button" class="chat-chip">Qual máquina gasta mais?</button>
+                <button type="button" class="chat-chip">Como posso reduzir meu consumo?</button>
+                <button type="button" class="chat-chip">Quanto de CO₂ eu emito por mês?</button>
+                <button type="button" class="chat-chip">O que é retrofit?</button>
+            </div>
+
+            <form class="chat-form" id="chat-form" autocomplete="off">
+                <textarea id="chat-texto" rows="1" maxlength="800" placeholder="Pergunte sobre consumo, custo ou CO₂..." aria-label="Mensagem para o assistente"></textarea>
+                <button type="submit" class="chat-enviar" id="chat-enviar" aria-label="Enviar mensagem">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 2 11 13" /><path d="M22 2 15 22l-4-9-9-4 20-7z" /></svg>
+                </button>
+            </form>
+
+            <p class="chat-aviso">A IA pode errar. Confira os números nas telas do sistema.</p>
+
+        </section>
+
+        <button type="button" class="chat-fab" id="chat-abrir" aria-label="Abrir o assistente com IA" aria-expanded="false" aria-controls="chat-painel">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H8l-5 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+        </button>
+
+    </div>
+
+    <script src="~/js/chat.js" asp-append-version="true"></script>
+}

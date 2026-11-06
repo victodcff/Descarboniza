@@ -121,10 +121,18 @@
             <div class="dsc-field">
 
                 <input asp-for="Input.Password"
-                       class="dsc-field__input"
+                       id="Input_Password"
+                       value="@(Model.Input?.Password)"
+                       class="dsc-field__input dsc-field__input--senha"
                        autocomplete="new-password"
                        aria-required="true"
                        placeholder=" " />
+
+                <button type="button" class="dsc-eye" data-senha-toggle aria-label="Mostrar senha" aria-pressed="false">
+                    <svg class="dsc-eye__on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" /><circle cx="12" cy="12" r="3" /></svg>
+                    <svg class="dsc-eye__off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18" /><path d="M10.6 6.1A10.7 10.7 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.2" /><path d="M6.6 6.6A17 17 0 0 0 2 12s3.5 7 10 7a10 10 0 0 0 4-.8" /><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" /></svg>
+                </button>
+
 
                 <label asp-for="Input.Password" class="dsc-field__label">
                     <svg viewBox="0 0 24 24"
@@ -142,19 +150,31 @@
 
                 <span asp-validation-for="Input.Password" class="dsc-field__error"></span>
 
-                <span class="form-hint">
-                    Pelo menos 6 caracteres, com letra maiúscula, minúscula, número e símbolo.
-                </span>
+                <ul class="senha-req" id="senhaReq" aria-live="polite">
+                    <li data-req="len">Mínimo de 6 caracteres</li>
+                    <li data-req="upper">Uma letra maiúscula</li>
+                    <li data-req="lower">Uma letra minúscula</li>
+                    <li data-req="num">Um número</li>
+                    <li data-req="sym">Um símbolo (ex.: ! # $ %)</li>
+                </ul>
 
             </div>
 
             <div class="dsc-field">
 
                 <input asp-for="Input.ConfirmPassword"
-                       class="dsc-field__input"
+                       id="Input_ConfirmPassword"
+                       value="@(Model.Input?.ConfirmPassword)"
+                       class="dsc-field__input dsc-field__input--senha"
                        autocomplete="new-password"
                        aria-required="true"
                        placeholder=" " />
+
+                <button type="button" class="dsc-eye" data-senha-toggle aria-label="Mostrar senha" aria-pressed="false">
+                    <svg class="dsc-eye__on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" /><circle cx="12" cy="12" r="3" /></svg>
+                    <svg class="dsc-eye__off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18" /><path d="M10.6 6.1A10.7 10.7 0 0 1 12 5c6.5 0 10 7 10 7a17 17 0 0 1-3.2 4.2" /><path d="M6.6 6.6A17 17 0 0 0 2 12s3.5 7 10 7a10 10 0 0 0 4-.8" /><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" /></svg>
+                </button>
+
 
                 <label asp-for="Input.ConfirmPassword" class="dsc-field__label">
                     <svg viewBox="0 0 24 24"
@@ -171,6 +191,7 @@
                 </label>
 
                 <span asp-validation-for="Input.ConfirmPassword" class="dsc-field__error"></span>
+                <span class="dsc-field__error senha-aviso" id="senhaAviso" role="alert"></span>
 
             </div>
 
@@ -194,4 +215,6 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <link rel="stylesheet" href="~/css/senha.css" asp-append-version="true" />
+    <script src="~/js/senha.js" asp-append-version="true"></script>
 }

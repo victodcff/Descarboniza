@@ -1,0 +1,211 @@
+/* =========================================================
+   Ajustes finos (v9) — carregado por último
+   ========================================================= */
+
+/* ---- Dashboard sem gradiente (claro e escuro) ---- */
+.dsh-page::before {
+    background: none !important;
+}
+
+.dsh-hero, .dsh-insight {
+    background: #fff !important;
+}
+
+html[data-theme="dark"]:root .dsh-page::before {
+    background: none !important;
+}
+
+html[data-theme="dark"]:root .dsh-card,
+html[data-theme="dark"]:root .dsh-hero,
+html[data-theme="dark"]:root .dsh-insight {
+    background: #151a21 !important;
+}
+
+    html[data-theme="dark"]:root .dsh-card:hover {
+        box-shadow: 0 18px 40px rgba(0, 0, 0, .35);
+    }
+
+/* ---- Colunas centralizadas (Horas/Dias, Cadastro) ---- */
+.data-table th.col-centro, .data-table td.col-centro {
+    text-align: center !important;
+    padding-left: 24px;
+    padding-right: 24px;
+}
+
+.data-table td.col-centro {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ---- Pílula de emissão no escuro ---- */
+html[data-theme="dark"]:root .table-badge:not(.ok):not(.warn):not(.muted):not(.danger) {
+    background: #1f2a24;
+    color: #9bd678;
+}
+
+/* ---- Relatórios: colunas centralizadas (cabeçalho, valores e total) ---- */
+.rel-table th {
+    white-space: normal !important;
+    vertical-align: middle;
+    line-height: 1.35;
+}
+
+    .rel-table th:first-child, .rel-table td:first-child {
+        width: 22%;
+        text-align: left;
+    }
+
+.rel-table thead th.table-number, .rel-table td.table-number, .rel-table tfoot td.table-number {
+    text-align: center !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+}
+
+.rel-table th.table-number {
+    padding-right: calc(10px - .8px) !important;
+}
+
+.rel-table td.table-number {
+    font-variant-numeric: tabular-nums;
+}
+
+/* ---- Celular ---- */
+@media (max-width: 767px) {
+    .data-table th.col-centro, .data-table td.col-centro {
+        text-align: left !important;
+        padding: 0 !important;
+    }
+
+
+    /* Relatórios: cada máquina vira um cartão com rótulos */
+    .data-page .data-table-card .data-table.rel-table tbody tr {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px 10px;
+        padding: 16px;
+    }
+
+        .data-page .data-table-card .data-table.rel-table tbody tr > td:first-child:not(.table-empty) {
+            grid-column: 1 / -1;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .data-page .data-table-card .data-table.rel-table tbody tr > td[data-label] {
+            text-align: left !important;
+            font-size: 14px;
+            font-variant-numeric: tabular-nums;
+        }
+
+    .rel-table td[data-label]::before {
+        content: attr(data-label);
+        display: block;
+        margin-bottom: 3px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        opacity: .6;
+    }
+
+    .rel-table tfoot, .rel-table tfoot tr {
+        display: block;
+    }
+
+        .rel-table tfoot tr {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px 10px;
+            padding: 14px 16px;
+        }
+
+        .rel-table tfoot td {
+            display: block;
+            padding: 0 !important;
+            border: 0 !important;
+            text-align: left !important;
+            background: transparent !important;
+        }
+
+            .rel-table tfoot td.table-number, .rel-table tbody td.table-number {
+                text-align: left !important;
+                padding: 0 !important;
+            }
+
+            .rel-table tfoot td:first-child {
+                grid-column: 1 / -1;
+            }
+
+            .rel-table tfoot td:empty {
+                display: none;
+            }
+
+    /* Análises: cartões organizados */
+    .an-list .data-table tbody tr {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 14px 10px;
+        padding: 16px;
+        align-items: start;
+    }
+
+    .an-list .data-table-card .data-table tbody tr > td:not(.table-empty) {
+        text-align: left !important;
+    }
+
+    .an-list .data-table-card .data-table tbody tr > td:first-child:not(.table-empty),
+    .an-list .data-table-card .data-table tbody tr > td:nth-child(5):not(.table-empty),
+    .an-list .data-table-card .data-table tbody tr > td:nth-child(6):not(.table-empty) {
+        grid-column: 1 / -1;
+    }
+
+    .an-list td:nth-child(2)::before, .an-list td:nth-child(3)::before, .an-list td:nth-child(4)::before {
+        display: block;
+        margin-bottom: 3px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        opacity: .6;
+    }
+
+    .an-list td:nth-child(2)::before {
+        content: "Consumo";
+    }
+
+    .an-list td:nth-child(3)::before {
+        content: "Custo mensal";
+    }
+
+    .an-list td:nth-child(4)::before {
+        content: "Emissão";
+    }
+
+    .an-list .an-share {
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+        min-width: 0;
+        width: 100%;
+    }
+
+    .an-list .an-share__valor {
+        order: 2;
+        min-width: 48px;
+        text-align: right;
+    }
+
+    .an-list .an-share .an-bar {
+        order: 1;
+        flex: 1;
+        max-width: none;
+    }
+
+    .an-list .table-actions {
+        justify-content: flex-start;
+    }
+
+    .an-list .data-table .an-col {
+        text-align: left;
+    }
+}
