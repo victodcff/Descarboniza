@@ -11,7 +11,7 @@
  *
  * Quando mudar este arquivo ou a página offline, aumente a VERSAO.
  */
-const VERSAO = 'v13';
+const VERSAO = 'v14';
 const CACHE_ESTATICO = 'descarboniza-estatico-' + VERSAO;
 const PAGINA_OFFLINE = '/offline.html';
 
