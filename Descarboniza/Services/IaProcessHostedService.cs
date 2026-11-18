@@ -31,7 +31,8 @@ namespace Descarboniza.Services
                 return;
             }
 
-            var baseUrl = new Uri(_config["IaService:BaseUrl"] ?? "http://127.0.0.1:8000/");
+            var baseUrlConfig = _config["IaService:BaseUrl"];
+            var baseUrl = new Uri(string.IsNullOrWhiteSpace(baseUrlConfig) ? "http://127.0.0.1:8000/" : baseUrlConfig);
 
             var pasta = Path.GetFullPath(Path.Combine(
                 _env.ContentRootPath,

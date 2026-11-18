@@ -68,7 +68,9 @@ builder.Services.AddScoped<EmissaoCarbonoService>();
 
 builder.Services.AddScoped<FotoPerfilService>();
 
-var iaBaseUrl = builder.Configuration["IaService:BaseUrl"] ?? "http://127.0.0.1:8000/";
+var iaBaseUrl = builder.Configuration["IaService:BaseUrl"];
+if (string.IsNullOrWhiteSpace(iaBaseUrl))
+    iaBaseUrl = "http://127.0.0.1:8000/";
 var iaToken = builder.Configuration["IaService:Token"];
 
 builder.Services.AddHttpClient<IaMaquinaService>(client =>
